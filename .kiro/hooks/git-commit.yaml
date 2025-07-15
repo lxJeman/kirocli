@@ -1,0 +1,7 @@
+name: git-commit
+description: Automated git commit with AI-generated commit message
+commands:
+  - git add .
+  - git status
+  - echo "Files staged for commit"
+workingDirectory: .

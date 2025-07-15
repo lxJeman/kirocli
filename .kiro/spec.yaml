@@ -1,0 +1,10 @@
+goal: Build a React login form
+language: TypeScript
+framework: React
+features:
+  - Email and password inputs
+  - Form validation
+  - Submit button with loading state
+  - Error handling
+  - Responsive design
+outputPath: ./generated

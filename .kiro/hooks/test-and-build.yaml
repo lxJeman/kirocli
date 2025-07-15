@@ -1,0 +1,7 @@
+name: test-and-build
+description: Run tests and build the project
+commands:
+  - npm test
+  - npm run build
+  - echo "Tests passed and build completed successfully"
+workingDirectory: .

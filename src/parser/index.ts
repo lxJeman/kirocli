@@ -1,67 +1,113 @@
-/**
- * Spec Parser Module
- * 
- * This module handles parsing and validation of .kiro/spec.yaml files
- * for spec-driven development workflows.
- */
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as yaml from 'js-yaml';
+import {SpecData} from '../ai/types.js';
 
-export interface KiroSpec {
-	goal: string;
-	language?: string;
-	framework?: string;
-	features?: string[];
-	dependencies?: string[];
-	outputPath?: string;
-}
+export class SpecParser {
+	async initSpec(filePath: string): Promise<void> {
+		const specTemplate: SpecData = {
+			goal: 'Build a sample application',
+			language: 'TypeScript',
+			framework: 'React',
+			features: [
+				'User interface',
+				'Basic functionality',
+				'Error handling',
+			],
+			outputPath: './generated',
+		};
 
-export interface ParseResult {
-	spec: KiroSpec;
-	isValid: boolean;
-	errors: string[];
-}
+		const specContent = yaml.dump(specTemplate, {
+			indent: 2,
+			lineWidth: 80,
+		});
 
-/**
- * Parses a YAML spec file and validates its structure
- */
-export async function parseSpec(filePath: string): Promise<ParseResult> {
-	// Implementation will use js-yaml in Phase 5
-	throw new Error('Spec parsing not yet implemented - coming in Phase 5');
-}
+		// Ensure directory exists
+		const dir = path.dirname(filePath);
+		await fs.mkdir(dir, {recursive: true});
 
-/**
- * Validates a parsed spec object
- */
-export function validateSpec(spec: Partial<KiroSpec>): { isValid: boolean; errors: string[] } {
-	const errors: string[] = [];
-
-	if (!spec.goal || typeof spec.goal !== 'string') {
-		errors.push('Spec must have a valid "goal" field');
+		// Write spec file
+		await fs.writeFile(filePath, specContent, 'utf8');
 	}
 
-	if (spec.language && typeof spec.language !== 'string') {
-		errors.push('Language field must be a string');
+	async parseSpec(filePath: string): Promise<SpecData> {
+		try {
+			const content = await fs.readFile(filePath, 'utf8');
+			const spec = yaml.load(content) as SpecData;
+
+			// Validate required fields
+			if (!spec.goal || !spec.language || !spec.features) {
+				throw new Error('Spec file is missing required fields: goal, language, features');
+			}
+
+			return spec;
+		} catch (error) {
+			if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+				throw new Error(`Spec file not found: ${filePath}`);
+			}
+			throw error;
+		}
 	}
 
-	if (spec.features && !Array.isArray(spec.features)) {
-		errors.push('Features field must be an array');
+	async validateSpec(filePath: string): Promise<boolean> {
+		try {
+			await this.parseSpec(filePath);
+			return true;
+		} catch {
+			return false;
+		}
 	}
 
-	return {
-		isValid: errors.length === 0,
-		errors
-	};
-}
+	async writeGeneratedCode(code: string, spec: SpecData): Promise<void> {
+		const outputPath = spec.outputPath || './generated';
+		
+		// Ensure output directory exists
+		await fs.mkdir(outputPath, {recursive: true});
 
-/**
- * Creates a default spec template
- */
-export function createDefaultSpec(): KiroSpec {
-	return {
-		goal: 'Build a new feature',
-		language: 'TypeScript',
-		framework: 'React',
-		features: [],
-		dependencies: [],
-		outputPath: './output'
-	};
+		// Determine file extension based on language
+		const extension = this.getFileExtension(spec.language, spec.framework);
+		const fileName = this.generateFileName(spec.goal, extension);
+		const fullPath = path.join(outputPath, fileName);
+
+		// Write generated code
+		await fs.writeFile(fullPath, code, 'utf8');
+
+		console.log(`Generated code written to: ${fullPath}`);
+	}
+
+	private getFileExtension(language: string, framework?: string): string {
+		const lang = language.toLowerCase();
+		
+		if (framework?.toLowerCase().includes('react')) {
+			return lang === 'typescript' ? '.tsx' : '.jsx';
+		}
+
+		switch (lang) {
+			case 'typescript':
+				return '.ts';
+			case 'javascript':
+				return '.js';
+			case 'python':
+				return '.py';
+			case 'java':
+				return '.java';
+			case 'go':
+				return '.go';
+			case 'rust':
+				return '.rs';
+			default:
+				return '.txt';
+		}
+	}
+
+	private generateFileName(goal: string, extension: string): string {
+		// Convert goal to a valid filename
+		const baseName = goal
+			.toLowerCase()
+			.replace(/[^a-z0-9\s]/g, '')
+			.replace(/\s+/g, '-')
+			.replace(/^-+|-+$/g, '');
+
+		return `${baseName}${extension}`;
+	}
 }

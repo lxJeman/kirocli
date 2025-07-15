@@ -9,21 +9,21 @@
 - [x] Build system (tsc compilation)
 - [x] Linting/formatting (XO + Prettier)
 
-## **Phase 2: Core Architecture Setup** 🔄 (Next Steps)
+## **Phase 2: Core Architecture Setup** ✅ (Completed)
 
 - [x] **Restructure project to match planned architecture**
   - [x] Move `source/` → `src/` to match documentation
   - [x] Create `src/ai/` directory for AI integrations
   - [x] Create `src/parser/` directory for spec parsing
   - [x] Update import paths and build config
-- [ ] **Enhanced CLI argument parsing**
-  - [ ] Add subcommands support (`spec`, `hook`, `chat`)
-  - [ ] Interactive mode vs command mode detection
-  - [ ] Help system improvements
-- [ ] **Basic project structure validation**
-  - [ ] Create `.kiro/` directory structure
-  - [ ] Add example `spec.yaml` template
-  - [ ] Basic config file handling
+- [x] **Enhanced CLI argument parsing**
+  - [x] Add subcommands support (`spec`, `hook`, `chat`)
+  - [x] Interactive mode vs command mode detection
+  - [x] Help system improvements
+- [x] **Basic project structure validation**
+  - [x] Create `.kiro/` directory structure
+  - [x] Add example `spec.yaml` template
+  - [x] Basic config file handling
 
 ## **Phase 3: AI Integration Foundation** 🎯
 
@@ -147,3 +147,36 @@
   - [ ] Security audit of AI integrations
   - [ ] Data privacy compliance
   - [ ] Secure credential handling
+  
+## **Immediate Next Steps (This Week):**
+1. **AI Integration** - Set up API keys and test AI providers
+2. **Command Execution** - Implement safe shell command execution
+3. **Spec Generation** - Test AI-powered code generation from specs
+4. **Hook System** - Test and enhance the agent hooks functionality
+
+## **Dependencies Added:** ✅
+```bash
+# Core functionality
+npm install execa commander js-yaml ora inquirer
+
+# AI integrations  
+npm install openai @anthropic-ai/sdk @google/generative-ai
+
+# Development
+npm install -D @types/js-yaml vitest
+```
+
+## **Current Status:**
+- ✅ Complete CLI foundation with subcommands
+- ✅ Full project architecture restructured
+- ✅ AI provider system scaffolded
+- ✅ Spec parser and hooks system implemented
+- 🔄 Ready to begin Phase 3 AI integration testing
+- 🎯 Target: Working AI-powered terminal assistant
+
+## **What's Working Now:**
+- `kirocli --help` - Full command help system
+- `kirocli spec validate` - YAML spec validation
+- `kirocli hook list` - List available hooks
+- `kirocli greet --name="Test"` - Legacy greeting
+- All subcommands with proper help text
