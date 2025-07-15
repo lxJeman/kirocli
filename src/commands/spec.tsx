@@ -1,20 +1,31 @@
 import React, {useState, useEffect} from 'react';
-import {Text, Box} from 'ink';
+import {Text, Box, useInput} from 'ink';
 import {SpecParser} from '../parser/index.js';
 import {AIProvider} from '../ai/index.js';
 
 type Props = {
 	action: 'init' | 'build' | 'validate';
 	file?: string;
+	onExit?: () => void;
 };
 
-export default function SpecCommand({action, file = '.kiro/spec.yaml'}: Props) {
+export default function SpecCommand({action, file = '.kiro/spec.yaml', onExit}: Props) {
 	const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
 	const [message, setMessage] = useState('');
 
 	useEffect(() => {
 		handleAction();
 	}, []);
+
+	useInput((input, key) => {
+		if (key.escape || (key.ctrl && input === 'm')) {
+			if (onExit) {
+				onExit();
+			}
+		} else if (key.ctrl && input === 'c') {
+			process.exit(0);
+		}
+	});
 
 	const handleAction = async () => {
 		try {
@@ -36,7 +47,7 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml'}: Props) {
 				case 'build':
 					setMessage('🔄 Generating code from spec...');
 					const spec = await parser.parseSpec(file);
-					const ai = new AIProvider();
+					const ai = await AIProvider.createDefault(); // Use default configured model
 					const code = await ai.generateFromSpec(spec);
 					await parser.writeGeneratedCode(code, spec);
 					setMessage('✅ Code generated successfully');
@@ -50,20 +61,32 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml'}: Props) {
 	};
 
 	return (
-		<Box flexDirection="column">
-			<Text color="cyan" bold>
-				📜 Spec Command: {action}
-			</Text>
-			{file && (
-				<Text color="gray">
-					File: {file}
-				</Text>
-			)}
-			<Text> </Text>
+		<Box flexDirection="column" padding={1}>
+			{/* Header */}
+			<Box borderStyle="round" borderColor="cyan" padding={1} marginBottom={1}>
+				<Box flexDirection="column">
+					<Text color="cyan" bold>
+						📜 Spec Command: {action}
+					</Text>
+					<Text color="white" dimColor>
+						{file ? `File: ${file}` : 'YAML specification processing'}
+					</Text>
+				</Box>
+			</Box>
 
-			<Text color={status === 'error' ? 'red' : status === 'success' ? 'green' : 'yellow'}>
-				{message}
-			</Text>
+			{/* Content */}
+			<Box borderStyle="single" borderColor="blue" padding={1} marginBottom={1}>
+				<Text color={status === 'error' ? 'red' : status === 'success' ? 'green' : 'yellow'}>
+					{message}
+				</Text>
+			</Box>
+
+			{/* Help */}
+			<Box borderStyle="single" borderColor="white" padding={1}>
+				<Text color="white" dimColor>
+					Press Escape to return to main menu • Ctrl+C to exit
+				</Text>
+			</Box>
 		</Box>
 	);
 }
