@@ -1,6 +1,7 @@
 # 🚀 KiroCLI Development Roadmap
 
 ## **Phase 1: Foundation & Core CLI Structure** ✅ (Current Phase)
+
 - [x] Basic Ink + React CLI setup
 - [x] TypeScript configuration with strict mode
 - [x] Package.json with proper dependencies
@@ -9,11 +10,12 @@
 - [x] Linting/formatting (XO + Prettier)
 
 ## **Phase 2: Core Architecture Setup** 🔄 (Next Steps)
-- [ ] **Restructure project to match planned architecture**
-  - [ ] Move `source/` → `src/` to match documentation
-  - [ ] Create `src/ai/` directory for AI integrations
-  - [ ] Create `src/parser/` directory for spec parsing
-  - [ ] Update import paths and build config
+
+- [x] **Restructure project to match planned architecture**
+  - [x] Move `source/` → `src/` to match documentation
+  - [x] Create `src/ai/` directory for AI integrations
+  - [x] Create `src/parser/` directory for spec parsing
+  - [x] Update import paths and build config
 - [ ] **Enhanced CLI argument parsing**
   - [ ] Add subcommands support (`spec`, `hook`, `chat`)
   - [ ] Interactive mode vs command mode detection
@@ -24,6 +26,7 @@
   - [ ] Basic config file handling
 
 ## **Phase 3: AI Integration Foundation** 🎯
+
 - [ ] **AI API wrapper system**
   - [ ] Abstract AI provider interface (`src/ai/types.ts`)
   - [ ] OpenAI GPT integration (`src/ai/openai.ts`)
@@ -40,6 +43,7 @@
   - [ ] Response parsing and validation
 
 ## **Phase 4: Command Execution System** ⚙️
+
 - [ ] **Safe shell execution**
   - [ ] Install and integrate `execa`
   - [ ] Command sanitization and validation
@@ -55,6 +59,7 @@
   - [ ] Error handling and recovery
 
 ## **Phase 5: Spec-Driven Development** 📜
+
 - [ ] **YAML spec parser**
   - [ ] Install `js-yaml` dependency
   - [ ] Spec schema definition and validation
@@ -69,6 +74,7 @@
   - [ ] `kirocli spec validate` - validate spec syntax
 
 ## **Phase 6: Agent Hooks System** 🔗
+
 - [ ] **Hook definition system**
   - [ ] Hook configuration format (YAML/JSON)
   - [ ] Event trigger system
@@ -83,6 +89,7 @@
   - [ ] `kirocli hook create` - interactive hook creation
 
 ## **Phase 7: Enhanced UI/UX** 🎨
+
 - [ ] **Interactive chat mode**
   - [ ] Persistent conversation interface
   - [ ] Command history and recall
@@ -97,6 +104,7 @@
   - [ ] Debug mode and verbose logging
 
 ## **Phase 8: Cross-Platform Distribution** 📦
+
 - [ ] **Binary packaging**
   - [ ] Install `pkg` or `nexe` for binary creation
   - [ ] Build scripts for Linux, macOS, Windows
@@ -111,6 +119,7 @@
   - [ ] Installation instructions
 
 ## **Phase 9: Advanced Features** 🚀
+
 - [ ] **Plugin system** (optional)
   - [ ] Plugin API definition
   - [ ] Dynamic plugin loading
@@ -125,6 +134,7 @@
   - [ ] Multi-step task automation
 
 ## **Phase 10: Production Readiness** ✨
+
 - [ ] **Testing suite**
   - [ ] Unit tests for all core functions
   - [ ] Integration tests for AI workflows
