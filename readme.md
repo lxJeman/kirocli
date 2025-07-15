@@ -1,5 +1,8 @@
 # KiroCLI — AI Developer Terminal Copilot
 
+![Alt text](https://imgur.com/Get4U9q.png)
+
+
 > A cross-platform AI-powered terminal assistant that understands natural language and helps developers run commands, generate code, and automate workflows — all from the command line.
 
 ## 🚀 Overview
