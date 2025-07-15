@@ -33,7 +33,7 @@ KiroCLI is a command-line tool designed to boost developer productivity by inter
 Clone the repo and install dependencies:
 
 ```bash
-git clone https://github.com/yourusername/kirocli.git
+git clone https://github.com/lxJeman/kirocli.git
 cd kirocli
 npm install
 
@@ -123,7 +123,7 @@ This project is named **KiroCLI** as an independent implementation.
 
 ## 📜 License
 
-MIT License © [Your Name or Org]
+MIT License © Jeman Alex.
 
 ## 🙌 Contributions
 
@@ -137,7 +137,7 @@ This project uses AI APIs which may send your commands or code to third-party se
 
 ## 📞 Contact
 
-For questions or help, reach out at \[[your.email@example.com](mailto:your.email@example.com)]
+For questions or help, reach out at \[[lxjeman@gmail.com](mailto:lxjeman@gmail.com)]
 
 ---
 
