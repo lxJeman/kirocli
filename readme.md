@@ -235,6 +235,78 @@ $ kirocli spec build
 🎉 Your code is ready to use!
 ```
 
+### 🔗 Agent Hooks System (New in Phase 6!)
+
+KiroCLI now features a comprehensive agent hooks system for workflow automation and event-driven actions:
+
+#### Available Hook Templates
+
+```bash
+# List all available hook templates
+kirocli hook templates
+
+# Create hooks from built-in templates
+kirocli hook create --template git-auto-commit    # Auto-commit on file changes
+kirocli hook create --template build-on-change    # Auto-build on source changes
+kirocli hook create --template test-runner        # Auto-run tests on changes
+kirocli hook create --template deploy-on-push     # Auto-deploy on git push
+```
+
+#### Hook Management
+
+```bash
+# List all hooks
+kirocli hook list
+
+# List hooks by category
+kirocli hook list --category git
+
+# Run a specific hook
+kirocli hook run my-hook-name
+
+# Enable/disable hooks
+kirocli hook enable my-hook-name
+kirocli hook disable my-hook-name
+
+# View hook statistics
+kirocli hook stats
+
+# Delete a hook
+kirocli hook delete my-hook-name
+```
+
+#### Example Hook Configuration
+
+Create custom hooks by editing `.kiro/hooks/my-hook.yaml`:
+
+```yaml
+id: my-custom-hook
+name: My Custom Hook
+description: A custom workflow automation hook
+enabled: true
+trigger:
+  type: file_change
+  filePattern: 'src/**/*.ts'
+actions:
+  - id: run-tests
+    type: npm
+    command: test
+  - id: notify
+    type: notification
+    message: 'Tests completed at {{timestamp}}'
+category: development
+```
+
+#### Hook Features
+
+- **Multiple Trigger Types**: Manual, file changes, git events, scheduled, and more
+- **Rich Action Types**: Shell commands, git operations, file operations, AI generation, notifications
+- **Built-in Templates**: Ready-to-use hooks for common workflows
+- **File Watching**: Automatic execution on file system changes
+- **Conditional Execution**: Run hooks based on conditions
+- **Error Handling**: Retry logic and graceful failure handling
+- **Statistics**: Track execution history and success rates
+
 ## 🔑 API Key Setup
 
 ### Option 1: Using the CLI (Recommended)
@@ -337,9 +409,14 @@ This project is named **KiroCLI** as an independent implementation.
 | `kirocli spec init` | Create new spec | `--file <path>`, `--template <type>` |
 | `kirocli spec validate` | Validate spec file | `--file <path>` |
 | `kirocli spec build` | Generate code from spec | `--file <path>` |
-| `kirocli hook list` | List available hooks | |
+| `kirocli hook list` | List available hooks | `--category <category>` |
 | `kirocli hook run <name>` | Run specific hook | |
-| `kirocli hook create` | Create new hook | |
+| `kirocli hook create` | Create new hook | `--template <template>`, `--category <category>` |
+| `kirocli hook templates` | List available hook templates | |
+| `kirocli hook stats` | Show hook statistics | |
+| `kirocli hook enable <name>` | Enable a hook | |
+| `kirocli hook disable <name>` | Disable a hook | |
+| `kirocli hook delete <name>` | Delete a hook | |
 
 ## 📜 License
 

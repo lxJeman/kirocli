@@ -1,0 +1,16 @@
+id: hook-1752687735896
+name: Git Auto Commit
+description: Automatically commit changes when files are modified
+enabled: true
+trigger:
+  type: file_change
+  filePattern: src/**/*
+actions:
+  - id: git-add
+    type: git
+    command: add .
+  - id: git-commit
+    type: git
+    command: 'commit -m "Auto-commit: {{timestamp}}"'
+category: git
+created: '2025-07-16T17:42:15.896Z'

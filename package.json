@@ -20,6 +20,7 @@
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.56.0",
 		"@google/generative-ai": "^0.24.1",
+		"chokidar": "^4.0.3",
 		"commander": "^14.0.0",
 		"execa": "^9.6.0",
 		"ink": "^4.1.0",
@@ -32,6 +33,7 @@
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^3.0.1",
+		"@types/chokidar": "^1.7.5",
 		"@types/js-yaml": "^4.0.9",
 		"@types/node": "^24.0.14",
 		"@types/react": "^18.0.32",

@@ -93,12 +93,18 @@ program
 	.command('hook')
 	.description('Agent hooks management')
 	.addCommand(
-		new Command('list').description('List available hooks').action(async () => {
-			const React = await import('react');
-			const {render} = await import('ink');
-			const {default: HookCommand} = await import('./commands/hook.js');
-			render(React.createElement(HookCommand, {action: 'list'}));
-		}),
+		new Command('list')
+			.description('List available hooks')
+			.option('-c, --category <category>', 'Filter by category')
+			.action(async options => {
+				const React = await import('react');
+				const {render} = await import('ink');
+				const {default: HookCommand} = await import('./commands/hook.js');
+				render(React.createElement(HookCommand, {
+					action: 'list',
+					category: options.category
+				}));
+			}),
 	)
 	.addCommand(
 		new Command('run')
@@ -115,12 +121,80 @@ program
 	)
 	.addCommand(
 		new Command('create')
-			.description('Create a new hook interactively')
+			.description('Create a new hook')
+			.option('-t, --template <template>', 'Hook template to use')
+			.option('-c, --category <category>', 'Hook category')
+			.action(async options => {
+				const React = await import('react');
+				const {render} = await import('ink');
+				const {default: HookCommand} = await import('./commands/hook.js');
+				render(React.createElement(HookCommand, {
+					action: 'create',
+					template: options.template,
+					category: options.category
+				}));
+			}),
+	)
+	.addCommand(
+		new Command('templates')
+			.description('List available hook templates')
 			.action(async () => {
 				const React = await import('react');
 				const {render} = await import('ink');
 				const {default: HookCommand} = await import('./commands/hook.js');
-				render(React.createElement(HookCommand, {action: 'create'}));
+				render(React.createElement(HookCommand, {action: 'templates'}));
+			}),
+	)
+	.addCommand(
+		new Command('stats')
+			.description('Show hook statistics')
+			.action(async () => {
+				const React = await import('react');
+				const {render} = await import('ink');
+				const {default: HookCommand} = await import('./commands/hook.js');
+				render(React.createElement(HookCommand, {action: 'stats'}));
+			}),
+	)
+	.addCommand(
+		new Command('enable')
+			.description('Enable a hook')
+			.argument('<name>', 'Hook name to enable')
+			.action(async name => {
+				const React = await import('react');
+				const {render} = await import('ink');
+				const {default: HookCommand} = await import('./commands/hook.js');
+				render(React.createElement(HookCommand, {
+					action: 'enable',
+					hookName: name
+				}));
+			}),
+	)
+	.addCommand(
+		new Command('disable')
+			.description('Disable a hook')
+			.argument('<name>', 'Hook name to disable')
+			.action(async name => {
+				const React = await import('react');
+				const {render} = await import('ink');
+				const {default: HookCommand} = await import('./commands/hook.js');
+				render(React.createElement(HookCommand, {
+					action: 'disable',
+					hookName: name
+				}));
+			}),
+	)
+	.addCommand(
+		new Command('delete')
+			.description('Delete a hook')
+			.argument('<name>', 'Hook name to delete')
+			.action(async name => {
+				const React = await import('react');
+				const {render} = await import('ink');
+				const {default: HookCommand} = await import('./commands/hook.js');
+				render(React.createElement(HookCommand, {
+					action: 'delete',
+					hookName: name
+				}));
 			}),
 	);
 
@@ -181,7 +255,7 @@ program
 program
 	.command('greet')
 	.description('Simple greeting (legacy)')
-	.option('--name <name>', 'Your name')
+	.option('--name <n>', 'Your name')
 	.action(async options => {
 		const React = await import('react');
 		const {render} = await import('ink');
