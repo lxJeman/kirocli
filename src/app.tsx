@@ -1,7 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text, Box, useApp} from 'ink';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as os from 'os';
 import MainMenu from './components/MainMenu.js';
 import CommandLine from './components/CommandLine.js';
+import GettingStarted from './components/GettingStarted.js';
 import ChatCommand from './commands/chat.js';
 import ConfigCommand from './commands/config.js';
 import SpecCommand from './commands/spec.js';
@@ -14,7 +18,8 @@ type AppMode =
 	| 'config'
 	| 'spec'
 	| 'hook'
-	| 'greeting';
+	| 'greeting'
+	| 'getting-started';
 
 type Props = {
 	name?: string;
@@ -33,9 +38,55 @@ export default function App({
 	initialMode = 'menu',
 	model = 'gpt-4',
 }: Props) {
-	const [mode, setMode] = useState<AppMode>(name ? 'greeting' : initialMode);
+	const [mode, setMode] = useState<AppMode>(name ? 'greeting' : initialMode || 'menu');
 	const [commandState, setCommandState] = useState<CommandState | null>(null);
 	const {exit} = useApp();
+
+	useEffect(() => {
+		checkFirstTimeUser();
+	}, []);
+
+	const checkFirstTimeUser = async () => {
+		try {
+			const userConfigDir = path.join(os.homedir(), '.kirocli');
+			const welcomeFile = path.join(userConfigDir, '.welcome-shown');
+			
+			// Check if welcome file exists
+			try {
+				await fs.access(welcomeFile);
+				// File exists, not first time
+				if (initialMode === 'menu' && !name) {
+					setMode('menu');
+				}
+			} catch {
+				// File doesn't exist, first time user
+				if (!name) {
+					setMode('getting-started');
+				}
+			}
+		} catch (error) {
+			console.warn('Error checking first-time user status:', error);
+			// Default to showing getting started
+			if (!name) {
+				setMode('getting-started');
+			}
+		}
+	};
+
+	const markWelcomeShown = async () => {
+		try {
+			const userConfigDir = path.join(os.homedir(), '.kirocli');
+			const welcomeFile = path.join(userConfigDir, '.welcome-shown');
+			
+			// Ensure directory exists
+			await fs.mkdir(userConfigDir, { recursive: true });
+			
+			// Create welcome file
+			await fs.writeFile(welcomeFile, new Date().toISOString(), 'utf8');
+		} catch (error) {
+			console.warn('Error marking welcome as shown:', error);
+		}
+	};
 
 	const handleCommandExecution = (command: string, args: string[]) => {
 		const action = args[0] || 'show'; // Default action
@@ -80,6 +131,20 @@ export default function App({
 
 	// Main application modes
 	switch (mode) {
+		case 'getting-started':
+			return (
+				<GettingStarted
+					onComplete={async () => {
+						await markWelcomeShown();
+						setMode('menu');
+					}}
+					onExit={() => {
+						markWelcomeShown();
+						setMode('menu');
+					}}
+				/>
+			);
+
 		case 'menu':
 			return (
 				<MainMenu

@@ -86,17 +86,62 @@ node dist/index.js
 
 ## 📦 Usage Examples
 
-### Basic natural language command
+### 🧠 AI-Powered Command Execution (New in Phase 4!)
+
+KiroCLI now features a complete AI command execution system with safety checks and interactive confirmation:
 
 ```bash
-$ kirocli
-> Delete all `.log` files recursively
+$ kirocli chat
+> Delete all .log files recursively
 
-[AI] Suggested command:
-rm -rf $(find . -name "*.log")
-Run? (y/n) y
+🧠 AI Command Interpreter
+Analyzing your request: "Delete all .log files recursively"
+🤔 Thinking...
 
-✔ Command executed successfully!
+💡 Command Suggestion
+For: "Delete all .log files recursively"
+
+📁 Suggested Command:
+find . -name '*.log' -type f -delete
+
+📝 Explanation: Finds and deletes all .log files in current directory and subdirectories
+⚠️ Safety Level: CAUTION
+
+🎮 What would you like to do?
+• Press Enter to proceed to confirmation
+• Press 'n' to reject and try again
+• Press Escape to cancel
+
+[User presses Enter]
+
+🛡️ Command Preview & Confirmation
+📁 Command to Execute:
+find . -name '*.log' -type f -delete
+
+⚠️ CAUTION
+This command will modify files or system state.
+Review the command carefully before proceeding.
+
+🎮 Available Actions:
+• Press 'y' to EXECUTE the command
+• Press 'n' to CANCEL and return
+• Press 'e' to EDIT the command
+• Press 'd' to toggle execution details
+
+[User presses 'y']
+
+⚡ Command Execution Progress
+🔧 Executing Command:
+find . -name '*.log' -type f -delete
+
+⏱️ Progress: 100%
+████████████████████████████████
+Elapsed: 1.2s • Running...
+
+✅ Execution Successful
+Duration: 1.2s • Exit Code: 0
+📤 Output:
+[3 files deleted successfully]
 ```
 
 ### Spec-driven code generation
