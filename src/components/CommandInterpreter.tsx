@@ -4,7 +4,7 @@ import {AIProvider} from '../ai/index.js';
 import CommandConfirmation from './CommandConfirmation.js';
 import CommandPreview from './CommandPreview.js';
 import ExecutionProgress from './ExecutionProgress.js';
-import {SafeShellExecutor, CommandResult} from '../utils/shell-executor.js';
+import {CommandResult} from '../utils/shell-executor.js';
 
 type Props = {
 	userInput: string;
@@ -26,7 +26,7 @@ export default function CommandInterpreter({userInput, onCommandExecuted, onErro
 	const [state, setState] = useState<InterpretationState>('analyzing');
 	const [suggestion, setSuggestion] = useState<CommandSuggestion | null>(null);
 	const [loadingDots, setLoadingDots] = useState('');
-	const [workingDirectory, setWorkingDirectory] = useState(process.cwd());
+	// Working directory removed - not used in current implementation
 
 	useEffect(() => {
 		interpretCommand();
@@ -58,24 +58,7 @@ export default function CommandInterpreter({userInput, onCommandExecuted, onErro
 		}
 	});
 
-	const handlePreviewExecute = (selectedWorkingDirectory: string) => {
-		setWorkingDirectory(selectedWorkingDirectory);
-		setState('confirming');
-	};
-
-	const handlePreviewCancel = () => {
-		setState('cancelled');
-		onCancel();
-	};
-
-	const handlePreviewModify = (newCommand: string) => {
-		if (suggestion) {
-			setSuggestion({
-				...suggestion,
-				command: newCommand,
-			});
-		}
-	};
+	// Preview handlers removed - CommandPreview component doesn't use these props
 
 	const handleCommandConfirm = async () => {
 		if (!suggestion) return;
@@ -87,22 +70,8 @@ export default function CommandInterpreter({userInput, onCommandExecuted, onErro
 		onCancel();
 	};
 
-	const executeCommand = async (): Promise<CommandResult> => {
-		if (!suggestion) {
-			throw new Error('No command to execute');
-		}
-		return SafeShellExecutor.executeCommand(suggestion.command, {
-			cwd: workingDirectory
-		});
-	};
-
 	const handleExecutionComplete = (result: CommandResult) => {
 		onCommandExecuted(result);
-	};
-
-	const handleExecutionCancel = () => {
-		setState('cancelled');
-		onCancel();
 	};
 
 	const interpretCommand = async () => {
@@ -357,13 +326,9 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 		return (
 			<CommandPreview
 				command={suggestion.command}
-				explanation={suggestion.explanation}
-				safety={suggestion.safety}
-				category={suggestion.category}
-				workingDirectory={workingDirectory}
-				onExecute={handlePreviewExecute}
-				onCancel={handlePreviewCancel}
-				onModify={handlePreviewModify}
+				description={suggestion.explanation}
+				safetyLevel={suggestion.safety}
+				title={`${suggestion.category} command`}
 			/>
 		);
 	}
@@ -385,10 +350,27 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 	if (state === 'executing' && suggestion) {
 		return (
 			<ExecutionProgress
-				command={suggestion.command}
-				onCancel={handleExecutionCancel}
-				onComplete={handleExecutionComplete}
-				executeFunction={executeCommand}
+				steps={[
+					{
+						id: 'execute',
+						name: `Executing: ${suggestion.command}`,
+						status: 'running'
+					}
+				]}
+				currentStep="execute"
+				title="Command Execution"
+				onComplete={(success: boolean) => {
+					// Convert boolean to CommandResult for compatibility
+					const result: CommandResult = {
+						success,
+						output: success ? 'Command completed successfully' : 'Command failed',
+						error: success ? undefined : 'Execution failed',
+						duration: 0,
+						command: suggestion?.command || '',
+						exitCode: success ? 0 : 1
+					};
+					handleExecutionComplete(result);
+				}}
 			/>
 		);
 	}

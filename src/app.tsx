@@ -25,6 +25,9 @@ type Props = {
 	name?: string;
 	initialMode?: AppMode;
 	model?: string;
+	command?: string;
+	action?: string;
+	args?: string[];
 };
 
 type CommandState = {
@@ -37,14 +40,25 @@ export default function App({
 	name,
 	initialMode = 'menu',
 	model = 'gpt-4',
+	command,
+	action,
+	args = [],
 }: Props) {
 	const [mode, setMode] = useState<AppMode>(name ? 'greeting' : initialMode || 'menu');
 	const [commandState, setCommandState] = useState<CommandState | null>(null);
 	const {exit} = useApp();
 
 	useEffect(() => {
+		// Set initial command state if command was provided via CLI
+		if (command && action) {
+			setCommandState({
+				command,
+				action,
+				args,
+			});
+		}
 		checkFirstTimeUser();
-	}, []);
+	}, [command, action, args]);
 
 	const checkFirstTimeUser = async () => {
 		try {
@@ -172,8 +186,17 @@ export default function App({
 		case 'commandline':
 			return (
 				<CommandLine
-					onExecuteCommand={handleCommandExecution}
-					onExit={() => setMode('menu')}
+					prompt="kirocli> "
+					placeholder="Enter command (e.g., 'config show', 'spec validate', 'hook list')"
+					onSubmit={(input) => {
+						const parts = input.trim().split(' ');
+						const command = parts[0];
+						const args = parts.slice(1);
+						if (command) {
+							handleCommandExecution(command, args);
+						}
+					}}
+					onCancel={() => setMode('menu')}
 				/>
 			);
 

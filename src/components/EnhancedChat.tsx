@@ -1,5 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text, Box, useInput} from 'ink';
+import {AIProvider as BaseAIProvider} from '../ai/types.js';
 import {AIProvider} from '../ai/index.js';
 import EnhancedSpinner from './EnhancedSpinner.js';
 import ProgressBar from './ProgressBar.js';
@@ -42,7 +43,7 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
 	const [commandHistory, setCommandHistory] = useState<string[]>([]);
-	const [aiProvider, setAiProvider] = useState<AIProvider | null>(null);
+	const [aiProvider, setAiProvider] = useState<BaseAIProvider | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [progress, setProgress] = useState(0);
 	const [sessionList, setSessionList] = useState<ChatSession[]>([]);
@@ -252,12 +253,10 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 			setProgress(30);
 
 			// Get AI response
-			const response = await aiProvider.generateFromSpec({
-				goal: 'Chat conversation',
-				language: 'text',
-				features: conversationMessages.map(msg => `${msg.role}: ${msg.content}`),
-				outputPath: ''
-			});
+			if (!aiProvider) {
+				throw new Error('AI provider not initialized');
+			}
+			const response = await aiProvider.chat(conversationMessages);
 			const duration = Date.now() - startTime;
 
 			setProgress(80);

@@ -164,7 +164,6 @@
   - [ ] GitHub Actions for automated builds
   - [ ] Release automation
   - [ ] Installation instructions
-  - [ ] Automatic script to compile/build automatically the app for production for all platforms
 
 ## **Phase 9: Advanced Features** 🚀
 
@@ -244,15 +243,21 @@ npm install -D @types/js-yaml vitest
 
 ### **Core Commands:**
 
-- `kirocli --help` - Full command help system
+- `kirocli --help` - Full command help system with comprehensive usage guide
 - `kirocli` or `kirocli menu` - Interactive main menu with getting started tutorial
+- `kirocli chat` - Enhanced AI chat mode with persistent conversations
+- `kirocli chat --model=claude-3-sonnet-20240229` - Chat with specific AI models
 - `kirocli config show` - Show AI configuration and API key status
 - `kirocli config test` - Test AI provider connections
 - `kirocli config setup` - Setup instructions for API keys
 - `kirocli config set-key <provider> <key>` - Set API keys securely
-- `kirocli spec validate` - YAML spec validation
-- `kirocli hook list` - List available hooks
-- `kirocli greet --name="Test"` - Legacy greeting
+- `kirocli spec validate` - YAML spec validation with detailed error reporting
+- `kirocli spec init --template=web` - Create new specs with templates
+- `kirocli spec build` - Generate code from specifications
+- `kirocli hook list` - List available hooks with detailed information
+- `kirocli hook run <name>` - Execute specific hooks
+- `kirocli hook create` - Interactive hook creation wizard
+- `kirocli greet --name="Test"` - Legacy greeting mode
 
 ### **Phase 4 New Features:**
 

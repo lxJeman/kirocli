@@ -255,16 +255,16 @@ export class Logger {
 	/**
 	 * Get color for log level
 	 */
-	private getLevelColor(level: LogLevel): string {
-		const colors = {
-			debug: 'gray',
-			info: 'blue',
-			warn: 'yellow',
-			error: 'red',
-			verbose: 'cyan'
-		};
-		return colors[level] || 'white';
-	}
+	// private getLevelColor(level: LogLevel): string {
+	//	const colors = {
+	//		debug: 'gray',
+	//		info: 'blue',
+	//		warn: 'yellow',
+	//		error: 'red',
+	//		verbose: 'cyan'
+	//	};
+	//	return colors[level] || 'white';
+	// }
 
 	/**
 	 * Get recent log entries
@@ -335,8 +335,8 @@ export class Logger {
 			totalEntries: this.logEntries.length,
 			byLevel,
 			byCategory,
-			oldestEntry: this.logEntries.length > 0 ? this.logEntries[0].timestamp : undefined,
-			newestEntry: this.logEntries.length > 0 ? this.logEntries[this.logEntries.length - 1].timestamp : undefined
+			oldestEntry: this.logEntries.length > 0 ? this.logEntries[0]?.timestamp : undefined,
+			newestEntry: this.logEntries.length > 0 ? this.logEntries[this.logEntries.length - 1]?.timestamp : undefined
 		};
 	}
 }
