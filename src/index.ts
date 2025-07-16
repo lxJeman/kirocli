@@ -42,11 +42,17 @@ program
 	.addCommand(
 		new Command('init')
 			.description('Initialize a new spec file')
-			.action(async () => {
+			.option('-f, --file <file>', 'Spec file path', '.kiro/spec.yaml')
+			.option('-t, --template <template>', 'Template type (basic, web, api, cli, library)', 'basic')
+			.action(async options => {
 				const React = await import('react');
 				const {render} = await import('ink');
 				const {default: SpecCommand} = await import('./commands/spec.js');
-				render(React.createElement(SpecCommand, {action: 'init'}));
+				render(React.createElement(SpecCommand, {
+					action: 'init',
+					file: options.file,
+					template: options.template
+				}));
 			}),
 	)
 	.addCommand(

@@ -144,24 +144,95 @@ Duration: 1.2s • Exit Code: 0
 [3 files deleted successfully]
 ```
 
-### Spec-driven code generation
+### 📜 Spec-Driven Development (New in Phase 5!)
 
-Define your project spec in `.kiro/spec.yaml`:
+KiroCLI now supports comprehensive spec-driven development for generating complete projects from YAML specifications:
+
+#### Initialize a New Spec
+
+```bash
+# Create a basic spec file
+kirocli spec init
+
+# Create with specific templates
+kirocli spec init --template web      # React web application
+kirocli spec init --template api      # Express API server
+kirocli spec init --template cli      # Command-line tool
+kirocli spec init --template library  # Utility library
+```
+
+#### Define Your Project Spec
+
+Edit `.kiro/spec.yaml` to define your project:
 
 ```yaml
-goal: Build a React login form
+name: my-awesome-app
+version: 1.0.0
+goal: Build a modern React application with authentication
 language: TypeScript
 framework: React
 features:
-  - Email and password inputs
-  - Validation
-  - Submit button
+  - User authentication system
+  - Responsive dashboard
+  - API integration
+  - Form validation
+  - Dark/light theme toggle
+dependencies:
+  - react
+  - react-dom
+  - react-router-dom
+  - axios
+devDependencies:
+  - typescript
+  - "@types/react"
+  - vite
+structure:
+  directories:
+    - src
+    - src/components
+    - src/pages
+    - src/hooks
+    - src/utils
+  files:
+    - path: src/App.tsx
+      template: react-app
+    - path: package.json
+      template: package-json
 ```
 
-Generate code with:
+#### Validate and Build
 
 ```bash
+# Validate your spec file
+kirocli spec validate
+
+# Generate the complete project
 kirocli spec build
+```
+
+#### Example Output
+
+```bash
+$ kirocli spec build
+✅ Code generation completed successfully!
+📋 Project: my-awesome-app
+⏱️ Duration: 2847ms
+📁 Output: ./generated
+📄 Files generated: 12
+
+📄 Generated files:
+  • src/App.tsx (2.1 KB)
+  • src/components/AuthForm.tsx (3.4 KB)
+  • src/components/Dashboard.tsx (2.8 KB)
+  • src/hooks/useAuth.ts (1.9 KB)
+  • src/utils/api.ts (1.2 KB)
+  • package.json (847 bytes)
+  • tsconfig.json (456 bytes)
+  • index.html (312 bytes)
+  • README.md (1.1 KB)
+  • .gitignore (234 bytes)
+
+🎉 Your code is ready to use!
 ```
 
 ## 🔑 API Key Setup
@@ -263,9 +334,9 @@ This project is named **KiroCLI** as an independent implementation.
 | `kirocli config show` | Show configuration | |
 | `kirocli config test` | Test API connections | |
 | `kirocli config set-key <provider> <key>` | Set API key | `openai`, `claude`, `gemini` |
+| `kirocli spec init` | Create new spec | `--file <path>`, `--template <type>` |
 | `kirocli spec validate` | Validate spec file | `--file <path>` |
 | `kirocli spec build` | Generate code from spec | `--file <path>` |
-| `kirocli spec init` | Create new spec | |
 | `kirocli hook list` | List available hooks | |
 | `kirocli hook run <name>` | Run specific hook | |
 | `kirocli hook create` | Create new hook | |

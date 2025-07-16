@@ -1,0 +1,56 @@
+# KiroCLI Specification File
+# Generated on: 2025-07-16T11:20:43.063Z
+# Template: web
+# 
+# This file defines the structure and requirements for code generation.
+# Modify the values below to customize your generated code.
+#
+# For more information, visit: https://github.com/your-repo/kirocli
+
+version: 1.0.0
+name: web-application
+goal: Build a modern web application
+language: TypeScript
+framework: React
+features:
+  - Responsive user interface
+  - Component-based architecture
+  - State management
+  - API integration
+  - Form validation
+  - Error handling
+  - Loading states
+  - Routing
+outputPath: ./generated
+author: KiroCLI User
+dependencies:
+  - react
+  - react-dom
+  - react-router-dom
+devDependencies:
+  - "@types/react"
+  - "@types/react-dom"
+  - vite
+  - typescript
+scripts:
+  dev: vite
+  build: vite build
+  preview: vite preview
+structure:
+  directories:
+    - src
+    - src/components
+    - src/pages
+    - src/hooks
+    - src/utils
+    - public
+  files:
+    - path: src/App.tsx
+      template: react-app
+    - path: src/main.tsx
+      template: react-main
+    - path: index.html
+      template: html-template
+    - path: package.json
+      template: package-json
+variables: {}
