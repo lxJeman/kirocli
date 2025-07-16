@@ -1,83 +1,27 @@
-import React, {useState} from 'react';
-import {Text, Box, useInput} from 'ink';
-import {SafeShellExecutor} from '../utils/shell-executor.js';
-import WorkingDirectorySelector from './WorkingDirectorySelector.js';
+import React from 'react';
+import {Text, Box} from 'ink';
 
 interface Props {
 	command: string;
-	explanation: string;
-	safety: 'safe' | 'caution' | 'dangerous';
-	category: string;
-	workingDirectory?: string;
-	onExecute: (workingDirectory: string) => void;
-	onCancel: () => void;
-	onModify: (newCommand: string) => void;
+	language?: 'bash' | 'javascript' | 'typescript' | 'python' | 'json' | 'yaml' | 'sql';
+	showLineNumbers?: boolean;
+	title?: string;
+	description?: string;
+	safetyLevel?: 'safe' | 'caution' | 'dangerous';
 }
 
 export default function CommandPreview({
 	command,
-	explanation,
-	safety,
-	category,
-	workingDirectory: initialWorkingDirectory,
-	onExecute,
-	onCancel,
-	onModify,
+	language = 'bash',
+	showLineNumbers = false,
+	title,
+	description,
+	safetyLevel = 'safe'
 }: Props) {
-	const [showDetails, setShowDetails] = useState(false);
-	const [isEditing, setIsEditing] = useState(false);
-	const [editedCommand, setEditedCommand] = useState(command);
-	const [showDirectorySelector, setShowDirectorySelector] = useState(false);
-	const [workingDirectory, setWorkingDirectory] = useState(initialWorkingDirectory || process.cwd());
-
-	useInput((input, key) => {
-		// Don't handle input when directory selector is shown
-		if (showDirectorySelector) {
-			return;
-		}
-
-		if (isEditing) {
-			if (key.return) {
-				// Save edited command
-				onModify(editedCommand);
-				setIsEditing(false);
-			} else if (key.escape) {
-				// Cancel editing
-				setEditedCommand(command);
-				setIsEditing(false);
-			} else if (key.backspace || key.delete) {
-				setEditedCommand(prev => prev.length > 0 ? prev.slice(0, -1) : '');
-			} else if (input && input.length === 1 && input >= ' ' && input <= '~') {
-				setEditedCommand(prev => prev + input);
-			}
-		} else {
-			if (key.escape) {
-				onCancel();
-			} else if (input === 'y' || input === 'Y') {
-				onExecute(workingDirectory);
-			} else if (input === 'n' || input === 'N') {
-				onCancel();
-			} else if (input === 'd' || input === 'D') {
-				setShowDetails(!showDetails);
-			} else if (input === 'e' || input === 'E') {
-				setIsEditing(true);
-			} else if (input === 'w' || input === 'W') {
-				setShowDirectorySelector(true);
-			}
-		}
-	});
-
-	const handleDirectorySelected = (directory: string) => {
-		setWorkingDirectory(directory);
-		setShowDirectorySelector(false);
-	};
-
-	const handleDirectorySelectorCancel = () => {
-		setShowDirectorySelector(false);
-	};
-
-	const getSafetyColor = (level: string) => {
-		switch (level) {
+	const lines = command.split('\\n');
+	
+	const getSafetyColor = () => {
+		switch (safetyLevel) {
 			case 'safe': return 'green';
 			case 'caution': return 'yellow';
 			case 'dangerous': return 'red';
@@ -85,255 +29,152 @@ export default function CommandPreview({
 		}
 	};
 
-	const getSafetyIcon = (level: string) => {
-		switch (level) {
+	const getSafetyIcon = () => {
+		switch (safetyLevel) {
 			case 'safe': return '✅';
 			case 'caution': return '⚠️';
 			case 'dangerous': return '🚨';
-			default: return '❓';
+			default: return '📝';
 		}
 	};
 
-	const getCategoryIcon = (cat: string) => {
-		switch (cat.toLowerCase()) {
-			case 'file': return '📁';
-			case 'git': return '🔀';
-			case 'system': return '⚙️';
-			case 'development': return '💻';
-			case 'network': return '🌐';
-			default: return '🔧';
-		}
+	const highlightBashCommand = (line: string) => {
+		// Simple bash syntax highlighting
+		// const parts: React.ReactNode[] = [];
+		// let currentIndex = 0;
+
+		// Keywords
+		const keywords = ['if', 'then', 'else', 'fi', 'for', 'while', 'do', 'done', 'case', 'esac', 'function'];
+		const commands = ['ls', 'cd', 'mkdir', 'rm', 'cp', 'mv', 'grep', 'find', 'sed', 'awk', 'cat', 'echo', 'git', 'npm', 'node'];
+		
+		// Split by spaces and process each part
+		const words = line.split(/(\s+)/);
+		
+		return words.map((word, index) => {
+			if (/^\s+$/.test(word)) {
+				return <Text key={index}>{word}</Text>;
+			}
+
+			// Comments
+			if (word.startsWith('#')) {
+				return <Text key={index} color="gray">{word}</Text>;
+			}
+
+			// Strings
+			if ((word.startsWith('"') && word.endsWith('"')) || (word.startsWith("'") && word.endsWith("'"))) {
+				return <Text key={index} color="green">{word}</Text>;
+			}
+
+			// Commands
+			if (commands.includes(word.toLowerCase())) {
+				return <Text key={index} color="cyan" bold>{word}</Text>;
+			}
+
+			// Keywords
+			if (keywords.includes(word.toLowerCase())) {
+				return <Text key={index} color="magenta" bold>{word}</Text>;
+			}
+
+			// Flags (starting with -)
+			if (word.startsWith('-')) {
+				return <Text key={index} color="yellow">{word}</Text>;
+			}
+
+			// Variables (starting with $)
+			if (word.startsWith('$')) {
+				return <Text key={index} color="blue">{word}</Text>;
+			}
+
+			// Pipes and redirects
+			if (['|', '>', '>>', '<', '&&', '||'].includes(word)) {
+				return <Text key={index} color="red" bold>{word}</Text>;
+			}
+
+			// Default
+			return <Text key={index}>{word}</Text>;
+		});
 	};
 
-	// Get command validation and platform info
-	const validation = SafeShellExecutor.validateCommand(command);
-	const platformInfo = SafeShellExecutor.getPlatformInfo();
-	const crossPlatformCommand = SafeShellExecutor.makeCommandCrossPlatform(command);
-	const safeAlternatives = SafeShellExecutor.getSafeAlternatives(command);
-
-	// Show directory selector if requested
-	if (showDirectorySelector) {
-		return (
-			<WorkingDirectorySelector
-				currentDirectory={workingDirectory}
-				onDirectorySelected={handleDirectorySelected}
-				onCancel={handleDirectorySelectorCancel}
-			/>
-		);
-	}
+	const highlightCode = (line: string, _lineNumber: number) => {
+		switch (language) {
+			case 'bash':
+				return highlightBashCommand(line);
+			case 'javascript':
+			case 'typescript':
+				// Simple JS/TS highlighting
+				return <Text color="blue">{line}</Text>;
+			case 'python':
+				return <Text color="green">{line}</Text>;
+			case 'json':
+				return <Text color="yellow">{line}</Text>;
+			case 'yaml':
+				return <Text color="cyan">{line}</Text>;
+			default:
+				return <Text>{line}</Text>;
+		}
+	};
 
 	return (
-		<Box flexDirection="column" padding={1}>
+		<Box flexDirection="column">
 			{/* Header */}
-			<Box borderStyle="round" borderColor={getSafetyColor(safety)} padding={1} marginBottom={1}>
-				<Text color={getSafetyColor(safety)} bold>
-					{getSafetyIcon(safety)} Command Preview & Confirmation
-				</Text>
-			</Box>
-
-			{/* Working Directory */}
-			<Box borderStyle="single" borderColor="cyan" padding={1} marginBottom={1}>
-				<Box flexDirection="column">
-					<Box marginBottom={1}>
-						<Text color="cyan" bold>
-							📂 Working Directory:
-						</Text>
-					</Box>
-					<Box marginBottom={1} paddingLeft={2}>
-						<Text color="white">
-							{workingDirectory}
-						</Text>
-					</Box>
-					<Box>
-						<Text color="white" dimColor>
-							Press 'w' to change working directory
-						</Text>
-					</Box>
-				</Box>
-			</Box>
-
-			{/* Command Details */}
-			<Box borderStyle="single" borderColor="blue" padding={1} marginBottom={1}>
-				<Box flexDirection="column">
-					<Box marginBottom={1}>
-						<Text color="white" bold>
-							{getCategoryIcon(category)} Command to Execute:
-						</Text>
-					</Box>
-					
-					{isEditing ? (
-						<Box marginBottom={1} paddingLeft={2}>
-							<Text color="yellow" bold>
-								Editing: {editedCommand}
-								<Text backgroundColor="white" color="black"> </Text>
-							</Text>
+			{(title || description || safetyLevel !== 'safe') && (
+				<Box flexDirection="column" marginBottom={1}>
+					{title && (
+						<Box>
+							<Text bold color="white">{title}</Text>
+							<Box marginLeft={1}>
+								<Text color={getSafetyColor()}>
+									{getSafetyIcon()}
+								</Text>
+							</Box>
 						</Box>
-					) : (
-						<Box marginBottom={1} paddingLeft={2}>
-							<Text color="cyan" bold>
-								{crossPlatformCommand !== command ? crossPlatformCommand : command}
+					)}
+					{description && (
+						<Text color="gray">{description}</Text>
+					)}
+					{safetyLevel !== 'safe' && (
+						<Box>
+							<Text color={getSafetyColor()} bold>
+								Safety Level: {safetyLevel.toUpperCase()}
 							</Text>
 						</Box>
 					)}
-
-					{crossPlatformCommand !== command && !isEditing && (
-						<Box marginBottom={1} paddingLeft={2}>
-							<Text color="white" dimColor>
-								Original: {command}
-							</Text>
-						</Box>
-					)}
-
-					<Box marginBottom={1}>
-						<Text color="white">
-							📝 {explanation}
-						</Text>
-					</Box>
-
-					<Box>
-						<Text color={getSafetyColor(safety)}>
-							{getSafetyIcon(safety)} Safety Level: <Text bold>{safety.toUpperCase()}</Text>
-						</Text>
-					</Box>
-				</Box>
-			</Box>
-
-			{/* Validation Status */}
-			{!validation.valid && (
-				<Box borderStyle="double" borderColor="red" padding={1} marginBottom={1}>
-					<Box flexDirection="column">
-						<Text color="red" bold>
-							🚫 COMMAND BLOCKED
-						</Text>
-						<Text color="white">
-							Reason: {validation.reason}
-						</Text>
-					</Box>
 				</Box>
 			)}
 
-			{/* Safety Warnings */}
-			{safety === 'dangerous' && validation.valid && (
-				<Box borderStyle="double" borderColor="red" padding={1} marginBottom={1}>
-					<Box flexDirection="column">
-						<Text color="red" bold>
-							🚨 DANGER WARNING
-						</Text>
-						<Text color="white">
-							This command could potentially cause:
-						</Text>
-						<Text color="white">• Data loss or corruption</Text>
-						<Text color="white">• System instability</Text>
-						<Text color="white">• Security vulnerabilities</Text>
-						<Text color="white">• Irreversible changes</Text>
-					</Box>
-				</Box>
-			)}
-
-			{safety === 'caution' && validation.valid && (
-				<Box borderStyle="single" borderColor="yellow" padding={1} marginBottom={1}>
-					<Box flexDirection="column">
-						<Text color="yellow" bold>
-							⚠️ CAUTION
-						</Text>
-						<Text color="white">
-							This command will modify files or system state.
-						</Text>
-						<Text color="white">
-							Review the command carefully before proceeding.
-						</Text>
-					</Box>
-				</Box>
-			)}
-
-			{/* Safe Alternatives */}
-			{safeAlternatives.length > 0 && (
-				<Box borderStyle="single" borderColor="green" padding={1} marginBottom={1}>
-					<Box flexDirection="column">
-						<Text color="green" bold>
-							💡 Safer Alternatives:
-						</Text>
-						{safeAlternatives.map((alt, index) => (
-							<Text key={index} color="white">
-								• {alt}
-							</Text>
-						))}
-					</Box>
-				</Box>
-			)}
-
-			{/* Platform Information */}
-			{showDetails && (
-				<Box borderStyle="single" borderColor="blue" padding={1} marginBottom={1}>
-					<Box flexDirection="column">
-						<Text color="blue" bold>
-							🖥️ Execution Environment:
-						</Text>
-						<Text color="white">Platform: {platformInfo.platform} ({platformInfo.arch})</Text>
-						<Text color="white">Shell: {platformInfo.shell}</Text>
-						<Text color="white">Working Directory: {process.cwd()}</Text>
-						<Text color="white">Home Directory: {platformInfo.homeDir}</Text>
-						<Text color="white">Command Category: {category}</Text>
-						<Text color="white">Cross-platform: {crossPlatformCommand !== command ? 'Yes' : 'No'}</Text>
-					</Box>
-				</Box>
-			)}
-
-			{/* Action Buttons */}
-			<Box borderStyle="single" borderColor="white" padding={1} marginBottom={1}>
-				<Box flexDirection="column">
-					<Text color="white" bold>
-						🎮 Available Actions:
+			{/* Code Block */}
+			<Box 
+				borderStyle="single" 
+				borderColor={getSafetyColor()} 
+				padding={1}
+				flexDirection="column"
+			>
+				{/* Language indicator */}
+				<Box marginBottom={1}>
+					<Text color="gray" bold>
+						{language.toUpperCase()}
 					</Text>
-					
-					{isEditing ? (
-						<>
-							<Text color="green">
-								• Press Enter to save changes
-							</Text>
-							<Text color="red">
-								• Press Escape to cancel editing
-							</Text>
-						</>
-					) : (
-						<>
-							{validation.valid ? (
-								<Text color="green">
-									• Press 'y' to EXECUTE the command
-								</Text>
-							) : (
-								<Text color="red">
-									• Command blocked - cannot execute
-								</Text>
-							)}
-							<Text color="red">
-								• Press 'n' to CANCEL and return
-							</Text>
-							<Text color="blue">
-								• Press 'e' to EDIT the command
-							</Text>
-							<Text color="cyan">
-								• Press 'w' to change WORKING DIRECTORY
-							</Text>
-							<Text color="blue">
-								• Press 'd' to toggle execution details
-							</Text>
-							<Text color="white">
-								• Press Escape to cancel
-							</Text>
-						</>
-					)}
 				</Box>
+
+				{/* Code lines */}
+				{lines.map((line, index) => (
+					<Box key={index}>
+						{showLineNumbers && (
+							<Text color="gray" dimColor>
+								{String(index + 1).padStart(3, ' ')} │ 
+							</Text>
+						)}
+						<Box marginLeft={showLineNumbers ? 1 : 0}>
+							{highlightCode(line, index + 1)}
+						</Box>
+					</Box>
+				))}
 			</Box>
 
-			{/* Current Status */}
-			<Box>
-				<Text color="white" dimColor>
-					{isEditing ? (
-						`Editing command... Press Enter to save, Escape to cancel`
-					) : (
-						`Validation: ${validation.valid ? '✅ Passed' : '❌ Failed'} • Platform: ${platformInfo.platform} • Safety: ${safety}`
-					)}
+			{/* Footer info */}
+			<Box marginTop={1}>
+				<Text dimColor>
+					Language: {language} • Lines: {lines.length} • Safety: {safetyLevel}
 				</Text>
 			</Box>
 		</Box>

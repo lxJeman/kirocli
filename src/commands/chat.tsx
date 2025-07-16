@@ -1,17 +1,21 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text, Box, useInput, Newline} from 'ink';
 import {AIProvider} from '../ai/index.js';
 import CommandInterpreter from '../components/CommandInterpreter.js';
+import EnhancedChat from '../components/EnhancedChat.js';
 import {CommandResult} from '../utils/shell-executor.js';
+import {logger} from '../utils/logger.js';
 
 type Props = {
 	model: string;
 	onExit?: () => void;
+	debug?: boolean;
+	verbose?: boolean;
 };
 
 type ChatMode = 'chat' | 'command-interpretation';
 
-export default function ChatCommand({model, onExit}: Props) {
+export default function ChatCommand({model, onExit, debug = false, verbose = false}: Props) {
 	const [input, setInput] = useState('');
 	const [messages, setMessages] = useState<
 		Array<{role: 'user' | 'assistant'; content: string; type?: 'command' | 'execution'}>
@@ -19,10 +23,46 @@ export default function ChatCommand({model, onExit}: Props) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [chatMode, setChatMode] = useState<ChatMode>('chat');
 	const [pendingCommand, setPendingCommand] = useState<string>('');
+	const [useEnhancedMode, setUseEnhancedMode] = useState(false);
+	const [showModeSelector, setShowModeSelector] = useState(false);
+
+	useEffect(() => {
+		// Configure logger based on props
+		logger.setDebugMode(debug);
+		logger.setVerboseMode(verbose);
+		
+		logger.info('ChatCommand', `Starting chat with model: ${model}`, {
+			model,
+			debug,
+			verbose
+		});
+	}, [model, debug, verbose]);
 
 	useInput((inputChar, key) => {
+		// Handle mode selector
+		if (showModeSelector) {
+			if (key.escape) {
+				setShowModeSelector(false);
+			} else if (inputChar === '1') {
+				setUseEnhancedMode(true);
+				setShowModeSelector(false);
+				logger.info('ChatCommand', 'Switched to enhanced chat mode');
+			} else if (inputChar === '2') {
+				setUseEnhancedMode(false);
+				setShowModeSelector(false);
+				logger.info('ChatCommand', 'Switched to legacy chat mode');
+			}
+			return;
+		}
+
 		// Don't handle input when in command interpretation mode
 		if (chatMode === 'command-interpretation') {
+			return;
+		}
+
+		// Show mode selector with Ctrl+E
+		if (key.ctrl && inputChar === 'e') {
+			setShowModeSelector(true);
 			return;
 		}
 
@@ -147,6 +187,60 @@ export default function ChatCommand({model, onExit}: Props) {
 		setChatMode('chat');
 		setPendingCommand('');
 	};
+
+	// Show mode selector
+	if (showModeSelector) {
+		return (
+			<Box flexDirection="column" padding={1}>
+				<Box borderStyle="round" borderColor="cyan" padding={1} marginBottom={1}>
+					<Text color="cyan" bold>
+						🎛️ Enhanced UI/UX Chat Mode Selection
+					</Text>
+				</Box>
+
+				<Box flexDirection="column" marginBottom={2}>
+					<Text bold>Choose your chat experience:</Text>
+					<Text></Text>
+					
+					<Box marginBottom={1}>
+						<Text color="green" bold>1. Enhanced Chat (Phase 7 Features)</Text>
+						<Text>   • Persistent conversation history</Text>
+						<Text>   • Command history with ↑↓ navigation</Text>
+						<Text>   • Multiple chat sessions (Ctrl+S)</Text>
+						<Text>   • Progress indicators and enhanced UI</Text>
+						<Text>   • Better error handling with suggestions</Text>
+						<Text>   • Syntax highlighting for commands</Text>
+						<Text>   • Debug mode and verbose logging</Text>
+					</Box>
+
+					<Box marginBottom={1}>
+						<Text color="yellow" bold>2. Legacy Chat</Text>
+						<Text>   • Simple command interpretation</Text>
+						<Text>   • Direct command execution</Text>
+						<Text>   • Basic UI elements</Text>
+					</Box>
+				</Box>
+
+				<Box borderStyle="single" borderColor="gray" padding={1}>
+					<Text dimColor>
+						Press 1 for Enhanced Chat, 2 for Legacy Chat, or Escape to cancel
+					</Text>
+				</Box>
+			</Box>
+		);
+	}
+
+	// Show enhanced chat if enabled
+	if (useEnhancedMode) {
+		return (
+			<EnhancedChat
+				model={model}
+				onExit={onExit}
+				debug={debug}
+				verbose={verbose}
+			/>
+		);
+	}
 
 	// Show command interpreter if in command interpretation mode
 	if (chatMode === 'command-interpretation') {

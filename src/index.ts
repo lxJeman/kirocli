@@ -17,11 +17,23 @@ program
 		'AI model to use (gpt-4, claude, gemini)',
 		'gpt-4',
 	)
+	.option(
+		'-d, --debug',
+		'Enable debug mode with detailed logging'
+	)
+	.option(
+		'-v, --verbose',
+		'Enable verbose output'
+	)
 	.action(async options => {
 		const React = await import('react');
 		const {render} = await import('ink');
-		const {default: App} = await import('./app.js');
-		render(React.createElement(App, {initialMode: 'chat', model: options.model}));
+		const {default: ChatCommand} = await import('./commands/chat.js');
+		render(React.createElement(ChatCommand, {
+			model: options.model,
+			debug: options.debug,
+			verbose: options.verbose
+		}));
 	});
 
 // Main menu command

@@ -1,324 +1,182 @@
 import React, {useState, useEffect} from 'react';
-import {Text, Box, useInput} from 'ink';
-import {CommandResult} from '../utils/shell-executor.js';
+import {Text, Box} from 'ink';
+import EnhancedSpinner from './EnhancedSpinner.js';
+import ProgressBar from './ProgressBar.js';
 
-interface Props {
-	command: string;
-	onCancel: () => void;
-	onComplete: (result: CommandResult) => void;
-	executeFunction: () => Promise<CommandResult>;
+interface ExecutionStep {
+	id: string;
+	name: string;
+	status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+	duration?: number;
+	output?: string;
+	error?: string;
 }
 
-type ExecutionState = 'preparing' | 'executing' | 'completed' | 'failed' | 'cancelled';
+interface Props {
+	steps: ExecutionStep[];
+	currentStep?: string;
+	overallProgress?: number;
+	title?: string;
+	showOutput?: boolean;
+	showTimings?: boolean;
+	onComplete?: (success: boolean) => void;
+}
 
 export default function ExecutionProgress({
-	command,
-	onCancel,
-	onComplete,
-	executeFunction,
+	steps,
+	currentStep,
+	overallProgress,
+	title = 'Execution Progress',
+	showOutput = false,
+	showTimings = true,
+	onComplete
 }: Props) {
-	const [state, setState] = useState<ExecutionState>('preparing');
-	const [progress, setProgress] = useState(0);
+	const [startTime] = useState(Date.now());
 	const [elapsedTime, setElapsedTime] = useState(0);
-	const [result, setResult] = useState<CommandResult | null>(null);
-	const [loadingDots, setLoadingDots] = useState('');
-	const [canCancel, setCanCancel] = useState(true);
 
 	useEffect(() => {
-		executeCommand();
-	}, []);
-
-	useEffect(() => {
-		// Update elapsed time every 100ms
 		const timer = setInterval(() => {
-			if (state === 'executing') {
-				setElapsedTime(prev => prev + 100);
-			}
+			setElapsedTime(Date.now() - startTime);
 		}, 100);
 
 		return () => clearInterval(timer);
-	}, [state]);
+	}, [startTime]);
 
 	useEffect(() => {
-		// Animate loading dots
-		if (state === 'preparing' || state === 'executing') {
-			const interval = setInterval(() => {
-				setLoadingDots(prev => {
-					if (prev.length >= 3) return '';
-					return prev + '.';
-				});
-			}, 500);
-			return () => clearInterval(interval);
+		const allCompleted = steps.every(step => 
+			step.status === 'completed' || step.status === 'failed' || step.status === 'skipped'
+		);
+		
+		if (allCompleted && onComplete) {
+			const success = steps.some(step => step.status === 'completed') && 
+							!steps.some(step => step.status === 'failed');
+			onComplete(success);
 		}
-		return undefined;
-	}, [state]);
+	}, [steps, onComplete]);
 
-	useEffect(() => {
-		// Simulate progress for visual feedback
-		if (state === 'executing') {
-			const progressTimer = setInterval(() => {
-				setProgress(prev => {
-					if (prev >= 90) return prev; // Don't go to 100% until actually complete
-					return prev + Math.random() * 10;
-				});
-			}, 200);
-
-			return () => clearInterval(progressTimer);
-		}
-		return undefined;
-	}, [state]);
-
-	useInput((input, key) => {
-		if ((key.ctrl && input === 'c') || key.escape) {
-			if (canCancel && (state === 'preparing' || state === 'executing')) {
-				setState('cancelled');
-				onCancel();
-			}
-		} else if (key.return && (state === 'completed' || state === 'failed')) {
-			onComplete(result!);
-		}
-	});
-
-	const executeCommand = async () => {
-		try {
-			setState('preparing');
-			setProgress(0);
-			
-			// Brief preparation phase
-			await new Promise(resolve => setTimeout(resolve, 500));
-			
-			setState('executing');
-			setCanCancel(false); // Disable cancellation during actual execution
-			
-			const executionResult = await executeFunction();
-			
-			setResult(executionResult);
-			setProgress(100);
-			
-			if (executionResult.success) {
-				setState('completed');
-			} else {
-				setState('failed');
-			}
-			
-		} catch (error) {
-			const errorResult: CommandResult = {
-				success: false,
-				output: '',
-				error: error instanceof Error ? error.message : 'Unknown execution error',
-				exitCode: -1,
-				command,
-				duration: elapsedTime,
-			};
-			
-			setResult(errorResult);
-			setState('failed');
-		}
-	};
-
-	const formatTime = (ms: number): string => {
-		if (ms < 1000) return `${ms}ms`;
-		return `${(ms / 1000).toFixed(1)}s`;
-	};
-
-	const getProgressBar = (percentage: number): string => {
-		const width = 30;
-		const filled = Math.round((percentage / 100) * width);
-		const empty = width - filled;
-		return '█'.repeat(filled) + '░'.repeat(empty);
-	};
-
-	const getStateColor = (currentState: ExecutionState): string => {
-		switch (currentState) {
-			case 'preparing': return 'yellow';
-			case 'executing': return 'blue';
-			case 'completed': return 'green';
-			case 'failed': return 'red';
-			case 'cancelled': return 'gray';
-			default: return 'white';
-		}
-	};
-
-	const getStateIcon = (currentState: ExecutionState): string => {
-		switch (currentState) {
-			case 'preparing': return '🔄';
-			case 'executing': return '⚡';
+	const getStatusIcon = (status: ExecutionStep['status']) => {
+		switch (status) {
+			case 'pending': return '⏳';
+			case 'running': return '🔄';
 			case 'completed': return '✅';
 			case 'failed': return '❌';
-			case 'cancelled': return '🚫';
+			case 'skipped': return '⏭️';
 			default: return '❓';
 		}
 	};
 
-	const getStateMessage = (currentState: ExecutionState): string => {
-		switch (currentState) {
-			case 'preparing': return 'Preparing command execution';
-			case 'executing': return 'Executing command';
-			case 'completed': return 'Command completed successfully';
-			case 'failed': return 'Command execution failed';
-			case 'cancelled': return 'Command execution cancelled';
-			default: return 'Unknown state';
+	const getStatusColor = (status: ExecutionStep['status']) => {
+		switch (status) {
+			case 'pending': return 'gray';
+			case 'running': return 'yellow';
+			case 'completed': return 'green';
+			case 'failed': return 'red';
+			case 'skipped': return 'blue';
+			default: return 'white';
 		}
 	};
 
+	const formatDuration = (ms: number) => {
+		if (ms < 1000) return `${ms}ms`;
+		if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+		return `${Math.floor(ms / 60000)}m ${Math.floor((ms % 60000) / 1000)}s`;
+	};
+
+	const completedSteps = steps.filter(step => step.status === 'completed').length;
+	const failedSteps = steps.filter(step => step.status === 'failed').length;
+	const calculatedProgress = overallProgress ?? (completedSteps / steps.length) * 100;
+
 	return (
-		<Box flexDirection="column" padding={1}>
+		<Box flexDirection="column">
 			{/* Header */}
-			<Box borderStyle="round" borderColor={getStateColor(state)} padding={1} marginBottom={1}>
-				<Text color={getStateColor(state)} bold>
-					{getStateIcon(state)} Command Execution Progress
-				</Text>
-			</Box>
-
-			{/* Command Info */}
-			<Box borderStyle="single" borderColor="blue" padding={1} marginBottom={1}>
-				<Box flexDirection="column">
-					<Box marginBottom={1}>
-						<Text color="white" bold>
-							🔧 Executing Command:
-						</Text>
+			<Box borderStyle="round" borderColor="cyan" padding={1} marginBottom={1}>
+				<Box flexDirection="column" width="100%">
+					<Box justifyContent="space-between">
+						<Text color="cyan" bold>{title}</Text>
+						{showTimings && (
+							<Text dimColor>
+								Elapsed: {formatDuration(elapsedTime)}
+							</Text>
+						)}
 					</Box>
-					<Box marginBottom={1} paddingLeft={2}>
-						<Text color="cyan" bold>
-							{command}
-						</Text>
-					</Box>
-					<Box>
-						<Text color="white">
-							📊 Status: <Text color={getStateColor(state)}>{getStateMessage(state)}</Text>
-						</Text>
+					
+					{/* Overall Progress */}
+					<Box marginTop={1}>
+						<ProgressBar 
+							progress={calculatedProgress} 
+							width={50} 
+							color={failedSteps > 0 ? 'red' : 'green'}
+							label={`Progress: ${completedSteps}/${steps.length} steps`}
+						/>
 					</Box>
 				</Box>
 			</Box>
 
-			{/* Progress Bar */}
-			{(state === 'preparing' || state === 'executing') && (
-				<Box borderStyle="single" borderColor="yellow" padding={1} marginBottom={1}>
-					<Box flexDirection="column">
-						<Box marginBottom={1}>
-							<Text color="yellow" bold>
-								⏱️ Progress: {Math.round(progress)}%
-							</Text>
-						</Box>
-						<Box marginBottom={1}>
-							<Text color="white">
-								{getProgressBar(progress)}
-							</Text>
-						</Box>
+			{/* Steps */}
+			<Box flexDirection="column">
+				{steps.map((step, _index) => (
+					<Box key={step.id} flexDirection="column" marginBottom={1}>
 						<Box>
-							<Text color="white">
-								Elapsed: {formatTime(elapsedTime)} • {state === 'preparing' ? 'Preparing' : 'Running'}{loadingDots}
+							<Text color={getStatusColor(step.status)}>
+								{getStatusIcon(step.status)}
 							</Text>
-						</Box>
-					</Box>
-				</Box>
-			)}
-
-			{/* Results */}
-			{result && (state === 'completed' || state === 'failed') && (
-				<Box borderStyle="single" borderColor={result.success ? 'green' : 'red'} padding={1} marginBottom={1}>
-					<Box flexDirection="column">
-						<Box marginBottom={1}>
-							<Text color={result.success ? 'green' : 'red'} bold>
-								{result.success ? '✅ Execution Successful' : '❌ Execution Failed'}
-							</Text>
-						</Box>
-						
-						<Box marginBottom={1}>
-							<Text color="white">
-								Duration: {formatTime(result.duration)} • Exit Code: {result.exitCode}
-							</Text>
-						</Box>
-
-						{result.output && (
-							<Box marginBottom={1}>
-								<Box flexDirection="column">
-									<Text color="white" bold>
-										📤 Output:
+							<Box marginLeft={1}>
+								<Text bold={step.status === 'running'}>
+									{step.name}
+								</Text>
+							</Box>
+							{step.status === 'running' && step.id === currentStep && (
+								<Box marginLeft={2}>
+									<EnhancedSpinner 
+										text="" 
+										type="dots" 
+										color="yellow" 
+									/>
+								</Box>
+							)}
+							{showTimings && step.duration && (
+								<Box marginLeft={2}>
+									<Text dimColor>
+										({formatDuration(step.duration)})
 									</Text>
-									<Box paddingLeft={2}>
-										<Text color="white">
-											{result.output.length > 500 
-												? result.output.substring(0, 500) + '...\n[Output truncated - too long]'
-												: result.output
-											}
-										</Text>
-									</Box>
+								</Box>
+							)}
+						</Box>
+
+						{/* Step Output */}
+						{showOutput && step.output && (
+							<Box marginLeft={4} marginTop={1}>
+								<Box borderStyle="single" borderColor="gray" padding={1}>
+									<Text color="gray">{step.output}</Text>
 								</Box>
 							</Box>
 						)}
 
-						{result.error && (
-							<Box marginBottom={1}>
-								<Box flexDirection="column">
-									<Text color="red" bold>
-										❌ Error:
-									</Text>
-									<Box paddingLeft={2}>
-										<Text color="red">
-											{result.error.length > 300 
-												? result.error.substring(0, 300) + '...\n[Error truncated - too long]'
-												: result.error
-											}
-										</Text>
-									</Box>
+						{/* Step Error */}
+						{step.error && (
+							<Box marginLeft={4} marginTop={1}>
+								<Box borderStyle="single" borderColor="red" padding={1}>
+									<Text color="red">Error: {step.error}</Text>
 								</Box>
 							</Box>
 						)}
 					</Box>
-				</Box>
-			)}
+				))}
+			</Box>
 
-			{/* Recovery Options for Failed Commands */}
-			{state === 'failed' && result && (
-				<Box borderStyle="single" borderColor="yellow" padding={1} marginBottom={1}>
-					<Box flexDirection="column">
-						<Text color="yellow" bold>
-							🔧 Troubleshooting Tips:
-						</Text>
-						{result.exitCode === 127 && (
-							<Text color="white">• Command not found - check if it's installed and in PATH</Text>
-						)}
-						{result.exitCode === 1 && (
-							<Text color="white">• General error - check command syntax and permissions</Text>
-						)}
-						{result.exitCode === 2 && (
-							<Text color="white">• Invalid usage - check command arguments and options</Text>
-						)}
-						{result.error?.includes('permission') && (
-							<Text color="white">• Permission denied - try with appropriate permissions</Text>
-						)}
-						{result.error?.includes('not found') && (
-							<Text color="white">• File or directory not found - check the path</Text>
-						)}
-						<Text color="white">• Try running the command manually to debug further</Text>
-						<Text color="white">• Check the command documentation for proper usage</Text>
-					</Box>
-				</Box>
-			)}
-
-			{/* Action Instructions */}
-			<Box borderStyle="single" borderColor="white" padding={1}>
+			{/* Summary */}
+			<Box borderStyle="single" borderColor="blue" padding={1} marginTop={1}>
 				<Box flexDirection="column">
-					<Text color="white" bold>
-						🎮 Controls:
+					<Text bold>Execution Summary:</Text>
+					<Text>
+						✅ Completed: {completedSteps} • 
+						❌ Failed: {failedSteps} • 
+						⏳ Pending: {steps.filter(s => s.status === 'pending').length} • 
+						🔄 Running: {steps.filter(s => s.status === 'running').length}
 					</Text>
-					{canCancel && (state === 'preparing' || state === 'executing') ? (
-						<>
-							<Text color="red">
-								• Press Ctrl+C or Escape to cancel execution
-							</Text>
-							<Text color="white" dimColor>
-								• Cancellation may not be immediate during execution
-							</Text>
-						</>
-					) : (state === 'completed' || state === 'failed') ? (
-						<Text color="green">
-							• Press Enter to continue
-						</Text>
-					) : (
-						<Text color="white" dimColor>
-							• Execution in progress - please wait
+					{showTimings && (
+						<Text dimColor>
+							Total elapsed time: {formatDuration(elapsedTime)}
 						</Text>
 					)}
 				</Box>

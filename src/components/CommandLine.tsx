@@ -1,144 +1,157 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text, Box, useInput} from 'ink';
 
-type Props = {
-	onExecuteCommand: (command: string, args: string[]) => void;
-	onExit: () => void;
-};
+interface Props {
+	prompt?: string;
+	placeholder?: string;
+	onSubmit: (value: string) => void;
+	onCancel?: () => void;
+	history?: string[];
+	multiline?: boolean;
+	maxLength?: number;
+	color?: string;
+	focusColor?: string;
+}
 
-export default function CommandLine({onExecuteCommand, onExit}: Props) {
+export default function CommandLine({
+	prompt = '> ',
+	placeholder = 'Type your command...',
+	onSubmit,
+	onCancel,
+	history = [],
+	multiline = false,
+	maxLength = 1000,
+	color = 'white',
+	focusColor = 'cyan'
+}: Props) {
 	const [input, setInput] = useState('');
-	const [history, setHistory] = useState<string[]>([]);
 	const [historyIndex, setHistoryIndex] = useState(-1);
+	const [cursorPosition, setCursorPosition] = useState(0);
+	const [isFocused] = useState(true);
+
+	useEffect(() => {
+		setCursorPosition(input.length);
+	}, [input]);
 
 	useInput((inputChar, key) => {
+		if (key.escape) {
+			if (onCancel) {
+				onCancel();
+			}
+			return;
+		}
+
 		if (key.return) {
-			// Handle Enter key - execute command
+			if (multiline && !key.ctrl) {
+				setInput(prev => prev + '\\n');
+				return;
+			}
+			
 			if (input.trim()) {
-				const parts = input.trim().split(' ');
-				const command = parts[0];
-				const args = parts.slice(1);
-				
-				if (command) {
-					// Add to history
-					setHistory(prev => [...prev, input.trim()]);
-					setHistoryIndex(-1);
-					
-					// Execute command
-					onExecuteCommand(command, args);
-					setInput('');
-				}
+				onSubmit(input.trim());
+				setInput('');
+				setHistoryIndex(-1);
+				setCursorPosition(0);
 			}
-		} else if (key.backspace || key.delete) {
-			// Handle Backspace/Delete key - remove last character
-			setInput(prev => prev.length > 0 ? prev.slice(0, -1) : '');
-		} else if (key.upArrow) {
-			// Navigate history up
+			return;
+		}
+
+		if (key.upArrow) {
 			if (history.length > 0) {
-				const newIndex = historyIndex === -1 ? history.length - 1 : Math.max(0, historyIndex - 1);
+				const newIndex = Math.min(historyIndex + 1, history.length - 1);
 				setHistoryIndex(newIndex);
-				setInput(history[newIndex] || '');
+				setInput(history[history.length - 1 - newIndex] || '');
 			}
-		} else if (key.downArrow) {
-			// Navigate history down
-			if (historyIndex >= 0) {
-				const newIndex = historyIndex + 1;
-				if (newIndex >= history.length) {
-					setHistoryIndex(-1);
-					setInput('');
-				} else {
-					setHistoryIndex(newIndex);
-					setInput(history[newIndex] || '');
-				}
+			return;
+		}
+
+		if (key.downArrow) {
+			if (historyIndex > 0) {
+				const newIndex = historyIndex - 1;
+				setHistoryIndex(newIndex);
+				setInput(history[history.length - 1 - newIndex] || '');
+			} else if (historyIndex === 0) {
+				setHistoryIndex(-1);
+				setInput('');
 			}
-		} else if (key.escape) {
-			// Handle Escape key - exit to main menu
-			onExit();
-		} else if (key.ctrl && inputChar === 'c') {
-			// Handle Ctrl+C - exit completely
-			process.exit(0);
-		} else if (key.ctrl && inputChar === 'm') {
-			// Handle Ctrl+M - return to main menu
-			onExit();
-		} else if (!key.ctrl && !key.meta && !key.escape && inputChar && inputChar.length === 1) {
-			// Handle regular character input - only printable characters
-			if (inputChar >= ' ' && inputChar <= '~') {
-				setInput(prev => prev + inputChar);
+			return;
+		}
+
+		if (key.leftArrow) {
+			setCursorPosition(Math.max(0, cursorPosition - 1));
+			return;
+		}
+
+		if (key.rightArrow) {
+			setCursorPosition(Math.min(input.length, cursorPosition + 1));
+			return;
+		}
+
+		if (key.backspace || key.delete) {
+			if (cursorPosition > 0) {
+				const newInput = input.slice(0, cursorPosition - 1) + input.slice(cursorPosition);
+				setInput(newInput);
+				setCursorPosition(cursorPosition - 1);
 			}
+			return;
+		}
+
+		if (key.ctrl && inputChar === 'c') {
+			if (onCancel) {
+				onCancel();
+			}
+			return;
+		}
+
+		if (key.ctrl && inputChar === 'l') {
+			// Clear screen (handled by parent)
+			return;
+		}
+
+		if (key.ctrl && inputChar === 'u') {
+			// Clear line
+			setInput('');
+			setCursorPosition(0);
+			return;
+		}
+
+		// Regular character input
+		if (inputChar && !key.ctrl && !key.meta && input.length < maxLength) {
+			const newInput = input.slice(0, cursorPosition) + inputChar + input.slice(cursorPosition);
+			setInput(newInput);
+			setCursorPosition(cursorPosition + 1);
 		}
 	});
 
+	const displayInput = input || (isFocused ? placeholder : '');
+	const beforeCursor = displayInput.slice(0, cursorPosition);
+	const atCursor = displayInput[cursorPosition] || ' ';
+	const afterCursor = displayInput.slice(cursorPosition + 1);
+
 	return (
-		<Box flexDirection="column" padding={1}>
-			{/* Header */}
-			<Box borderStyle="round" borderColor="cyan" padding={1} marginBottom={1}>
-				<Box flexDirection="column">
-					<Text color="cyan" bold>
-						💻 KiroCLI Command Line
+		<Box flexDirection="column">
+			<Box>
+				<Text color={isFocused ? focusColor : color}>{prompt}</Text>
+				<Text color={input ? color : 'gray'}>
+					{beforeCursor}
+					<Text backgroundColor={isFocused ? focusColor : undefined}>
+						{atCursor}
 					</Text>
-					<Text color="white" dimColor>
-						Execute commands directly without the kirocli prefix
-					</Text>
-				</Box>
-			</Box>
-
-			{/* Command Examples */}
-			<Box borderStyle="single" borderColor="blue" padding={1} marginBottom={1}>
-				<Box flexDirection="column">
-					<Text color="yellow" bold>
-						💡 Available Commands:
-					</Text>
-					<Text color="white">
-						config show                    # Show configuration
-					</Text>
-					<Text color="white">
-						config test                    # Test API connections
-					</Text>
-					<Text color="white">
-						config set-key openai "key"   # Set API key
-					</Text>
-					<Text color="white">
-						spec validate                  # Validate spec file
-					</Text>
-					<Text color="white">
-						spec build                     # Generate code from spec
-					</Text>
-					<Text color="white">
-						hook list                      # List available hooks
-					</Text>
-					<Text color="white">
-						hook run git-commit           # Run specific hook
-					</Text>
-					<Text color="white">
-						chat                          # Start chat mode
-					</Text>
-					<Text color="white">
-						menu                          # Return to main menu
-					</Text>
-				</Box>
-			</Box>
-
-			{/* Command Input */}
-			<Box borderStyle="single" borderColor="green" padding={1} marginBottom={1}>
-				<Box>
-					<Text color="green" bold>
-						kirocli❯{' '}
-					</Text>
-					<Text color="white">
-						{input}
-						<Text backgroundColor="white" color="black">
-							{' '}
-						</Text>
-					</Text>
-				</Box>
-			</Box>
-
-			{/* Help */}
-			<Box borderStyle="single" borderColor="white" padding={1}>
-				<Text color="white" dimColor>
-					Enter: execute • Backspace: edit • ↑↓: history • Escape/Ctrl+M: menu • Ctrl+C: exit
+					{afterCursor}
 				</Text>
 			</Box>
+			
+			{multiline && (
+				<Text dimColor>
+					Press Ctrl+Enter to submit, Enter for new line, Escape to cancel
+				</Text>
+			)}
+			
+			{!multiline && (
+				<Text dimColor>
+					Press Enter to submit, ↑↓ for history, Escape to cancel
+				</Text>
+			)}
 		</Box>
 	);
 }
