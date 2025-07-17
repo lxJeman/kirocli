@@ -1,6 +1,6 @@
 {
 	"name": "kirocli",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"license": "MIT",
 	"bin": "dist/index.js",
 	"type": "module",
@@ -12,7 +12,23 @@
 		"dev": "tsc --watch",
 		"start": "node dist/index.js",
 		"dev:run": "npm run build && npm start",
-		"test": "prettier --check . && xo && ava"
+		"test": "prettier --check . && xo && ava",
+		"build:all": "npm run build && npm run package:all",
+		"package:all": "npm run package:linux && npm run package:macos && npm run package:windows",
+		"package:linux": "pkg dist/cli-cjs.js --targets node18-linux-x64 --output binaries/kirocli-linux",
+		"package:macos": "pkg dist/cli-cjs.js --targets node18-macos-x64 --output binaries/kirocli-macos",
+		"package:windows": "pkg dist/cli-cjs.js --targets node18-win-x64 --output binaries/kirocli-windows.exe",
+		"package:nexe:all": "npm run package:nexe:linux && npm run package:nexe:macos && npm run package:nexe:windows",
+		"package:nexe:linux": "nexe dist/cli.js --target linux-x64-18.20.4 --output binaries/kirocli-nexe-linux",
+		"package:nexe:macos": "nexe dist/cli.js --target mac-x64-18.20.4 --output binaries/kirocli-nexe-macos",
+		"package:nexe:windows": "nexe dist/cli.js --target windows-x64-18.20.4 --output binaries/kirocli-nexe-windows.exe",
+		"clean:binaries": "rm -rf binaries",
+		"prepare:release": "npm run clean:binaries && npm run build:all",
+		"dist": "node scripts/create-distribution.js",
+		"dist:linux": "node scripts/create-distribution.js linux",
+		"dist:macos": "node scripts/create-distribution.js macos", 
+		"dist:windows": "node scripts/create-distribution.js windows",
+		"clean:dist": "rm -rf distribution"
 	},
 	"files": [
 		"dist"
@@ -49,6 +65,8 @@
 		"eslint-plugin-react": "^7.32.2",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"ink-testing-library": "^3.0.0",
+		"nexe": "^5.0.0-beta.4",
+		"pkg": "^5.8.1",
 		"prettier": "^2.8.7",
 		"ts-node": "^10.9.1",
 		"typescript": "^5.0.3",
@@ -71,5 +89,27 @@
 			"react/prop-types": "off"
 		}
 	},
-	"prettier": "@vdemedes/prettier-config"
+	"prettier": "@vdemedes/prettier-config",
+	"pkg": {
+		"scripts": [
+			"dist/**/*.js"
+		],
+		"assets": [
+			"node_modules/@anthropic-ai/sdk/**/*",
+			"node_modules/@google/generative-ai/**/*",
+			"node_modules/openai/**/*",
+			"node_modules/ink/**/*",
+			"node_modules/react/**/*",
+			"node_modules/js-yaml/**/*",
+			"node_modules/execa/**/*",
+			"node_modules/chokidar/**/*",
+			"node_modules/cli-highlight/**/*"
+		],
+		"targets": [
+			"node18-linux-x64",
+			"node18-macos-x64", 
+			"node18-win-x64"
+		],
+		"outputPath": "binaries"
+	}
 }

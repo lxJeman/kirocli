@@ -1,5 +1,6 @@
 import {execa, ExecaError} from 'execa';
 import * as os from 'os';
+import {platformDetector} from './platform-detector.js';
 
 export interface CommandResult {
 	success: boolean;
@@ -104,50 +105,11 @@ export class SafeShellExecutor {
 	}
 
 	/**
-	 * Converts commands to be cross-platform compatible
+	 * Converts commands to be cross-platform compatible using platform detector
 	 */
 	static makeCommandCrossPlatform(command: string): string {
-		const platform = os.platform();
-		
-		// Common command mappings
-		const commandMappings: Record<string, Record<string, string>> = {
-			win32: {
-				'ls': 'dir',
-				'ls -la': 'dir /a',
-				'ls -l': 'dir',
-				'cat': 'type',
-				'grep': 'findstr',
-				'which': 'where',
-				'ps': 'tasklist',
-				'kill': 'taskkill /PID',
-				'cp': 'copy',
-				'mv': 'move',
-				'rm': 'del',
-				'mkdir': 'mkdir',
-				'rmdir': 'rmdir',
-				'pwd': 'cd',
-				'clear': 'cls',
-				'touch': 'echo. >',
-			},
-			darwin: {
-				// macOS specific mappings if needed
-			},
-			linux: {
-				// Linux specific mappings if needed
-			},
-		};
-
-		let crossPlatformCommand = command;
-
-		// Apply platform-specific mappings
-		if (commandMappings[platform]) {
-			for (const [unixCmd, platformCmd] of Object.entries(commandMappings[platform])) {
-				const regex = new RegExp(`\\b${unixCmd}\\b`, 'g');
-				crossPlatformCommand = crossPlatformCommand.replace(regex, platformCmd);
-			}
-		}
-
-		return crossPlatformCommand;
+		// Use the platform detector for better cross-platform command translation
+		return platformDetector.translateCommand(command);
 	}
 
 	/**
