@@ -1,7 +1,7 @@
 # KiroCLI Specification File
 # Generated on: 2025-07-16T11:20:43.063Z
 # Template: web
-# 
+#
 # This file defines the structure and requirements for code generation.
 # Modify the values below to customize your generated code.
 #
@@ -28,8 +28,8 @@ dependencies:
   - react-dom
   - react-router-dom
 devDependencies:
-  - "@types/react"
-  - "@types/react-dom"
+  - '@types/react'
+  - '@types/react-dom'
   - vite
   - typescript
 scripts:

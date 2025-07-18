@@ -44,7 +44,9 @@ export default function App({
 	action,
 	args = [],
 }: Props) {
-	const [mode, setMode] = useState<AppMode>(name ? 'greeting' : initialMode || 'menu');
+	const [mode, setMode] = useState<AppMode>(
+		name ? 'greeting' : initialMode || 'menu',
+	);
 	const [commandState, setCommandState] = useState<CommandState | null>(null);
 	const {exit} = useApp();
 
@@ -64,7 +66,7 @@ export default function App({
 		try {
 			const userConfigDir = path.join(os.homedir(), '.kirocli');
 			const welcomeFile = path.join(userConfigDir, '.welcome-shown');
-			
+
 			// Check if welcome file exists
 			try {
 				await fs.access(welcomeFile);
@@ -91,10 +93,10 @@ export default function App({
 		try {
 			const userConfigDir = path.join(os.homedir(), '.kirocli');
 			const welcomeFile = path.join(userConfigDir, '.welcome-shown');
-			
+
 			// Ensure directory exists
-			await fs.mkdir(userConfigDir, { recursive: true });
-			
+			await fs.mkdir(userConfigDir, {recursive: true});
+
 			// Create welcome file
 			await fs.writeFile(welcomeFile, new Date().toISOString(), 'utf8');
 		} catch (error) {
@@ -188,7 +190,7 @@ export default function App({
 				<CommandLine
 					prompt="kirocli> "
 					placeholder="Enter command (e.g., 'config show', 'spec validate', 'hook list')"
-					onSubmit={(input) => {
+					onSubmit={input => {
 						const parts = input.trim().split(' ');
 						const command = parts[0];
 						const args = parts.slice(1);

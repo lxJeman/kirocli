@@ -6,9 +6,11 @@
  */
 
 // Import the ES module CLI
-import('./cli.js').then(() => {
-  // CLI execution happens during import
-}).catch(error => {
-  console.error('Failed to start KiroCLI:', error);
-  process.exit(1);
-});
+import('./cli.js')
+	.then(() => {
+		// CLI execution happens during import
+	})
+	.catch(error => {
+		console.error('Failed to start KiroCLI:', error);
+		process.exit(1);
+	});

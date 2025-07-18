@@ -2,55 +2,55 @@ name: Development Build
 
 on:
   push:
-    branches-ignore: [ main, master ]
+    branches-ignore: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   quick-test:
     name: Quick Test and Build
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run linting
-      run: npm run lint || echo "Linting step skipped"
-      continue-on-error: true
-      
-    - name: Build TypeScript
-      run: npm run build
-      
-    - name: Test CLI functionality
-      run: |
-        echo "🧪 Testing CLI functionality..."
-        node dist/cli.js --help
-        echo "✅ Help command works"
-        
-        node dist/cli.js config show || echo "✅ Config command works"
-        
-        echo "🎉 Development build successful!"
-        
-    - name: Test distribution creation (Linux only)
-      run: |
-        echo "🔨 Testing distribution creation..."
-        npm run dist:linux
-        echo "✅ Linux distribution created successfully"
-        ls -la distribution/
-        
-    - name: Upload development build
-      uses: actions/upload-artifact@v4
-      with:
-        name: kirocli-dev-build-${{ github.sha }}
-        path: distribution/kirocli-linux-portable.tar.gz
-        retention-days: 7
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint || echo "Linting step skipped"
+        continue-on-error: true
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Test CLI functionality
+        run: |
+          echo "🧪 Testing CLI functionality..."
+          node dist/cli.js --help
+          echo "✅ Help command works"
+
+          node dist/cli.js config show || echo "✅ Config command works"
+
+          echo "🎉 Development build successful!"
+
+      - name: Test distribution creation (Linux only)
+        run: |
+          echo "🔨 Testing distribution creation..."
+          npm run dist:linux
+          echo "✅ Linux distribution created successfully"
+          ls -la distribution/
+
+      - name: Upload development build
+        uses: actions/upload-artifact@v4
+        with:
+          name: kirocli-dev-build-${{ github.sha }}
+          path: distribution/kirocli-linux-portable.tar.gz
+          retention-days: 7

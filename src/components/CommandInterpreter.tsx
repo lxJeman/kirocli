@@ -13,7 +13,14 @@ type Props = {
 	onCancel: () => void;
 };
 
-type InterpretationState = 'analyzing' | 'suggesting' | 'previewing' | 'confirming' | 'executing' | 'error' | 'cancelled';
+type InterpretationState =
+	| 'analyzing'
+	| 'suggesting'
+	| 'previewing'
+	| 'confirming'
+	| 'executing'
+	| 'error'
+	| 'cancelled';
 
 interface CommandSuggestion {
 	command: string;
@@ -22,7 +29,12 @@ interface CommandSuggestion {
 	category: 'file' | 'git' | 'system' | 'development' | 'network' | 'other';
 }
 
-export default function CommandInterpreter({userInput, onCommandExecuted, onError, onCancel}: Props) {
+export default function CommandInterpreter({
+	userInput,
+	onCommandExecuted,
+	onError,
+	onCancel,
+}: Props) {
 	const [state, setState] = useState<InterpretationState>('analyzing');
 	const [suggestion, setSuggestion] = useState<CommandSuggestion | null>(null);
 	const [loadingDots, setLoadingDots] = useState('');
@@ -77,10 +89,10 @@ export default function CommandInterpreter({userInput, onCommandExecuted, onErro
 	const interpretCommand = async () => {
 		try {
 			setState('analyzing');
-			
+
 			// Create AI provider
 			const aiProvider = await AIProvider.createDefault();
-			
+
 			// Create a specialized prompt for command interpretation
 			const prompt = `You are a helpful command-line assistant. The user wants to: "${userInput}"
 
@@ -109,70 +121,90 @@ User: "show git status"
 Response: {"command": "git status", "explanation": "Shows the current status of the git repository", "safety": "safe", "category": "git"}`;
 
 			const response = await aiProvider.chat([{role: 'user', content: prompt}]);
-			
+
 			// Parse the JSON response with better error handling
 			let cleanResponse = response.trim();
-			
+
 			// Remove markdown code blocks if present
 			cleanResponse = cleanResponse.replace(/```json\n?|\n?```/g, '');
 			cleanResponse = cleanResponse.replace(/```\n?|\n?```/g, '');
-			
+
 			// Try to extract JSON from the response if it's mixed with other text
 			const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/);
 			if (jsonMatch) {
 				cleanResponse = jsonMatch[0];
 			}
-			
+
 			// Validate that we have a JSON-like string
 			if (!cleanResponse.startsWith('{') || !cleanResponse.endsWith('}')) {
 				throw new Error('AI response is not in valid JSON format');
 			}
-			
+
 			const parsedSuggestion = JSON.parse(cleanResponse) as CommandSuggestion;
-			
+
 			setSuggestion(parsedSuggestion);
 			setState('suggesting');
-			
 		} catch (error) {
 			console.error('Command interpretation error:', error);
 			setState('error');
-			onError(error instanceof Error ? error.message : 'Failed to interpret command');
+			onError(
+				error instanceof Error ? error.message : 'Failed to interpret command',
+			);
 		}
 	};
 
 	const getSafetyColor = (safety: string) => {
 		switch (safety) {
-			case 'safe': return 'green';
-			case 'caution': return 'yellow';
-			case 'dangerous': return 'red';
-			default: return 'white';
+			case 'safe':
+				return 'green';
+			case 'caution':
+				return 'yellow';
+			case 'dangerous':
+				return 'red';
+			default:
+				return 'white';
 		}
 	};
 
 	const getSafetyIcon = (safety: string) => {
 		switch (safety) {
-			case 'safe': return '✅';
-			case 'caution': return '⚠️';
-			case 'dangerous': return '🚨';
-			default: return '❓';
+			case 'safe':
+				return '✅';
+			case 'caution':
+				return '⚠️';
+			case 'dangerous':
+				return '🚨';
+			default:
+				return '❓';
 		}
 	};
 
 	const getCategoryIcon = (category: string) => {
 		switch (category) {
-			case 'file': return '📁';
-			case 'git': return '🔀';
-			case 'system': return '⚙️';
-			case 'development': return '💻';
-			case 'network': return '🌐';
-			default: return '🔧';
+			case 'file':
+				return '📁';
+			case 'git':
+				return '🔀';
+			case 'system':
+				return '⚙️';
+			case 'development':
+				return '💻';
+			case 'network':
+				return '🌐';
+			default:
+				return '🔧';
 		}
 	};
 
 	if (state === 'analyzing') {
 		return (
 			<Box flexDirection="column" padding={1}>
-				<Box borderStyle="round" borderColor="blue" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="round"
+					borderColor="blue"
+					padding={1}
+					marginBottom={1}
+				>
 					<Text color="blue" bold>
 						🧠 AI Command Interpreter
 					</Text>
@@ -182,9 +214,7 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 					<Text color="white">
 						Analyzing your request: <Text color="cyan">"{userInput}"</Text>
 					</Text>
-					<Text color="yellow">
-						🤔 Thinking{loadingDots}
-					</Text>
+					<Text color="yellow">🤔 Thinking{loadingDots}</Text>
 				</Box>
 
 				<Box borderStyle="single" borderColor="white" padding={1}>
@@ -226,7 +256,12 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 	if (state === 'suggesting' && suggestion) {
 		return (
 			<Box flexDirection="column" padding={1}>
-				<Box borderStyle="round" borderColor="green" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="round"
+					borderColor="green"
+					padding={1}
+					marginBottom={1}
+				>
 					<Text color="green" bold>
 						💡 Command Suggestion
 					</Text>
@@ -239,14 +274,19 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 				</Box>
 
 				{/* Command suggestion */}
-				<Box borderStyle="single" borderColor={getSafetyColor(suggestion.safety)} padding={1} marginBottom={2}>
+				<Box
+					borderStyle="single"
+					borderColor={getSafetyColor(suggestion.safety)}
+					padding={1}
+					marginBottom={2}
+				>
 					<Box flexDirection="column">
 						<Box marginBottom={1}>
 							<Text color="white" bold>
 								{getCategoryIcon(suggestion.category)} Suggested Command:
 							</Text>
 						</Box>
-						
+
 						<Box marginBottom={1} paddingLeft={2}>
 							<Text color="cyan" bold>
 								{suggestion.command}
@@ -261,7 +301,8 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 
 						<Box>
 							<Text color={getSafetyColor(suggestion.safety)}>
-								{getSafetyIcon(suggestion.safety)} Safety Level: {suggestion.safety.toUpperCase()}
+								{getSafetyIcon(suggestion.safety)} Safety Level:{' '}
+								{suggestion.safety.toUpperCase()}
 							</Text>
 						</Box>
 					</Box>
@@ -269,7 +310,12 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 
 				{/* Safety warning for dangerous commands */}
 				{suggestion.safety === 'dangerous' && (
-					<Box borderStyle="double" borderColor="red" padding={1} marginBottom={2}>
+					<Box
+						borderStyle="double"
+						borderColor="red"
+						padding={1}
+						marginBottom={2}
+					>
 						<Box flexDirection="column">
 							<Text color="red" bold>
 								🚨 DANGER WARNING
@@ -286,7 +332,12 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 
 				{/* Caution warning */}
 				{suggestion.safety === 'caution' && (
-					<Box borderStyle="single" borderColor="yellow" padding={1} marginBottom={2}>
+					<Box
+						borderStyle="single"
+						borderColor="yellow"
+						padding={1}
+						marginBottom={2}
+					>
 						<Box flexDirection="column">
 							<Text color="yellow" bold>
 								⚠️ CAUTION
@@ -307,15 +358,9 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 						<Text color="white" bold>
 							🎮 What would you like to do?
 						</Text>
-						<Text color="green">
-							• Press Enter to proceed to confirmation
-						</Text>
-						<Text color="red">
-							• Press 'n' to reject and try again
-						</Text>
-						<Text color="white">
-							• Press Escape to cancel
-						</Text>
+						<Text color="green">• Press Enter to proceed to confirmation</Text>
+						<Text color="red">• Press 'n' to reject and try again</Text>
+						<Text color="white">• Press Escape to cancel</Text>
 					</Box>
 				</Box>
 			</Box>
@@ -354,8 +399,8 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 					{
 						id: 'execute',
 						name: `Executing: ${suggestion.command}`,
-						status: 'running'
-					}
+						status: 'running',
+					},
 				]}
 				currentStep="execute"
 				title="Command Execution"
@@ -363,11 +408,13 @@ Response: {"command": "git status", "explanation": "Shows the current status of 
 					// Convert boolean to CommandResult for compatibility
 					const result: CommandResult = {
 						success,
-						output: success ? 'Command completed successfully' : 'Command failed',
+						output: success
+							? 'Command completed successfully'
+							: 'Command failed',
 						error: success ? undefined : 'Execution failed',
 						duration: 0,
 						command: suggestion?.command || '',
-						exitCode: success ? 0 : 1
+						exitCode: success ? 0 : 1,
 					};
 					handleExecutionComplete(result);
 				}}

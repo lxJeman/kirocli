@@ -58,39 +58,39 @@ export interface HookCondition {
 	operator?: 'equals' | 'contains' | 'matches' | 'exists' | 'not_exists';
 }
 
-export type TriggerType = 
-	| 'manual'           // User-triggered
-	| 'file_change'      // File system events
-	| 'git_event'        // Git operations
-	| 'schedule'         // Time-based
-	| 'command'          // After specific commands
-	| 'startup'          // On KiroCLI startup
-	| 'shutdown'         // On KiroCLI shutdown
-	| 'spec_build'       // After spec build
-	| 'spec_validate';   // After spec validation
+export type TriggerType =
+	| 'manual' // User-triggered
+	| 'file_change' // File system events
+	| 'git_event' // Git operations
+	| 'schedule' // Time-based
+	| 'command' // After specific commands
+	| 'startup' // On KiroCLI startup
+	| 'shutdown' // On KiroCLI shutdown
+	| 'spec_build' // After spec build
+	| 'spec_validate'; // After spec validation
 
-export type ActionType = 
-	| 'shell'            // Execute shell command
-	| 'script'           // Run script file
-	| 'file_create'      // Create file
-	| 'file_copy'        // Copy file
-	| 'file_move'        // Move file
-	| 'file_delete'      // Delete file
-	| 'git'              // Git operations
-	| 'npm'              // NPM operations
-	| 'notification'     // Show notification
-	| 'ai_generate'      // AI code generation
-	| 'spec_build'       // Build from spec
-	| 'custom';          // Custom action
+export type ActionType =
+	| 'shell' // Execute shell command
+	| 'script' // Run script file
+	| 'file_create' // Create file
+	| 'file_copy' // Copy file
+	| 'file_move' // Move file
+	| 'file_delete' // Delete file
+	| 'git' // Git operations
+	| 'npm' // NPM operations
+	| 'notification' // Show notification
+	| 'ai_generate' // AI code generation
+	| 'spec_build' // Build from spec
+	| 'custom'; // Custom action
 
-export type HookCategory = 
-	| 'git'              // Git workflow automation
-	| 'build'            // Build and test automation
-	| 'deploy'           // Deployment automation
-	| 'maintenance'      // Code maintenance
-	| 'notification'     // Notifications and alerts
-	| 'development'      // Development workflow
-	| 'custom';          // User-defined
+export type HookCategory =
+	| 'git' // Git workflow automation
+	| 'build' // Build and test automation
+	| 'deploy' // Deployment automation
+	| 'maintenance' // Code maintenance
+	| 'notification' // Notifications and alerts
+	| 'development' // Development workflow
+	| 'custom'; // User-defined
 
 export interface HookExecutionResult {
 	hookId: string;
@@ -170,7 +170,7 @@ export interface FileWatcherConfig {
 }
 
 // Git event types
-export type GitEventType = 
+export type GitEventType =
 	| 'commit'
 	| 'push'
 	| 'pull'
@@ -181,8 +181,4 @@ export type GitEventType =
 	| 'rebase';
 
 // Notification types
-export type NotificationType = 
-	| 'info'
-	| 'success'
-	| 'warning'
-	| 'error';
+export type NotificationType = 'info' | 'success' | 'warning' | 'error';

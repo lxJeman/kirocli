@@ -15,6 +15,7 @@ This guide covers all installation methods for KiroCLI across different platform
 Download the pre-built portable package for your platform from the [latest release](https://github.com/lxJeman/kirocli/releases/latest):
 
 #### Linux
+
 ```bash
 # Download and extract
 wget https://github.com/lxJeman/kirocli/releases/latest/download/kirocli-linux-portable.tar.gz
@@ -30,6 +31,7 @@ source ~/.bashrc
 ```
 
 #### macOS
+
 ```bash
 # Download and extract
 curl -L -o kirocli-macos-portable.tar.gz https://github.com/lxJeman/kirocli/releases/latest/download/kirocli-macos-portable.tar.gz
@@ -45,6 +47,7 @@ source ~/.zshrc
 ```
 
 #### Windows
+
 ```powershell
 # Download kirocli-windows-portable.tar.gz from releases page
 # Extract using 7-Zip or Windows built-in extraction
@@ -94,6 +97,7 @@ kirocli config setup
 ```
 
 This will guide you through setting up API keys for:
+
 - **OpenAI** (GPT-4, GPT-3.5-turbo)
 - **Anthropic Claude** (Claude-3-sonnet, Claude-3-haiku)
 - **Google Gemini** (Gemini-pro)
@@ -143,21 +147,25 @@ kirocli hook list
 ## 🔧 Platform-Specific Notes
 
 ### Linux
+
 - **Shell**: Works with bash, zsh, fish, and other POSIX shells
 - **Dependencies**: Requires glibc 2.17+ (most modern distributions)
 - **Installation**: Can be installed system-wide in `/usr/local/bin/`
 
 ### macOS
+
 - **Shell**: Works with zsh (default), bash, and other shells
 - **Dependencies**: Requires macOS 10.13+ (High Sierra)
 - **Installation**: Can be installed system-wide in `/usr/local/bin/`
 
 ### Windows
+
 - **Shell**: Works with Command Prompt, PowerShell, and WSL
 - **Dependencies**: Requires Windows 10+ (x64)
 - **Installation**: Can be added to PATH or placed in `%USERPROFILE%\AppData\Local\Microsoft\WindowsApps\`
 
 ### WSL (Windows Subsystem for Linux)
+
 KiroCLI automatically detects WSL and adapts command execution accordingly.
 
 ## 🚨 Troubleshooting
@@ -165,6 +173,7 @@ KiroCLI automatically detects WSL and adapts command execution accordingly.
 ### Common Issues
 
 #### "Node.js not found"
+
 ```bash
 # Install Node.js from https://nodejs.org/
 # Or use a package manager:
@@ -180,6 +189,7 @@ choco install nodejs
 ```
 
 #### "Permission denied" (Linux/macOS)
+
 ```bash
 # Make the binary executable
 chmod +x kirocli
@@ -189,6 +199,7 @@ bash kirocli --help
 ```
 
 #### "API key not configured"
+
 ```bash
 # Run the setup wizard
 kirocli config setup
@@ -198,6 +209,7 @@ kirocli config set-key openai your-api-key
 ```
 
 #### "Command not found"
+
 ```bash
 # Add to PATH (Linux/macOS)
 export PATH="$PATH:/path/to/kirocli"
@@ -228,14 +240,17 @@ kirocli --verbose config test
 ## 🔄 Updates
 
 ### Portable Packages
+
 Download the latest release and replace your existing installation.
 
 ### NPM Installation
+
 ```bash
 npm update -g kirocli
 ```
 
 ### Build from Source
+
 ```bash
 git pull origin main
 npm install
@@ -245,14 +260,17 @@ npm run build
 ## 🗑️ Uninstallation
 
 ### Portable Packages
+
 Simply delete the installation directory and remove from PATH if added.
 
 ### NPM Installation
+
 ```bash
 npm uninstall -g kirocli
 ```
 
 ### Configuration Cleanup
+
 ```bash
 # Remove configuration directory
 rm -rf ~/.kirocli  # Linux/macOS

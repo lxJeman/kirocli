@@ -28,7 +28,11 @@ export class RateLimiter {
 			const oldestRequest = this.requests[0];
 			if (oldestRequest) {
 				const waitTime = 60 * 1000 - (now - oldestRequest.timestamp);
-				throw new Error(`Rate limit exceeded. Please wait ${Math.ceil(waitTime / 1000)} seconds before making another request.`);
+				throw new Error(
+					`Rate limit exceeded. Please wait ${Math.ceil(
+						waitTime / 1000,
+					)} seconds before making another request.`,
+				);
 			}
 		}
 
@@ -38,7 +42,11 @@ export class RateLimiter {
 			const oldestRequest = this.requests[0];
 			if (oldestRequest) {
 				const waitTime = 60 * 1000 - (now - oldestRequest.timestamp);
-				throw new Error(`Token rate limit exceeded. Please wait ${Math.ceil(waitTime / 1000)} seconds before making another request.`);
+				throw new Error(
+					`Token rate limit exceeded. Please wait ${Math.ceil(
+						waitTime / 1000,
+					)} seconds before making another request.`,
+				);
 			}
 		}
 
@@ -52,14 +60,18 @@ export class RateLimiter {
 	getRemainingRequests(): number {
 		const now = Date.now();
 		const oneMinuteAgo = now - 60 * 1000;
-		const recentRequests = this.requests.filter(req => req.timestamp > oneMinuteAgo);
+		const recentRequests = this.requests.filter(
+			req => req.timestamp > oneMinuteAgo,
+		);
 		return Math.max(0, this.config.requests_per_minute - recentRequests.length);
 	}
 
 	getRemainingTokens(): number {
 		const now = Date.now();
 		const oneMinuteAgo = now - 60 * 1000;
-		const recentRequests = this.requests.filter(req => req.timestamp > oneMinuteAgo);
+		const recentRequests = this.requests.filter(
+			req => req.timestamp > oneMinuteAgo,
+		);
 		const usedTokens = recentRequests.reduce((sum, req) => sum + req.tokens, 0);
 		return Math.max(0, this.config.tokens_per_minute - usedTokens);
 	}

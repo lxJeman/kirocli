@@ -60,10 +60,14 @@ export class SafeShellExecutor {
 	/**
 	 * Validates and sanitizes a command before execution
 	 */
-	static validateCommand(command: string): {valid: boolean; reason?: string; sanitized?: string} {
+	static validateCommand(command: string): {
+		valid: boolean;
+		reason?: string;
+		sanitized?: string;
+	} {
 		// Basic sanitization
 		const sanitized = command.trim();
-		
+
 		if (!sanitized) {
 			return {valid: false, reason: 'Empty command'};
 		}
@@ -72,14 +76,20 @@ export class SafeShellExecutor {
 		const lowerCommand = sanitized.toLowerCase();
 		for (const dangerous of this.DANGEROUS_COMMANDS) {
 			if (lowerCommand.includes(dangerous.toLowerCase())) {
-				return {valid: false, reason: `Dangerous command detected: ${dangerous}`};
+				return {
+					valid: false,
+					reason: `Dangerous command detected: ${dangerous}`,
+				};
 			}
 		}
 
 		// Check for restricted paths
 		for (const restrictedPath of this.RESTRICTED_PATHS) {
 			if (lowerCommand.includes(restrictedPath.toLowerCase())) {
-				return {valid: false, reason: `Access to restricted path: ${restrictedPath}`};
+				return {
+					valid: false,
+					reason: `Access to restricted path: ${restrictedPath}`,
+				};
 			}
 		}
 
@@ -117,10 +127,10 @@ export class SafeShellExecutor {
 	 */
 	static async executeCommand(
 		command: string,
-		options: CommandOptions = {}
+		options: CommandOptions = {},
 	): Promise<CommandResult> {
 		const startTime = Date.now();
-		
+
 		// Validate command
 		const validation = this.validateCommand(command);
 		if (!validation.valid) {
@@ -135,8 +145,10 @@ export class SafeShellExecutor {
 		}
 
 		// Make command cross-platform compatible
-		const crossPlatformCommand = this.makeCommandCrossPlatform(validation.sanitized!);
-		
+		const crossPlatformCommand = this.makeCommandCrossPlatform(
+			validation.sanitized!,
+		);
+
 		// Set up execution options
 		const execOptions = {
 			timeout: options.timeout || this.DEFAULT_TIMEOUT,
@@ -150,7 +162,7 @@ export class SafeShellExecutor {
 		try {
 			// Parse command and arguments
 			const [cmd, ...args] = this.parseCommand(crossPlatformCommand);
-			
+
 			// Ensure we have a command
 			if (!cmd) {
 				return {
@@ -162,24 +174,27 @@ export class SafeShellExecutor {
 					duration: Date.now() - startTime,
 				};
 			}
-			
+
 			// Execute command
 			const result = await execa(cmd, args, execOptions);
-			
+
 			return {
 				success: true,
-				output: result.stdout || result.stderr || 'Command executed successfully',
+				output:
+					result.stdout || result.stderr || 'Command executed successfully',
 				exitCode: result.exitCode || 0,
 				command: crossPlatformCommand,
 				duration: Date.now() - startTime,
 			};
 		} catch (error) {
 			const execaError = error as ExecaError;
-			
+
 			return {
 				success: false,
 				output: String(execaError.stdout || ''),
-				error: String(execaError.stderr || execaError.message || 'Unknown execution error'),
+				error: String(
+					execaError.stderr || execaError.message || 'Unknown execution error',
+				),
 				exitCode: execaError.exitCode || -1,
 				command: crossPlatformCommand,
 				duration: Date.now() - startTime,
@@ -199,7 +214,7 @@ export class SafeShellExecutor {
 
 		for (let i = 0; i < command.length; i++) {
 			const char = command[i];
-			
+
 			if ((char === '"' || char === "'") && !inQuotes) {
 				inQuotes = true;
 				quoteChar = char;
@@ -249,12 +264,12 @@ export class SafeShellExecutor {
 		try {
 			const platform = os.platform();
 			const checkCommand = platform === 'win32' ? 'where' : 'which';
-			
+
 			await execa(checkCommand, [command], {
 				timeout: 5000,
 				stdio: 'ignore',
 			});
-			
+
 			return true;
 		} catch {
 			return false;

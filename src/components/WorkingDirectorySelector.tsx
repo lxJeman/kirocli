@@ -41,15 +41,19 @@ export default function WorkingDirectorySelector({
 				setCustomPath('');
 				setError('');
 			} else if (key.backspace || key.delete) {
-				setCustomPath(prev => prev.length > 0 ? prev.slice(0, -1) : '');
+				setCustomPath(prev => (prev.length > 0 ? prev.slice(0, -1) : ''));
 			} else if (input && input.length === 1 && input >= ' ' && input <= '~') {
 				setCustomPath(prev => prev + input);
 			}
 		} else {
 			if (key.upArrow) {
-				setSelectedIndex(prev => (prev > 0 ? prev - 1 : directories.length - 1));
+				setSelectedIndex(prev =>
+					prev > 0 ? prev - 1 : directories.length - 1,
+				);
 			} else if (key.downArrow) {
-				setSelectedIndex(prev => (prev < directories.length - 1 ? prev + 1 : 0));
+				setSelectedIndex(prev =>
+					prev < directories.length - 1 ? prev + 1 : 0,
+				);
 			} else if (key.return) {
 				handleDirectorySelection();
 			} else if (key.escape) {
@@ -64,7 +68,7 @@ export default function WorkingDirectorySelector({
 
 	const loadDirectoryOptions = async () => {
 		const options: DirectoryOption[] = [];
-		
+
 		// Current directory
 		options.push({
 			path: currentDirectory,
@@ -107,7 +111,7 @@ export default function WorkingDirectorySelector({
 
 		// Try to load subdirectories
 		try {
-			const entries = await fs.readdir(currentDirectory, { withFileTypes: true });
+			const entries = await fs.readdir(currentDirectory, {withFileTypes: true});
 			const subdirs = entries
 				.filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
 				.slice(0, 5) // Limit to 5 subdirectories
@@ -117,7 +121,7 @@ export default function WorkingDirectorySelector({
 					type: 'subdirectory' as const,
 					description: 'Subdirectory',
 				}));
-			
+
 			options.push(...subdirs);
 		} catch {
 			// Ignore errors reading directory
@@ -136,12 +140,12 @@ export default function WorkingDirectorySelector({
 
 	const handleDirectorySelection = async () => {
 		const selected = directories[selectedIndex];
-		
+
 		if (!selected) {
 			setError('No directory selected');
 			return;
 		}
-		
+
 		if (selected.type === 'custom') {
 			setIsCustomMode(true);
 			return;
@@ -151,14 +155,18 @@ export default function WorkingDirectorySelector({
 		try {
 			await fs.access(selected.path);
 			const stats = await fs.stat(selected.path);
-			
+
 			if (stats.isDirectory()) {
 				onDirectorySelected(selected.path);
 			} else {
 				setError(`"${selected.path}" is not a directory`);
 			}
 		} catch (error) {
-			setError(`Cannot access "${selected.path}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+			setError(
+				`Cannot access "${selected.path}": ${
+					error instanceof Error ? error.message : 'Unknown error'
+				}`,
+			);
 		}
 	};
 
@@ -169,12 +177,12 @@ export default function WorkingDirectorySelector({
 		}
 
 		let resolvedPath = customPath.trim();
-		
+
 		// Handle tilde expansion
 		if (resolvedPath.startsWith('~')) {
 			resolvedPath = path.join(os.homedir(), resolvedPath.slice(1));
 		}
-		
+
 		// Handle relative paths
 		if (!path.isAbsolute(resolvedPath)) {
 			resolvedPath = path.resolve(currentDirectory, resolvedPath);
@@ -183,38 +191,56 @@ export default function WorkingDirectorySelector({
 		try {
 			await fs.access(resolvedPath);
 			const stats = await fs.stat(resolvedPath);
-			
+
 			if (stats.isDirectory()) {
 				onDirectorySelected(resolvedPath);
 			} else {
 				setError(`"${resolvedPath}" is not a directory`);
 			}
 		} catch (error) {
-			setError(`Cannot access "${resolvedPath}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+			setError(
+				`Cannot access "${resolvedPath}": ${
+					error instanceof Error ? error.message : 'Unknown error'
+				}`,
+			);
 		}
 	};
 
 	const getTypeIcon = (type: string): string => {
 		switch (type) {
-			case 'current': return '📍';
-			case 'parent': return '⬆️';
-			case 'home': return '🏠';
-			case 'root': return '🌳';
-			case 'subdirectory': return '📁';
-			case 'custom': return '✏️';
-			default: return '📂';
+			case 'current':
+				return '📍';
+			case 'parent':
+				return '⬆️';
+			case 'home':
+				return '🏠';
+			case 'root':
+				return '🌳';
+			case 'subdirectory':
+				return '📁';
+			case 'custom':
+				return '✏️';
+			default:
+				return '📂';
 		}
 	};
 
 	const getTypeColor = (type: string): string => {
 		switch (type) {
-			case 'current': return 'green';
-			case 'parent': return 'blue';
-			case 'home': return 'cyan';
-			case 'root': return 'red';
-			case 'subdirectory': return 'white';
-			case 'custom': return 'yellow';
-			default: return 'white';
+			case 'current':
+				return 'green';
+			case 'parent':
+				return 'blue';
+			case 'home':
+				return 'cyan';
+			case 'root':
+				return 'red';
+			case 'subdirectory':
+				return 'white';
+			case 'custom':
+				return 'yellow';
+			default:
+				return 'white';
 		}
 	};
 
@@ -228,20 +254,28 @@ export default function WorkingDirectorySelector({
 			</Box>
 
 			{/* Current directory info */}
-			<Box borderStyle="single" borderColor="white" padding={1} marginBottom={1}>
+			<Box
+				borderStyle="single"
+				borderColor="white"
+				padding={1}
+				marginBottom={1}
+			>
 				<Box flexDirection="column">
 					<Text color="white" bold>
 						Current Directory:
 					</Text>
-					<Text color="cyan">
-						{currentDirectory}
-					</Text>
+					<Text color="cyan">{currentDirectory}</Text>
 				</Box>
 			</Box>
 
 			{/* Custom path input */}
 			{isCustomMode && (
-				<Box borderStyle="single" borderColor="yellow" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="single"
+					borderColor="yellow"
+					padding={1}
+					marginBottom={1}
+				>
 					<Box flexDirection="column">
 						<Text color="yellow" bold>
 							✏️ Enter Custom Directory Path:
@@ -249,7 +283,9 @@ export default function WorkingDirectorySelector({
 						<Box marginTop={1}>
 							<Text color="white">
 								Path: {customPath}
-								<Text backgroundColor="white" color="black"> </Text>
+								<Text backgroundColor="white" color="black">
+									{' '}
+								</Text>
 							</Text>
 						</Box>
 						<Box marginTop={1}>
@@ -263,12 +299,17 @@ export default function WorkingDirectorySelector({
 
 			{/* Directory options */}
 			{!isCustomMode && (
-				<Box borderStyle="single" borderColor="green" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="single"
+					borderColor="green"
+					padding={1}
+					marginBottom={1}
+				>
 					<Box flexDirection="column">
 						<Text color="white" bold>
 							📋 Available Directories:
 						</Text>
-						
+
 						{directories.map((dir, index) => (
 							<Box key={index} marginTop={1}>
 								<Box
@@ -278,7 +319,14 @@ export default function WorkingDirectorySelector({
 									paddingLeft={selectedIndex === index ? 1 : 2}
 								>
 									<Box width={40}>
-										<Text color={selectedIndex === index ? 'green' : getTypeColor(dir.type)} bold>
+										<Text
+											color={
+												selectedIndex === index
+													? 'green'
+													: getTypeColor(dir.type)
+											}
+											bold
+										>
 											{selectedIndex === index ? '❯ ' : '  '}
 											{getTypeIcon(dir.type)} {dir.name}
 										</Text>
@@ -302,7 +350,12 @@ export default function WorkingDirectorySelector({
 
 			{/* Error display */}
 			{error && (
-				<Box borderStyle="single" borderColor="red" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="single"
+					borderColor="red"
+					padding={1}
+					marginBottom={1}
+				>
 					<Text color="red" bold>
 						❌ Error: {error}
 					</Text>
@@ -317,30 +370,16 @@ export default function WorkingDirectorySelector({
 					</Text>
 					{isCustomMode ? (
 						<>
-							<Text color="white">
-								• Type the directory path
-							</Text>
-							<Text color="green">
-								• Press Enter to confirm
-							</Text>
-							<Text color="red">
-								• Press Escape to cancel custom input
-							</Text>
+							<Text color="white">• Type the directory path</Text>
+							<Text color="green">• Press Enter to confirm</Text>
+							<Text color="red">• Press Escape to cancel custom input</Text>
 						</>
 					) : (
 						<>
-							<Text color="white">
-								• Use ↑↓ arrow keys to navigate
-							</Text>
-							<Text color="green">
-								• Press Enter to select directory
-							</Text>
-							<Text color="yellow">
-								• Press 'c' for custom path
-							</Text>
-							<Text color="red">
-								• Press Escape to cancel
-							</Text>
+							<Text color="white">• Use ↑↓ arrow keys to navigate</Text>
+							<Text color="green">• Press Enter to select directory</Text>
+							<Text color="yellow">• Press 'c' for custom path</Text>
+							<Text color="red">• Press Escape to cancel</Text>
 						</>
 					)}
 				</Box>
@@ -350,7 +389,8 @@ export default function WorkingDirectorySelector({
 			{!isCustomMode && directories.length > 0 && (
 				<Box marginTop={1}>
 					<Text color="white" dimColor>
-						Selected: {directories[selectedIndex]?.name} • Press Enter to confirm
+						Selected: {directories[selectedIndex]?.name} • Press Enter to
+						confirm
 					</Text>
 				</Box>
 			)}

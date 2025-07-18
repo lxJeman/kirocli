@@ -38,18 +38,33 @@ interface Props {
 	verbose?: boolean;
 }
 
-export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, verbose = false}: Props) {
+export default function EnhancedChat({
+	model = 'gpt-4',
+	onExit,
+	debug = false,
+	verbose = false,
+}: Props) {
 	const [messages, setMessages] = useState<ChatMessage[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
-	const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
+	const [currentSession, setCurrentSession] = useState<ChatSession | null>(
+		null,
+	);
 	const [commandHistory, setCommandHistory] = useState<string[]>([]);
 	const [aiProvider, setAiProvider] = useState<BaseAIProvider | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [progress, setProgress] = useState(0);
 	const [sessionList, setSessionList] = useState<ChatSession[]>([]);
 	const [mode, setMode] = useState<'chat' | 'sessions' | 'help'>('chat');
-	const chatHistoryPath = path.join(os.homedir(), '.kirocli', 'chat-history.json');
-	const sessionHistoryPath = path.join(os.homedir(), '.kirocli', 'chat-sessions.json');
+	const chatHistoryPath = path.join(
+		os.homedir(),
+		'.kirocli',
+		'chat-history.json',
+	);
+	const sessionHistoryPath = path.join(
+		os.homedir(),
+		'.kirocli',
+		'chat-sessions.json',
+	);
 
 	useEffect(() => {
 		initializeChat();
@@ -99,16 +114,16 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 		try {
 			setIsLoading(true);
 			setProgress(25);
-			
+
 			const provider = await AIProvider.createDefault();
 			setAiProvider(provider);
 			setProgress(50);
-			
+
 			// Create initial session if none exists
 			if (!currentSession) {
 				createNewSession();
 			}
-			
+
 			setProgress(100);
 		} catch (err) {
 			setError(`Failed to initialize AI provider: ${(err as Error).message}`);
@@ -125,9 +140,9 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 			messages: [],
 			created: new Date(),
 			lastActive: new Date(),
-			model
+			model,
 		};
-		
+
 		setCurrentSession(newSession);
 		setMessages([]);
 		addSystemMessage('New chat session started. How can I help you today?');
@@ -139,7 +154,7 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 			setCurrentSession({
 				...currentSession,
 				messages: [],
-				lastActive: new Date()
+				lastActive: new Date(),
 			});
 			addSystemMessage('Chat history cleared. Starting fresh!');
 		}
@@ -150,9 +165,9 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 			id: `system-${Date.now()}`,
 			role: 'system',
 			content,
-			timestamp: new Date()
+			timestamp: new Date(),
 		};
-		
+
 		setMessages(prev => [...prev, systemMessage]);
 	};
 
@@ -169,10 +184,10 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 
 	const saveChatHistory = async () => {
 		try {
-			await fs.mkdir(path.dirname(chatHistoryPath), { recursive: true });
+			await fs.mkdir(path.dirname(chatHistoryPath), {recursive: true});
 			const historyData = {
 				commands: commandHistory,
-				lastUpdated: new Date().toISOString()
+				lastUpdated: new Date().toISOString(),
 			};
 			await fs.writeFile(chatHistoryPath, JSON.stringify(historyData, null, 2));
 		} catch (err) {
@@ -186,15 +201,17 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 		try {
 			const sessionsData = await fs.readFile(sessionHistoryPath, 'utf8');
 			const sessions = JSON.parse(sessionsData);
-			setSessionList(sessions.map((s: any) => ({
-				...s,
-				created: new Date(s.created),
-				lastActive: new Date(s.lastActive),
-				messages: s.messages.map((m: any) => ({
-					...m,
-					timestamp: new Date(m.timestamp)
-				}))
-			})));
+			setSessionList(
+				sessions.map((s: any) => ({
+					...s,
+					created: new Date(s.created),
+					lastActive: new Date(s.lastActive),
+					messages: s.messages.map((m: any) => ({
+						...m,
+						timestamp: new Date(m.timestamp),
+					})),
+				})),
+			);
 		} catch {
 			// File doesn't exist or is invalid, start with empty sessions
 			setSessionList([]);
@@ -203,15 +220,22 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 
 	const saveSessions = async () => {
 		try {
-			await fs.mkdir(path.dirname(sessionHistoryPath), { recursive: true });
-			const allSessions = currentSession ? 
-				[...sessionList.filter(s => s.id !== currentSession.id), {
-					...currentSession,
-					messages,
-					lastActive: new Date()
-				}] : sessionList;
-			
-			await fs.writeFile(sessionHistoryPath, JSON.stringify(allSessions, null, 2));
+			await fs.mkdir(path.dirname(sessionHistoryPath), {recursive: true});
+			const allSessions = currentSession
+				? [
+						...sessionList.filter(s => s.id !== currentSession.id),
+						{
+							...currentSession,
+							messages,
+							lastActive: new Date(),
+						},
+				  ]
+				: sessionList;
+
+			await fs.writeFile(
+				sessionHistoryPath,
+				JSON.stringify(allSessions, null, 2),
+			);
 		} catch (err) {
 			if (debug) {
 				console.error('Failed to save sessions:', err);
@@ -233,7 +257,7 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 			id: `user-${Date.now()}`,
 			role: 'user',
 			content,
-			timestamp: new Date()
+			timestamp: new Date(),
 		};
 
 		setMessages(prev => [...prev, userMessage]);
@@ -247,7 +271,7 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 			// Prepare conversation context
 			const conversationMessages = [...messages, userMessage].map(msg => ({
 				role: msg.role as 'user' | 'assistant' | 'system',
-				content: msg.content
+				content: msg.content,
 			}));
 
 			setProgress(30);
@@ -269,8 +293,8 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 				timestamp: new Date(),
 				metadata: {
 					model,
-					duration
-				}
+					duration,
+				},
 			};
 
 			setMessages(prev => [...prev, assistantMessage]);
@@ -279,19 +303,18 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 			if (verbose) {
 				console.log(`AI Response received in ${duration}ms`);
 			}
-
 		} catch (err) {
 			const errorMessage = (err as Error).message;
 			setError(errorMessage);
-			
+
 			const errorChatMessage: ChatMessage = {
 				id: `error-${Date.now()}`,
 				role: 'assistant',
 				content: `I apologize, but I encountered an error: ${errorMessage}`,
 				timestamp: new Date(),
 				metadata: {
-					error: errorMessage
-				}
+					error: errorMessage,
+				},
 			};
 
 			setMessages(prev => [...prev, errorChatMessage]);
@@ -321,11 +344,13 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 						<Text dimColor> • {message.metadata.duration}ms</Text>
 					)}
 				</Box>
-				
+
 				<Box marginLeft={2} flexDirection="column">
 					<Text>{message.content}</Text>
 					{message.metadata?.error && (
-						<Text color="red" dimColor>Error: {message.metadata.error}</Text>
+						<Text color="red" dimColor>
+							Error: {message.metadata.error}
+						</Text>
 					)}
 				</Box>
 			</Box>
@@ -334,7 +359,9 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 
 	const renderHelp = () => (
 		<Box flexDirection="column" padding={1}>
-			<Text bold color="cyan">🎮 Enhanced Chat Controls</Text>
+			<Text bold color="cyan">
+				🎮 Enhanced Chat Controls
+			</Text>
 			<Text></Text>
 			<Text bold>Navigation:</Text>
 			<Text>• Escape - Exit chat or return to chat from other modes</Text>
@@ -359,7 +386,9 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 
 	const renderSessions = () => (
 		<Box flexDirection="column" padding={1}>
-			<Text bold color="cyan">💬 Chat Sessions</Text>
+			<Text bold color="cyan">
+				💬 Chat Sessions
+			</Text>
 			<Text></Text>
 			{sessionList.length === 0 ? (
 				<Text dimColor>No saved sessions found.</Text>
@@ -370,9 +399,7 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 							<Text bold>{session.name}</Text>
 							<Text dimColor> • {session.messages.length} messages</Text>
 						</Box>
-						<Text dimColor>
-							Created: {session.created.toLocaleString()}
-						</Text>
+						<Text dimColor>Created: {session.created.toLocaleString()}</Text>
 						<Text dimColor>
 							Last active: {session.lastActive.toLocaleString()}
 						</Text>
@@ -415,7 +442,12 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 
 			{/* Error Display */}
 			{error && (
-				<Box borderStyle="single" borderColor="red" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="single"
+					borderColor="red"
+					padding={1}
+					marginBottom={1}
+				>
 					<Text color="red">❌ Error: {error}</Text>
 				</Box>
 			)}
@@ -435,18 +467,20 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 						<Text>• Enhanced error handling</Text>
 						<Text>• Progress indicators</Text>
 						<Text></Text>
-						<Text dimColor>Press Ctrl+H for help, or start chatting below!</Text>
+						<Text dimColor>
+							Press Ctrl+H for help, or start chatting below!
+						</Text>
 					</Box>
 				) : (
 					messages.map(renderMessage)
 				)}
-				
+
 				{isLoading && (
 					<Box marginTop={1}>
-						<EnhancedSpinner 
-							text="AI is thinking..." 
-							type="dots" 
-							color="cyan" 
+						<EnhancedSpinner
+							text="AI is thinking..."
+							type="dots"
+							color="cyan"
 						/>
 					</Box>
 				)}
@@ -468,7 +502,8 @@ export default function EnhancedChat({model = 'gpt-4', onExit, debug = false, ve
 			{/* Footer */}
 			<Box justifyContent="center" marginTop={1}>
 				<Text dimColor>
-					Ctrl+H: Help • Ctrl+S: Sessions • Ctrl+N: New • Ctrl+L: Clear • Escape: Exit
+					Ctrl+H: Help • Ctrl+S: Sessions • Ctrl+N: New • Ctrl+L: Clear •
+					Escape: Exit
 				</Text>
 			</Box>
 		</Box>

@@ -3,7 +3,14 @@ import {Text, Box} from 'ink';
 
 interface Props {
 	command: string;
-	language?: 'bash' | 'javascript' | 'typescript' | 'python' | 'json' | 'yaml' | 'sql';
+	language?:
+		| 'bash'
+		| 'javascript'
+		| 'typescript'
+		| 'python'
+		| 'json'
+		| 'yaml'
+		| 'sql';
 	showLineNumbers?: boolean;
 	title?: string;
 	description?: string;
@@ -16,25 +23,33 @@ export default function CommandPreview({
 	showLineNumbers = false,
 	title,
 	description,
-	safetyLevel = 'safe'
+	safetyLevel = 'safe',
 }: Props) {
 	const lines = command.split('\\n');
-	
+
 	const getSafetyColor = () => {
 		switch (safetyLevel) {
-			case 'safe': return 'green';
-			case 'caution': return 'yellow';
-			case 'dangerous': return 'red';
-			default: return 'white';
+			case 'safe':
+				return 'green';
+			case 'caution':
+				return 'yellow';
+			case 'dangerous':
+				return 'red';
+			default:
+				return 'white';
 		}
 	};
 
 	const getSafetyIcon = () => {
 		switch (safetyLevel) {
-			case 'safe': return '✅';
-			case 'caution': return '⚠️';
-			case 'dangerous': return '🚨';
-			default: return '📝';
+			case 'safe':
+				return '✅';
+			case 'caution':
+				return '⚠️';
+			case 'dangerous':
+				return '🚨';
+			default:
+				return '📝';
 		}
 	};
 
@@ -44,12 +59,40 @@ export default function CommandPreview({
 		// let currentIndex = 0;
 
 		// Keywords
-		const keywords = ['if', 'then', 'else', 'fi', 'for', 'while', 'do', 'done', 'case', 'esac', 'function'];
-		const commands = ['ls', 'cd', 'mkdir', 'rm', 'cp', 'mv', 'grep', 'find', 'sed', 'awk', 'cat', 'echo', 'git', 'npm', 'node'];
-		
+		const keywords = [
+			'if',
+			'then',
+			'else',
+			'fi',
+			'for',
+			'while',
+			'do',
+			'done',
+			'case',
+			'esac',
+			'function',
+		];
+		const commands = [
+			'ls',
+			'cd',
+			'mkdir',
+			'rm',
+			'cp',
+			'mv',
+			'grep',
+			'find',
+			'sed',
+			'awk',
+			'cat',
+			'echo',
+			'git',
+			'npm',
+			'node',
+		];
+
 		// Split by spaces and process each part
 		const words = line.split(/(\s+)/);
-		
+
 		return words.map((word, index) => {
 			if (/^\s+$/.test(word)) {
 				return <Text key={index}>{word}</Text>;
@@ -57,37 +100,68 @@ export default function CommandPreview({
 
 			// Comments
 			if (word.startsWith('#')) {
-				return <Text key={index} color="gray">{word}</Text>;
+				return (
+					<Text key={index} color="gray">
+						{word}
+					</Text>
+				);
 			}
 
 			// Strings
-			if ((word.startsWith('"') && word.endsWith('"')) || (word.startsWith("'") && word.endsWith("'"))) {
-				return <Text key={index} color="green">{word}</Text>;
+			if (
+				(word.startsWith('"') && word.endsWith('"')) ||
+				(word.startsWith("'") && word.endsWith("'"))
+			) {
+				return (
+					<Text key={index} color="green">
+						{word}
+					</Text>
+				);
 			}
 
 			// Commands
 			if (commands.includes(word.toLowerCase())) {
-				return <Text key={index} color="cyan" bold>{word}</Text>;
+				return (
+					<Text key={index} color="cyan" bold>
+						{word}
+					</Text>
+				);
 			}
 
 			// Keywords
 			if (keywords.includes(word.toLowerCase())) {
-				return <Text key={index} color="magenta" bold>{word}</Text>;
+				return (
+					<Text key={index} color="magenta" bold>
+						{word}
+					</Text>
+				);
 			}
 
 			// Flags (starting with -)
 			if (word.startsWith('-')) {
-				return <Text key={index} color="yellow">{word}</Text>;
+				return (
+					<Text key={index} color="yellow">
+						{word}
+					</Text>
+				);
 			}
 
 			// Variables (starting with $)
 			if (word.startsWith('$')) {
-				return <Text key={index} color="blue">{word}</Text>;
+				return (
+					<Text key={index} color="blue">
+						{word}
+					</Text>
+				);
 			}
 
 			// Pipes and redirects
 			if (['|', '>', '>>', '<', '&&', '||'].includes(word)) {
-				return <Text key={index} color="red" bold>{word}</Text>;
+				return (
+					<Text key={index} color="red" bold>
+						{word}
+					</Text>
+				);
 			}
 
 			// Default
@@ -121,17 +195,15 @@ export default function CommandPreview({
 				<Box flexDirection="column" marginBottom={1}>
 					{title && (
 						<Box>
-							<Text bold color="white">{title}</Text>
+							<Text bold color="white">
+								{title}
+							</Text>
 							<Box marginLeft={1}>
-								<Text color={getSafetyColor()}>
-									{getSafetyIcon()}
-								</Text>
+								<Text color={getSafetyColor()}>{getSafetyIcon()}</Text>
 							</Box>
 						</Box>
 					)}
-					{description && (
-						<Text color="gray">{description}</Text>
-					)}
+					{description && <Text color="gray">{description}</Text>}
 					{safetyLevel !== 'safe' && (
 						<Box>
 							<Text color={getSafetyColor()} bold>
@@ -143,9 +215,9 @@ export default function CommandPreview({
 			)}
 
 			{/* Code Block */}
-			<Box 
-				borderStyle="single" 
-				borderColor={getSafetyColor()} 
+			<Box
+				borderStyle="single"
+				borderColor={getSafetyColor()}
 				padding={1}
 				flexDirection="column"
 			>
@@ -161,7 +233,7 @@ export default function CommandPreview({
 					<Box key={index}>
 						{showLineNumbers && (
 							<Text color="gray" dimColor>
-								{String(index + 1).padStart(3, ' ')} │ 
+								{String(index + 1).padStart(3, ' ')} │
 							</Text>
 						)}
 						<Box marginLeft={showLineNumbers ? 1 : 0}>

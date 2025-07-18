@@ -1,9 +1,23 @@
 import React, {useState, useEffect} from 'react';
 import {Text, Box, useInput} from 'ink';
-import {HookManager, HookConfig, HookExecutionResult, HookStats, HookTemplate} from '../hooks/index.js';
+import {
+	HookManager,
+	HookConfig,
+	HookExecutionResult,
+	HookStats,
+	HookTemplate,
+} from '../hooks/index.js';
 
 type Props = {
-	action: 'list' | 'run' | 'create' | 'stats' | 'templates' | 'enable' | 'disable' | 'delete';
+	action:
+		| 'list'
+		| 'run'
+		| 'create'
+		| 'stats'
+		| 'templates'
+		| 'enable'
+		| 'disable'
+		| 'delete';
 	hookName?: string;
 	template?: string;
 	category?: string;
@@ -12,11 +26,18 @@ type Props = {
 
 type HookState = 'loading' | 'success' | 'error' | 'running' | 'ready';
 
-export default function HookCommand({action, hookName, template, category, onExit}: Props) {
+export default function HookCommand({
+	action,
+	hookName,
+	template,
+	category,
+	onExit,
+}: Props) {
 	const [state, setState] = useState<HookState>('loading');
 	const [message, setMessage] = useState('');
 	const [hooks, setHooks] = useState<HookConfig[]>([]);
-	const [executionResult, setExecutionResult] = useState<HookExecutionResult | null>(null);
+	const [executionResult, setExecutionResult] =
+		useState<HookExecutionResult | null>(null);
 	const [stats, setStats] = useState<HookStats | null>(null);
 	const [templates, setTemplates] = useState<HookTemplate[]>([]);
 	const [error, setError] = useState<string | null>(null);
@@ -87,7 +108,9 @@ export default function HookCommand({action, hookName, template, category, onExi
 		if (hookList.length === 0) {
 			setMessage('📋 No hooks found');
 		} else {
-			setMessage(`📋 Found ${hookList.length} hook${hookList.length === 1 ? '' : 's'}`);
+			setMessage(
+				`📋 Found ${hookList.length} hook${hookList.length === 1 ? '' : 's'}`,
+			);
 		}
 
 		setState('success');
@@ -146,7 +169,11 @@ export default function HookCommand({action, hookName, template, category, onExi
 		const templateList = hookManager.getHookTemplates();
 		setTemplates(templateList);
 
-		setMessage(`📋 Found ${templateList.length} hook template${templateList.length === 1 ? '' : 's'}`);
+		setMessage(
+			`📋 Found ${templateList.length} hook template${
+				templateList.length === 1 ? '' : 's'
+			}`,
+		);
 		setState('success');
 	};
 
@@ -160,7 +187,9 @@ export default function HookCommand({action, hookName, template, category, onExi
 
 		await hookManager.toggleHook(hookName, enabled);
 
-		setMessage(`✅ Hook '${hookName}' ${enabled ? 'enabled' : 'disabled'} successfully`);
+		setMessage(
+			`✅ Hook '${hookName}' ${enabled ? 'enabled' : 'disabled'} successfully`,
+		);
 		setState('success');
 	};
 
@@ -221,7 +250,13 @@ export default function HookCommand({action, hookName, template, category, onExi
 		if (!executionResult) return null;
 
 		return (
-			<Box flexDirection="column" marginBottom={1} borderStyle="single" borderColor={executionResult.success ? 'green' : 'red'} padding={1}>
+			<Box
+				flexDirection="column"
+				marginBottom={1}
+				borderStyle="single"
+				borderColor={executionResult.success ? 'green' : 'red'}
+				padding={1}
+			>
 				<Text bold color={executionResult.success ? 'green' : 'red'}>
 					🔧 Execution Result:
 				</Text>
@@ -229,10 +264,12 @@ export default function HookCommand({action, hookName, template, category, onExi
 				<Text>Duration: {executionResult.duration}ms</Text>
 				<Text>Success: {executionResult.success ? '✅' : '❌'}</Text>
 				<Text>Actions executed: {executionResult.actions.length}</Text>
-				
+
 				{executionResult.error && (
 					<Box marginTop={1}>
-						<Text color="red" bold>Error:</Text>
+						<Text color="red" bold>
+							Error:
+						</Text>
 						<Text color="red">{executionResult.error}</Text>
 					</Box>
 				)}
@@ -268,21 +305,35 @@ export default function HookCommand({action, hookName, template, category, onExi
 		if (!stats) return null;
 
 		return (
-			<Box flexDirection="column" marginBottom={1} borderStyle="single" borderColor="blue" padding={1}>
-				<Text bold color="blue">📊 Hook Statistics:</Text>
+			<Box
+				flexDirection="column"
+				marginBottom={1}
+				borderStyle="single"
+				borderColor="blue"
+				padding={1}
+			>
+				<Text bold color="blue">
+					📊 Hook Statistics:
+				</Text>
 				<Text>Total hooks: {stats.total}</Text>
 				<Text>Enabled: {stats.enabled}</Text>
 				<Text>Disabled: {stats.disabled}</Text>
 				<Text>Total executions: {stats.totalExecutions}</Text>
 				<Text>Success rate: {stats.successRate.toFixed(1)}%</Text>
-				{stats.lastExecuted && <Text>Last executed: {new Date(stats.lastExecuted).toLocaleString()}</Text>}
-				
+				{stats.lastExecuted && (
+					<Text>
+						Last executed: {new Date(stats.lastExecuted).toLocaleString()}
+					</Text>
+				)}
+
 				{Object.keys(stats.byCategory).length > 0 && (
 					<Box flexDirection="column" marginTop={1}>
 						<Text bold>By Category:</Text>
 						{Object.entries(stats.byCategory).map(([category, count]) => (
 							<Box key={category} marginLeft={2}>
-								<Text>• {category}: {count}</Text>
+								<Text>
+									• {category}: {count}
+								</Text>
 							</Box>
 						))}
 					</Box>
@@ -298,9 +349,16 @@ export default function HookCommand({action, hookName, template, category, onExi
 			<Box flexDirection="column" marginBottom={1}>
 				<Text bold>📋 Available Templates:</Text>
 				{templates.map((template, index) => (
-					<Box key={index} flexDirection="column" marginLeft={2} marginBottom={1}>
+					<Box
+						key={index}
+						flexDirection="column"
+						marginLeft={2}
+						marginBottom={1}
+					>
 						<Box>
-							<Text bold color="cyan">{template.name}</Text>
+							<Text bold color="cyan">
+								{template.name}
+							</Text>
 							<Box marginLeft={1}>
 								<Text dimColor>({template.id})</Text>
 							</Box>
@@ -319,21 +377,31 @@ export default function HookCommand({action, hookName, template, category, onExi
 
 	const getStatusColor = () => {
 		switch (state) {
-			case 'success': return 'green';
-			case 'error': return 'red';
-			case 'running': return 'yellow';
-			case 'loading': return 'yellow';
-			default: return 'white';
+			case 'success':
+				return 'green';
+			case 'error':
+				return 'red';
+			case 'running':
+				return 'yellow';
+			case 'loading':
+				return 'yellow';
+			default:
+				return 'white';
 		}
 	};
 
 	const getStatusIcon = () => {
 		switch (state) {
-			case 'success': return '✅';
-			case 'error': return '❌';
-			case 'running': return '🔄';
-			case 'loading': return '🔄';
-			default: return '🔗';
+			case 'success':
+				return '✅';
+			case 'error':
+				return '❌';
+			case 'running':
+				return '🔄';
+			case 'loading':
+				return '🔄';
+			default:
+				return '🔗';
 		}
 	};
 
@@ -355,7 +423,12 @@ export default function HookCommand({action, hookName, template, category, onExi
 			</Box>
 
 			{/* Status */}
-			<Box borderStyle="single" borderColor={getStatusColor()} padding={1} marginBottom={1}>
+			<Box
+				borderStyle="single"
+				borderColor={getStatusColor()}
+				padding={1}
+				marginBottom={1}
+			>
 				<Text color={getStatusColor()} bold>
 					{getStatusIcon()} {message}
 				</Text>
@@ -363,8 +436,15 @@ export default function HookCommand({action, hookName, template, category, onExi
 
 			{/* Error Display */}
 			{error && (
-				<Box borderStyle="single" borderColor="red" padding={1} marginBottom={1}>
-					<Text color="red" bold>❌ Error: {error}</Text>
+				<Box
+					borderStyle="single"
+					borderColor="red"
+					padding={1}
+					marginBottom={1}
+				>
+					<Text color="red" bold>
+						❌ Error: {error}
+					</Text>
 				</Box>
 			)}
 
@@ -376,10 +456,19 @@ export default function HookCommand({action, hookName, template, category, onExi
 
 			{/* Usage Examples */}
 			{action === 'list' && hooks.length === 0 && (
-				<Box borderStyle="single" borderColor="yellow" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="single"
+					borderColor="yellow"
+					padding={1}
+					marginBottom={1}
+				>
 					<Box flexDirection="column">
-						<Text color="yellow" bold>💡 Getting Started with Hooks:</Text>
-						<Text>• Create a hook: kirocli hook create --template git-auto-commit</Text>
+						<Text color="yellow" bold>
+							💡 Getting Started with Hooks:
+						</Text>
+						<Text>
+							• Create a hook: kirocli hook create --template git-auto-commit
+						</Text>
 						<Text>• List templates: kirocli hook templates</Text>
 						<Text>• View statistics: kirocli hook stats</Text>
 						<Text>• Run a hook: kirocli hook run &lt;hook-name&gt;</Text>
@@ -390,11 +479,17 @@ export default function HookCommand({action, hookName, template, category, onExi
 			{/* Help */}
 			<Box borderStyle="single" borderColor="white" padding={1}>
 				<Box flexDirection="column">
-					<Text color="white" bold>🎮 Controls:</Text>
-					<Text color="white">• Press Escape or Ctrl+M to return to main menu</Text>
+					<Text color="white" bold>
+						🎮 Controls:
+					</Text>
+					<Text color="white">
+						• Press Escape or Ctrl+M to return to main menu
+					</Text>
 					<Text color="white">• Press Ctrl+C to exit KiroCLI</Text>
 					{action === 'run' && executionResult?.success && (
-						<Text color="green">• Hook executed successfully! Check the results above.</Text>
+						<Text color="green">
+							• Hook executed successfully! Check the results above.
+						</Text>
 					)}
 				</Box>
 			</Box>

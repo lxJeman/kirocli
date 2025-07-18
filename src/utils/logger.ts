@@ -28,11 +28,17 @@ export class Logger {
 
 	private constructor() {
 		this.logFilePath = path.join(os.homedir(), '.kirocli', 'debug.log');
-		
+
 		// Check environment variables
-		this.debugMode = process.env['KIROCLI_DEBUG'] === 'true' || process.argv.includes('--debug');
-		this.verboseMode = process.env['KIROCLI_VERBOSE'] === 'true' || process.argv.includes('--verbose');
-		this.logToFile = process.env['KIROCLI_LOG_FILE'] === 'true' || process.argv.includes('--log-file');
+		this.debugMode =
+			process.env['KIROCLI_DEBUG'] === 'true' ||
+			process.argv.includes('--debug');
+		this.verboseMode =
+			process.env['KIROCLI_VERBOSE'] === 'true' ||
+			process.argv.includes('--verbose');
+		this.logToFile =
+			process.env['KIROCLI_LOG_FILE'] === 'true' ||
+			process.argv.includes('--log-file');
 	}
 
 	static getInstance(): Logger {
@@ -47,7 +53,11 @@ export class Logger {
 	 */
 	setDebugMode(enabled: boolean): void {
 		this.debugMode = enabled;
-		this.log('info', 'Logger', `Debug mode ${enabled ? 'enabled' : 'disabled'}`);
+		this.log(
+			'info',
+			'Logger',
+			`Debug mode ${enabled ? 'enabled' : 'disabled'}`,
+		);
 	}
 
 	/**
@@ -55,7 +65,11 @@ export class Logger {
 	 */
 	setVerboseMode(enabled: boolean): void {
 		this.verboseMode = enabled;
-		this.log('info', 'Logger', `Verbose mode ${enabled ? 'enabled' : 'disabled'}`);
+		this.log(
+			'info',
+			'Logger',
+			`Verbose mode ${enabled ? 'enabled' : 'disabled'}`,
+		);
 	}
 
 	/**
@@ -63,7 +77,11 @@ export class Logger {
 	 */
 	setFileLogging(enabled: boolean): void {
 		this.logToFile = enabled;
-		this.log('info', 'Logger', `File logging ${enabled ? 'enabled' : 'disabled'}`);
+		this.log(
+			'info',
+			'Logger',
+			`File logging ${enabled ? 'enabled' : 'disabled'}`,
+		);
 	}
 
 	/**
@@ -81,26 +99,32 @@ export class Logger {
 			verboseMode: this.verboseMode,
 			logToFile: this.logToFile,
 			logFilePath: this.logFilePath,
-			totalEntries: this.logEntries.length
+			totalEntries: this.logEntries.length,
 		};
 	}
 
 	/**
 	 * Main logging method
 	 */
-	log(level: LogLevel, category: string, message: string, data?: any, context?: Record<string, any>): void {
+	log(
+		level: LogLevel,
+		category: string,
+		message: string,
+		data?: any,
+		context?: Record<string, any>,
+	): void {
 		const entry: LogEntry = {
 			timestamp: new Date(),
 			level,
 			category,
 			message,
 			data,
-			context
+			context,
 		};
 
 		// Add to memory log
 		this.logEntries.push(entry);
-		
+
 		// Trim log entries if too many
 		if (this.logEntries.length > this.maxLogEntries) {
 			this.logEntries = this.logEntries.slice(-this.maxLogEntries);
@@ -120,35 +144,60 @@ export class Logger {
 	/**
 	 * Debug level logging
 	 */
-	debug(category: string, message: string, data?: any, context?: Record<string, any>): void {
+	debug(
+		category: string,
+		message: string,
+		data?: any,
+		context?: Record<string, any>,
+	): void {
 		this.log('debug', category, message, data, context);
 	}
 
 	/**
 	 * Info level logging
 	 */
-	info(category: string, message: string, data?: any, context?: Record<string, any>): void {
+	info(
+		category: string,
+		message: string,
+		data?: any,
+		context?: Record<string, any>,
+	): void {
 		this.log('info', category, message, data, context);
 	}
 
 	/**
 	 * Warning level logging
 	 */
-	warn(category: string, message: string, data?: any, context?: Record<string, any>): void {
+	warn(
+		category: string,
+		message: string,
+		data?: any,
+		context?: Record<string, any>,
+	): void {
 		this.log('warn', category, message, data, context);
 	}
 
 	/**
 	 * Error level logging
 	 */
-	error(category: string, message: string, data?: any, context?: Record<string, any>): void {
+	error(
+		category: string,
+		message: string,
+		data?: any,
+		context?: Record<string, any>,
+	): void {
 		this.log('error', category, message, data, context);
 	}
 
 	/**
 	 * Verbose level logging
 	 */
-	verbose(category: string, message: string, data?: any, context?: Record<string, any>): void {
+	verbose(
+		category: string,
+		message: string,
+		data?: any,
+		context?: Record<string, any>,
+	): void {
 		this.log('verbose', category, message, data, context);
 	}
 
@@ -157,15 +206,15 @@ export class Logger {
 	 */
 	private outputToConsole(entry: LogEntry): void {
 		const shouldOutput = this.shouldOutputToConsole(entry.level);
-		
+
 		if (!shouldOutput) return;
 
 		const timestamp = entry.timestamp.toISOString();
 		const levelEmoji = this.getLevelEmoji(entry.level);
-		
+
 		// Format message
 		let output = `${levelEmoji} [${timestamp}] ${entry.category}: ${entry.message}`;
-		
+
 		// Add data if present and in debug/verbose mode
 		if (entry.data && (this.debugMode || this.verboseMode)) {
 			output += `\\n  Data: ${JSON.stringify(entry.data, null, 2)}`;
@@ -198,16 +247,17 @@ export class Logger {
 	private async outputToFile(entry: LogEntry): Promise<void> {
 		try {
 			// Ensure log directory exists
-			await fs.mkdir(path.dirname(this.logFilePath), { recursive: true });
+			await fs.mkdir(path.dirname(this.logFilePath), {recursive: true});
 
-			const logLine = JSON.stringify({
-				timestamp: entry.timestamp.toISOString(),
-				level: entry.level,
-				category: entry.category,
-				message: entry.message,
-				data: entry.data,
-				context: entry.context
-			}) + '\\n';
+			const logLine =
+				JSON.stringify({
+					timestamp: entry.timestamp.toISOString(),
+					level: entry.level,
+					category: entry.category,
+					message: entry.message,
+					data: entry.data,
+					context: entry.context,
+				}) + '\\n';
 
 			await fs.appendFile(this.logFilePath, logLine);
 		} catch (error) {
@@ -247,7 +297,7 @@ export class Logger {
 			info: 'ℹ️',
 			warn: '⚠️',
 			error: '❌',
-			verbose: '📝'
+			verbose: '📝',
 		};
 		return emojis[level] || '📄';
 	}
@@ -271,7 +321,7 @@ export class Logger {
 	 */
 	getRecentLogs(count = 50, level?: LogLevel): LogEntry[] {
 		let logs = this.logEntries.slice(-count);
-		
+
 		if (level) {
 			logs = logs.filter(entry => entry.level === level);
 		}
@@ -291,15 +341,17 @@ export class Logger {
 	 * Export logs to file
 	 */
 	async exportLogs(filePath?: string): Promise<string> {
-		const exportPath = filePath || path.join(os.homedir(), '.kirocli', `logs-export-${Date.now()}.json`);
-		
+		const exportPath =
+			filePath ||
+			path.join(os.homedir(), '.kirocli', `logs-export-${Date.now()}.json`);
+
 		const exportData = {
 			exportedAt: new Date().toISOString(),
 			config: this.getConfig(),
-			entries: this.logEntries
+			entries: this.logEntries,
 		};
 
-		await fs.mkdir(path.dirname(exportPath), { recursive: true });
+		await fs.mkdir(path.dirname(exportPath), {recursive: true});
 		await fs.writeFile(exportPath, JSON.stringify(exportData, null, 2));
 
 		this.log('info', 'Logger', `Logs exported to ${exportPath}`);
@@ -321,7 +373,7 @@ export class Logger {
 			info: 0,
 			warn: 0,
 			error: 0,
-			verbose: 0
+			verbose: 0,
 		};
 
 		const byCategory: Record<string, number> = {};
@@ -335,8 +387,12 @@ export class Logger {
 			totalEntries: this.logEntries.length,
 			byLevel,
 			byCategory,
-			oldestEntry: this.logEntries.length > 0 ? this.logEntries[0]?.timestamp : undefined,
-			newestEntry: this.logEntries.length > 0 ? this.logEntries[this.logEntries.length - 1]?.timestamp : undefined
+			oldestEntry:
+				this.logEntries.length > 0 ? this.logEntries[0]?.timestamp : undefined,
+			newestEntry:
+				this.logEntries.length > 0
+					? this.logEntries[this.logEntries.length - 1]?.timestamp
+					: undefined,
 		};
 	}
 }

@@ -13,7 +13,15 @@ export interface ErrorSuggestion {
 
 export interface EnhancedError {
 	originalError: Error;
-	category: 'network' | 'permission' | 'syntax' | 'missing_dependency' | 'configuration' | 'ai_provider' | 'file_system' | 'unknown';
+	category:
+		| 'network'
+		| 'permission'
+		| 'syntax'
+		| 'missing_dependency'
+		| 'configuration'
+		| 'ai_provider'
+		| 'file_system'
+		| 'unknown';
 	severity: 'critical' | 'error' | 'warning' | 'info';
 	userMessage: string;
 	technicalDetails: string;
@@ -35,28 +43,29 @@ export class ErrorHandler {
 			pattern: /ENOTFOUND|ECONNREFUSED|ETIMEDOUT|fetch failed/i,
 			category: 'network',
 			severity: 'error',
-			messageGenerator: () => 'Network connection failed. Please check your internet connection.',
+			messageGenerator: () =>
+				'Network connection failed. Please check your internet connection.',
 			suggestionsGenerator: () => [
 				{
 					type: 'fix',
 					title: 'Check Internet Connection',
 					description: 'Verify that you have an active internet connection',
-					priority: 'high'
+					priority: 'high',
 				},
 				{
 					type: 'command',
 					title: 'Test Network Connectivity',
 					description: 'Run a network test to diagnose connection issues',
 					action: 'ping google.com',
-					priority: 'medium'
+					priority: 'medium',
 				},
 				{
 					type: 'alternative',
 					title: 'Try Different Network',
 					description: 'Switch to a different network or use mobile hotspot',
-					priority: 'low'
-				}
-			]
+					priority: 'low',
+				},
+			],
 		},
 
 		// Permission errors
@@ -64,58 +73,62 @@ export class ErrorHandler {
 			pattern: /EACCES|EPERM|permission denied/i,
 			category: 'permission',
 			severity: 'error',
-			messageGenerator: () => 'Permission denied. You may need elevated privileges to perform this action.',
+			messageGenerator: () =>
+				'Permission denied. You may need elevated privileges to perform this action.',
 			suggestionsGenerator: () => [
 				{
 					type: 'command',
 					title: 'Run with Sudo',
 					description: 'Try running the command with administrator privileges',
 					action: 'sudo [your-command]',
-					priority: 'high'
+					priority: 'high',
 				},
 				{
 					type: 'fix',
 					title: 'Check File Permissions',
-					description: 'Verify that you have the necessary permissions for the target files/directories',
-					priority: 'medium'
+					description:
+						'Verify that you have the necessary permissions for the target files/directories',
+					priority: 'medium',
 				},
 				{
 					type: 'alternative',
 					title: 'Change Ownership',
 					description: 'Change the ownership of the files to your user account',
 					action: 'sudo chown -R $USER:$USER [directory]',
-					priority: 'medium'
-				}
-			]
+					priority: 'medium',
+				},
+			],
 		},
 
 		// Missing dependency errors
 		{
-			pattern: /command not found|not recognized as an internal or external command/i,
+			pattern:
+				/command not found|not recognized as an internal or external command/i,
 			category: 'missing_dependency',
 			severity: 'error',
-			messageGenerator: (_match) => `Command not found. The required tool may not be installed.`,
-			suggestionsGenerator: (_match) => [
+			messageGenerator: _match =>
+				`Command not found. The required tool may not be installed.`,
+			suggestionsGenerator: _match => [
 				{
 					type: 'installation',
 					title: 'Install Missing Tool',
 					description: 'Install the required command-line tool',
-					priority: 'high'
+					priority: 'high',
 				},
 				{
 					type: 'command',
 					title: 'Check PATH',
 					description: 'Verify that the tool is in your system PATH',
 					action: 'echo $PATH',
-					priority: 'medium'
+					priority: 'medium',
 				},
 				{
 					type: 'documentation',
 					title: 'Installation Guide',
 					description: 'Look up installation instructions for the missing tool',
-					priority: 'low'
-				}
-			]
+					priority: 'low',
+				},
+			],
 		},
 
 		// API key errors
@@ -123,29 +136,30 @@ export class ErrorHandler {
 			pattern: /invalid api key|unauthorized|authentication failed/i,
 			category: 'configuration',
 			severity: 'error',
-			messageGenerator: () => 'API authentication failed. Please check your API key configuration.',
+			messageGenerator: () =>
+				'API authentication failed. Please check your API key configuration.',
 			suggestionsGenerator: () => [
 				{
 					type: 'command',
 					title: 'Set API Key',
 					description: 'Configure your API key using the config command',
 					action: 'kirocli config set-key [provider] [your-api-key]',
-					priority: 'high'
+					priority: 'high',
 				},
 				{
 					type: 'command',
 					title: 'Test Configuration',
 					description: 'Test your API key configuration',
 					action: 'kirocli config test',
-					priority: 'high'
+					priority: 'high',
 				},
 				{
 					type: 'documentation',
 					title: 'API Key Setup Guide',
 					description: 'Follow the setup guide to configure API keys properly',
-					priority: 'medium'
-				}
-			]
+					priority: 'medium',
+				},
+			],
 		},
 
 		// File system errors
@@ -160,22 +174,22 @@ export class ErrorHandler {
 					title: 'Check File Path',
 					description: 'Verify that the file or directory exists',
 					action: 'ls -la [path]',
-					priority: 'high'
+					priority: 'high',
 				},
 				{
 					type: 'fix',
 					title: 'Create Missing Directory',
 					description: 'Create the required directory structure',
 					action: 'mkdir -p [directory-path]',
-					priority: 'medium'
+					priority: 'medium',
 				},
 				{
 					type: 'alternative',
 					title: 'Use Absolute Path',
 					description: 'Try using the absolute path instead of relative path',
-					priority: 'low'
-				}
-			]
+					priority: 'low',
+				},
+			],
 		},
 
 		// Syntax errors
@@ -183,40 +197,44 @@ export class ErrorHandler {
 			pattern: /syntax error|unexpected token|invalid syntax/i,
 			category: 'syntax',
 			severity: 'error',
-			messageGenerator: () => 'Syntax error detected in the command or configuration.',
+			messageGenerator: () =>
+				'Syntax error detected in the command or configuration.',
 			suggestionsGenerator: () => [
 				{
 					type: 'fix',
 					title: 'Check Syntax',
 					description: 'Review the command syntax and fix any errors',
-					priority: 'high'
+					priority: 'high',
 				},
 				{
 					type: 'documentation',
 					title: 'Command Reference',
 					description: 'Consult the command documentation for correct syntax',
-					priority: 'medium'
+					priority: 'medium',
 				},
 				{
 					type: 'alternative',
 					title: 'Use Help Command',
 					description: 'Get help for the specific command',
 					action: '[command] --help',
-					priority: 'medium'
-				}
-			]
-		}
+					priority: 'medium',
+				},
+			],
+		},
 	];
 
 	/**
 	 * Enhance an error with helpful information and suggestions
 	 */
-	static enhanceError(error: Error, context?: Record<string, any>): EnhancedError {
+	static enhanceError(
+		error: Error,
+		context?: Record<string, any>,
+	): EnhancedError {
 		const errorMessage = error.message.toLowerCase();
-		
+
 		// Find matching pattern
-		const matchedPattern = this.errorPatterns.find(pattern => 
-			pattern.pattern.test(errorMessage)
+		const matchedPattern = this.errorPatterns.find(pattern =>
+			pattern.pattern.test(errorMessage),
 		);
 
 		if (matchedPattern) {
@@ -225,11 +243,15 @@ export class ErrorHandler {
 				originalError: error,
 				category: matchedPattern.category,
 				severity: matchedPattern.severity,
-				userMessage: matchedPattern.messageGenerator(match || [''] as RegExpMatchArray),
+				userMessage: matchedPattern.messageGenerator(
+					match || ([''] as RegExpMatchArray),
+				),
 				technicalDetails: error.message,
-				suggestions: matchedPattern.suggestionsGenerator(match || [''] as RegExpMatchArray),
+				suggestions: matchedPattern.suggestionsGenerator(
+					match || ([''] as RegExpMatchArray),
+				),
 				context,
-				timestamp: new Date()
+				timestamp: new Date(),
 			};
 		}
 
@@ -245,17 +267,17 @@ export class ErrorHandler {
 					type: 'documentation',
 					title: 'Check Documentation',
 					description: 'Review the documentation for troubleshooting tips',
-					priority: 'medium'
+					priority: 'medium',
 				},
 				{
 					type: 'alternative',
 					title: 'Try Again',
 					description: 'Sometimes temporary issues resolve themselves',
-					priority: 'low'
-				}
+					priority: 'low',
+				},
 			],
 			context,
-			timestamp: new Date()
+			timestamp: new Date(),
 		};
 	}
 
@@ -265,7 +287,7 @@ export class ErrorHandler {
 	static generateContextualSuggestions(
 		operation: string,
 		_error: Error,
-		_context?: Record<string, any>
+		_context?: Record<string, any>,
 	): ErrorSuggestion[] {
 		const suggestions: ErrorSuggestion[] = [];
 
@@ -278,15 +300,15 @@ export class ErrorHandler {
 						title: 'Check AI Configuration',
 						description: 'Verify your AI provider settings',
 						action: 'kirocli config show',
-						priority: 'high'
+						priority: 'high',
 					},
 					{
 						type: 'command',
 						title: 'Test AI Connection',
 						description: 'Test your AI provider connection',
 						action: 'kirocli config test',
-						priority: 'high'
-					}
+						priority: 'high',
+					},
 				);
 				break;
 
@@ -297,14 +319,15 @@ export class ErrorHandler {
 						title: 'Validate Spec File',
 						description: 'Check your spec file for syntax errors',
 						action: 'kirocli spec validate',
-						priority: 'high'
+						priority: 'high',
 					},
 					{
 						type: 'fix',
 						title: 'Check Spec Format',
-						description: 'Ensure your spec file follows the correct YAML format',
-						priority: 'medium'
-					}
+						description:
+							'Ensure your spec file follows the correct YAML format',
+						priority: 'medium',
+					},
 				);
 				break;
 
@@ -315,15 +338,15 @@ export class ErrorHandler {
 						title: 'List Available Hooks',
 						description: 'Check what hooks are available',
 						action: 'kirocli hook list',
-						priority: 'high'
+						priority: 'high',
 					},
 					{
 						type: 'command',
 						title: 'Check Hook Status',
 						description: 'Verify hook configuration and status',
 						action: 'kirocli hook stats',
-						priority: 'medium'
-					}
+						priority: 'medium',
+					},
 				);
 				break;
 		}
@@ -345,18 +368,20 @@ export class ErrorHandler {
 			critical: '🚨',
 			error: '❌',
 			warning: '⚠️',
-			info: 'ℹ️'
+			info: 'ℹ️',
 		};
 
 		return {
-			title: `${severityEmoji[enhancedError.severity]} ${enhancedError.category.replace('_', ' ').toUpperCase()} Error`,
+			title: `${severityEmoji[enhancedError.severity]} ${enhancedError.category
+				.replace('_', ' ')
+				.toUpperCase()} Error`,
 			message: enhancedError.userMessage,
 			details: enhancedError.technicalDetails,
 			suggestions: enhancedError.suggestions.sort((a, b) => {
-				const priorityOrder = { high: 3, medium: 2, low: 1 };
+				const priorityOrder = {high: 3, medium: 2, low: 1};
 				return priorityOrder[b.priority] - priorityOrder[a.priority];
 			}),
-			severity: enhancedError.severity
+			severity: enhancedError.severity,
 		};
 	}
 
@@ -372,7 +397,7 @@ export class ErrorHandler {
 				technicalDetails: enhancedError.technicalDetails,
 				suggestions: enhancedError.suggestions.length,
 				context: enhancedError.context,
-				timestamp: enhancedError.timestamp
+				timestamp: enhancedError.timestamp,
 			});
 		}
 	}

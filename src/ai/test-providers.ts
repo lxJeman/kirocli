@@ -12,7 +12,7 @@ async function testEnvironmentConfiguration() {
 	console.log('🧪 Testing AI Providers with Environment Configuration\n');
 
 	const configManager = ConfigManager.getInstance();
-	
+
 	try {
 		// Test configuration loading
 		console.log('📋 Loading Configuration...');
@@ -25,7 +25,11 @@ async function testEnvironmentConfiguration() {
 		console.log('🔑 Validating API Keys...');
 		const apiKeyStatus = await configManager.validateApiKeys();
 		for (const [provider, hasKey] of Object.entries(apiKeyStatus)) {
-			console.log(`  ${hasKey ? '✅' : '❌'} ${provider}: ${hasKey ? 'Configured' : 'Missing API key'}`);
+			console.log(
+				`  ${hasKey ? '✅' : '❌'} ${provider}: ${
+					hasKey ? 'Configured' : 'Missing API key'
+				}`,
+			);
 		}
 		console.log();
 
@@ -33,9 +37,15 @@ async function testEnvironmentConfiguration() {
 		console.log('🏭 Testing Provider Factory with Configuration...');
 		try {
 			const defaultProvider = await AIProviderFactory.createDefault();
-			console.log(`  ✅ Default provider created: ${defaultProvider.providerName} (${defaultProvider.modelName})`);
+			console.log(
+				`  ✅ Default provider created: ${defaultProvider.providerName} (${defaultProvider.modelName})`,
+			);
 		} catch (error) {
-			console.log(`  ❌ Default provider creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			console.log(
+				`  ❌ Default provider creation failed: ${
+					error instanceof Error ? error.message : 'Unknown error'
+				}`,
+			);
 		}
 
 		// Test specific model creation
@@ -45,7 +55,11 @@ async function testEnvironmentConfiguration() {
 				const provider = await AIProviderFactory.createFromModel(model);
 				console.log(`  ✅ ${model} provider created: ${provider.providerName}`);
 			} catch (error) {
-				console.log(`  ❌ ${model} provider creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+				console.log(
+					`  ❌ ${model} provider creation failed: ${
+						error instanceof Error ? error.message : 'Unknown error'
+					}`,
+				);
 			}
 		}
 		console.log();
@@ -57,7 +71,7 @@ async function testEnvironmentConfiguration() {
 			'Generate a React login component',
 			'Explain this JavaScript function',
 			'I have an error in my code',
-			'What is the weather today?'
+			'What is the weather today?',
 		];
 
 		for (const input of testInputs) {
@@ -65,10 +79,19 @@ async function testEnvironmentConfiguration() {
 			const template = PromptTemplates.getTemplateForIntent(intent);
 			console.log(`  Input: "${input}"`);
 			console.log(`  Intent: ${intent}`);
-			console.log(`  Template: ${template === PromptTemplates.COMMAND_GENERATION ? 'Command Generation' : 
-				template === PromptTemplates.CODE_GENERATION ? 'Code Generation' :
-				template === PromptTemplates.CODE_EXPLANATION ? 'Code Explanation' :
-				template === PromptTemplates.DEBUGGING_HELP ? 'Debugging Help' : 'General Chat'}`);
+			console.log(
+				`  Template: ${
+					template === PromptTemplates.COMMAND_GENERATION
+						? 'Command Generation'
+						: template === PromptTemplates.CODE_GENERATION
+						? 'Code Generation'
+						: template === PromptTemplates.CODE_EXPLANATION
+						? 'Code Explanation'
+						: template === PromptTemplates.DEBUGGING_HELP
+						? 'Debugging Help'
+						: 'General Chat'
+				}`,
+			);
 			console.log();
 		}
 
@@ -85,9 +108,11 @@ async function testEnvironmentConfiguration() {
 		for (const [provider, hasKey] of Object.entries(apiKeyStatus)) {
 			if (hasKey) {
 				try {
-					const providerConfig = await configManager.getProviderConfig(provider as any);
+					const providerConfig = await configManager.getProviderConfig(
+						provider as any,
+					);
 					const apiKey = await configManager.getApiKey(provider as any);
-					
+
 					const aiProvider = AIProviderFactory.create({
 						provider: provider as any,
 						apiKey,
@@ -98,23 +123,33 @@ async function testEnvironmentConfiguration() {
 
 					console.log(`  Testing ${provider} connection...`);
 					const isConnected = await aiProvider.validateConnection();
-					console.log(`  ${isConnected ? '✅' : '❌'} ${provider}: ${isConnected ? 'Connected successfully!' : 'Connection failed'}`);
+					console.log(
+						`  ${isConnected ? '✅' : '❌'} ${provider}: ${
+							isConnected ? 'Connected successfully!' : 'Connection failed'
+						}`,
+					);
 
 					if (isConnected) {
 						// Test a simple chat
 						const response = await aiProvider.chat([
-							{ role: 'user', content: 'Say hello in one word' }
+							{role: 'user', content: 'Say hello in one word'},
 						]);
 						console.log(`  💬 Test response: "${response}"`);
 					}
 				} catch (error) {
-					console.log(`  ❌ ${provider} test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+					console.log(
+						`  ❌ ${provider} test failed: ${
+							error instanceof Error ? error.message : 'Unknown error'
+						}`,
+					);
 				}
 			}
 		}
-
 	} catch (error) {
-		console.error('❌ Test failed:', error instanceof Error ? error.message : 'Unknown error');
+		console.error(
+			'❌ Test failed:',
+			error instanceof Error ? error.message : 'Unknown error',
+		);
 	}
 
 	console.log('\n🎉 Environment Configuration Test Complete!');

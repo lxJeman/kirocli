@@ -22,7 +22,7 @@ export default function CommandLine({
 	multiline = false,
 	maxLength = 1000,
 	color = 'white',
-	focusColor = 'cyan'
+	focusColor = 'cyan',
 }: Props) {
 	const [input, setInput] = useState('');
 	const [historyIndex, setHistoryIndex] = useState(-1);
@@ -46,7 +46,7 @@ export default function CommandLine({
 				setInput(prev => prev + '\\n');
 				return;
 			}
-			
+
 			if (input.trim()) {
 				onSubmit(input.trim());
 				setInput('');
@@ -89,7 +89,8 @@ export default function CommandLine({
 
 		if (key.backspace || key.delete) {
 			if (cursorPosition > 0) {
-				const newInput = input.slice(0, cursorPosition - 1) + input.slice(cursorPosition);
+				const newInput =
+					input.slice(0, cursorPosition - 1) + input.slice(cursorPosition);
 				setInput(newInput);
 				setCursorPosition(cursorPosition - 1);
 			}
@@ -117,7 +118,10 @@ export default function CommandLine({
 
 		// Regular character input
 		if (inputChar && !key.ctrl && !key.meta && input.length < maxLength) {
-			const newInput = input.slice(0, cursorPosition) + inputChar + input.slice(cursorPosition);
+			const newInput =
+				input.slice(0, cursorPosition) +
+				inputChar +
+				input.slice(cursorPosition);
 			setInput(newInput);
 			setCursorPosition(cursorPosition + 1);
 		}
@@ -140,13 +144,13 @@ export default function CommandLine({
 					{afterCursor}
 				</Text>
 			</Box>
-			
+
 			{multiline && (
 				<Text dimColor>
 					Press Ctrl+Enter to submit, Enter for new line, Escape to cancel
 				</Text>
 			)}
-			
+
 			{!multiline && (
 				<Text dimColor>
 					Press Enter to submit, ↑↓ for history, Escape to cancel

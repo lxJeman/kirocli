@@ -42,12 +42,12 @@ kirocli [command] [action] [options]
 
 ### Global Options
 
-| Option | Description | Example |
-|--------|-------------|---------|
-| `--help` | Show help information | `kirocli --help` |
-| `--version` | Show version information | `kirocli --version` |
-| `--verbose` | Enable verbose logging | `kirocli --verbose chat` |
-| `--debug` | Enable debug mode | `kirocli --debug config test` |
+| Option      | Description              | Example                       |
+| ----------- | ------------------------ | ----------------------------- |
+| `--help`    | Show help information    | `kirocli --help`              |
+| `--version` | Show version information | `kirocli --version`           |
+| `--verbose` | Enable verbose logging   | `kirocli --verbose chat`      |
+| `--debug`   | Enable debug mode        | `kirocli --debug config test` |
 
 ### Interactive Menu
 
@@ -63,6 +63,7 @@ kirocli menu
 ```
 
 **Menu Options:**
+
 1. **Start AI Chat** - Interactive chat with AI models
 2. **Command Line** - Execute commands directly
 3. **Configuration** - Manage API keys and settings
@@ -85,11 +86,11 @@ kirocli chat --model=gemini-pro
 
 ### Supported AI Models
 
-| Provider | Models | Command |
-|----------|--------|---------|
-| **OpenAI** | `gpt-4`, `gpt-3.5-turbo`, `gpt-4-turbo` | `kirocli chat --model=gpt-4` |
+| Provider   | Models                                                                          | Command                                         |
+| ---------- | ------------------------------------------------------------------------------- | ----------------------------------------------- |
+| **OpenAI** | `gpt-4`, `gpt-3.5-turbo`, `gpt-4-turbo`                                         | `kirocli chat --model=gpt-4`                    |
 | **Claude** | `claude-3-sonnet-20240229`, `claude-3-haiku-20240307`, `claude-3-opus-20240229` | `kirocli chat --model=claude-3-sonnet-20240229` |
-| **Gemini** | `gemini-pro`, `gemini-pro-vision` | `kirocli chat --model=gemini-pro` |
+| **Gemini** | `gemini-pro`, `gemini-pro-vision`                                               | `kirocli chat --model=gemini-pro`               |
 
 ### Chat Features
 
@@ -103,13 +104,13 @@ kirocli chat --model=gemini-pro
 
 ### Chat Controls
 
-| Key Combination | Action |
-|-----------------|--------|
-| `Enter` | Send message |
-| `↑/↓` | Navigate command history |
-| `Ctrl+C` | Exit chat |
-| `Ctrl+L` | Clear screen |
-| `Escape` | Return to main menu |
+| Key Combination | Action                   |
+| --------------- | ------------------------ |
+| `Enter`         | Send message             |
+| `↑/↓`           | Navigate command history |
+| `Ctrl+C`        | Exit chat                |
+| `Ctrl+L`        | Clear screen             |
+| `Escape`        | Return to main menu      |
 
 ## ⚙️ Configuration Commands
 
@@ -170,10 +171,10 @@ kirocli config list-providers
 
 ### Configuration Files
 
-| File | Location | Purpose |
-|------|----------|---------|
-| `config.json` | `~/.kirocli/config.json` | Main configuration |
-| `api-keys.json` | `~/.kirocli/api-keys.json` | Encrypted API keys |
+| File                | Location                       | Purpose                   |
+| ------------------- | ------------------------------ | ------------------------- |
+| `config.json`       | `~/.kirocli/config.json`       | Main configuration        |
+| `api-keys.json`     | `~/.kirocli/api-keys.json`     | Encrypted API keys        |
 | `chat-history.json` | `~/.kirocli/chat-history.json` | Chat conversation history |
 
 ## 📜 Specification Commands
@@ -214,13 +215,13 @@ kirocli spec init --file=custom-spec.yaml --template=web
 
 ### Available Templates
 
-| Template | Description | Use Case |
-|----------|-------------|----------|
-| `basic` | Simple project template | General purpose projects |
-| `web` | React web application | Frontend web apps |
-| `api` | Express.js API server | Backend REST APIs |
-| `cli` | Command-line tool | CLI applications |
-| `library` | Reusable library | NPM packages/libraries |
+| Template  | Description             | Use Case                 |
+| --------- | ----------------------- | ------------------------ |
+| `basic`   | Simple project template | General purpose projects |
+| `web`     | React web application   | Frontend web apps        |
+| `api`     | Express.js API server   | Backend REST APIs        |
+| `cli`     | Command-line tool       | CLI applications         |
+| `library` | Reusable library        | NPM packages/libraries   |
 
 ### Build from Specifications
 
@@ -259,7 +260,7 @@ dependencies:
   - react
   - react-dom
 devDependencies:
-  - "@types/react"
+  - '@types/react'
   - typescript
 scripts:
   dev: vite
@@ -354,16 +355,16 @@ description: Automatically commit changes when files are modified
 trigger:
   type: file_change
   patterns:
-    - "src/**/*.ts"
-    - "src/**/*.tsx"
+    - 'src/**/*.ts'
+    - 'src/**/*.tsx'
   exclude:
-    - "node_modules/**"
+    - 'node_modules/**'
 actions:
   - type: shell
     command: git add .
   - type: git
     action: commit
-    message: "Auto-commit: {{timestamp}}"
+    message: 'Auto-commit: {{timestamp}}'
 conditions:
   - type: git_status
     has_changes: true
@@ -433,23 +434,23 @@ npm run clean:dist
 
 ### Environment Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `KIROCLI_DEBUG` | Enable debug mode | `export KIROCLI_DEBUG=true` |
-| `KIROCLI_VERBOSE` | Enable verbose logging | `export KIROCLI_VERBOSE=true` |
-| `KIROCLI_CONFIG_DIR` | Custom config directory | `export KIROCLI_CONFIG_DIR=/custom/path` |
-| `KIROCLI_PLATFORM` | Override platform detection | `export KIROCLI_PLATFORM=linux` |
-| `KIROCLI_SHELL` | Override shell detection | `export KIROCLI_SHELL=bash` |
-| `OPENAI_API_KEY` | OpenAI API key | `export OPENAI_API_KEY=sk-...` |
-| `ANTHROPIC_API_KEY` | Claude API key | `export ANTHROPIC_API_KEY=sk-ant-...` |
-| `GOOGLE_API_KEY` | Gemini API key | `export GOOGLE_API_KEY=AIza...` |
+| Variable             | Description                 | Example                                  |
+| -------------------- | --------------------------- | ---------------------------------------- |
+| `KIROCLI_DEBUG`      | Enable debug mode           | `export KIROCLI_DEBUG=true`              |
+| `KIROCLI_VERBOSE`    | Enable verbose logging      | `export KIROCLI_VERBOSE=true`            |
+| `KIROCLI_CONFIG_DIR` | Custom config directory     | `export KIROCLI_CONFIG_DIR=/custom/path` |
+| `KIROCLI_PLATFORM`   | Override platform detection | `export KIROCLI_PLATFORM=linux`          |
+| `KIROCLI_SHELL`      | Override shell detection    | `export KIROCLI_SHELL=bash`              |
+| `OPENAI_API_KEY`     | OpenAI API key              | `export OPENAI_API_KEY=sk-...`           |
+| `ANTHROPIC_API_KEY`  | Claude API key              | `export ANTHROPIC_API_KEY=sk-ant-...`    |
+| `GOOGLE_API_KEY`     | Gemini API key              | `export GOOGLE_API_KEY=AIza...`          |
 
 ### Configuration File Locations
 
-| OS | Config Directory |
-|----|------------------|
-| **Linux** | `~/.kirocli/` |
-| **macOS** | `~/.kirocli/` |
+| OS          | Config Directory                       |
+| ----------- | -------------------------------------- |
+| **Linux**   | `~/.kirocli/`                          |
+| **macOS**   | `~/.kirocli/`                          |
 | **Windows** | `%USERPROFILE%\AppData\Local\KiroCLI\` |
 
 ### Working with Multiple Projects

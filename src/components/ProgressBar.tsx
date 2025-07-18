@@ -16,26 +16,22 @@ export default function ProgressBar({
 	showPercentage = true,
 	color = 'green',
 	backgroundColor = 'gray',
-	label
+	label,
 }: Props) {
 	const clampedProgress = Math.max(0, Math.min(100, progress));
 	const filledWidth = Math.round((clampedProgress / 100) * width);
 	const emptyWidth = width - filledWidth;
-	
+
 	const filledBar = '█'.repeat(filledWidth);
 	const emptyBar = '░'.repeat(emptyWidth);
-	
+
 	return (
 		<Box flexDirection="column">
-			{label && (
-				<Text>{label}</Text>
-			)}
+			{label && <Text>{label}</Text>}
 			<Box>
 				<Text color={color}>{filledBar}</Text>
 				<Text color={backgroundColor}>{emptyBar}</Text>
-				{showPercentage && (
-					<Text> {clampedProgress.toFixed(1)}%</Text>
-				)}
+				{showPercentage && <Text> {clampedProgress.toFixed(1)}%</Text>}
 			</Box>
 		</Box>
 	);

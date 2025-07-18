@@ -74,23 +74,33 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					🎉 Thank you for choosing KiroCLI!
 				</Text>
 				<Text color="white">
-					This quick tutorial will help you get started with your new AI development companion.
+					This quick tutorial will help you get started with your new AI
+					development companion.
 				</Text>
 				<Text color="white">
 					KiroCLI transforms natural language into actionable development tasks.
 				</Text>
 			</Box>
 
-			<Box borderStyle="single" borderColor="yellow" padding={1} marginBottom={2}>
+			<Box
+				borderStyle="single"
+				borderColor="yellow"
+				padding={1}
+				marginBottom={2}
+			>
 				<Box flexDirection="column">
 					<Text color="yellow" bold>
 						✨ What makes KiroCLI special:
 					</Text>
 					<Text color="white">• Natural language command interpretation</Text>
-					<Text color="white">• AI-powered code generation from specifications</Text>
+					<Text color="white">
+						• AI-powered code generation from specifications
+					</Text>
 					<Text color="white">• Workflow automation with agent hooks</Text>
 					<Text color="white">• Cross-platform terminal interface</Text>
-					<Text color="white">• Multiple AI provider support (OpenAI, Claude, Gemini)</Text>
+					<Text color="white">
+						• Multiple AI provider support (OpenAI, Claude, Gemini)
+					</Text>
 				</Box>
 			</Box>
 		</Box>
@@ -105,16 +115,15 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 			</Box>
 
 			<Box flexDirection="column" marginBottom={2}>
-				<Text color="white">
-					Great! KiroCLI has detected your system:
-				</Text>
+				<Text color="white">Great! KiroCLI has detected your system:</Text>
 				<Box marginTop={1} marginBottom={1}>
 					<Text color="cyan" bold>
 						Platform: {platform}
 					</Text>
 				</Box>
 				<Text color="white">
-					KiroCLI is fully compatible with your system and ready to enhance your development workflow.
+					KiroCLI is fully compatible with your system and ready to enhance your
+					development workflow.
 				</Text>
 			</Box>
 
@@ -126,8 +135,12 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					{platform.includes('linux') && (
 						<>
 							<Text color="white">• Native bash/zsh shell integration</Text>
-							<Text color="white">• Full package manager support (apt, yum, pacman)</Text>
-							<Text color="white">• Docker and container workflow automation</Text>
+							<Text color="white">
+								• Full package manager support (apt, yum, pacman)
+							</Text>
+							<Text color="white">
+								• Docker and container workflow automation
+							</Text>
 						</>
 					)}
 					{platform.includes('darwin') && (
@@ -139,12 +152,20 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					)}
 					{platform.includes('win32') && (
 						<>
-							<Text color="white">• Windows Command Prompt and PowerShell support</Text>
-							<Text color="white">• WSL (Windows Subsystem for Linux) integration</Text>
-							<Text color="white">• Visual Studio and .NET development tools</Text>
+							<Text color="white">
+								• Windows Command Prompt and PowerShell support
+							</Text>
+							<Text color="white">
+								• WSL (Windows Subsystem for Linux) integration
+							</Text>
+							<Text color="white">
+								• Visual Studio and .NET development tools
+							</Text>
 						</>
 					)}
-					<Text color="white">• Cross-platform Node.js and npm/yarn workflows</Text>
+					<Text color="white">
+						• Cross-platform Node.js and npm/yarn workflows
+					</Text>
 				</Box>
 			</Box>
 		</Box>
@@ -152,7 +173,12 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 
 	const renderFeatures = () => (
 		<Box flexDirection="column">
-			<Box borderStyle="round" borderColor="magenta" padding={1} marginBottom={2}>
+			<Box
+				borderStyle="round"
+				borderColor="magenta"
+				padding={1}
+				marginBottom={2}
+			>
 				<Text color="magenta" bold>
 					🎯 Core Features Overview
 				</Text>
@@ -164,7 +190,8 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 						1. 🧠 AI Chat Mode with Command Execution
 					</Text>
 					<Text color="white">
-						• Ask questions in natural language: "How do I delete all .log files?"
+						• Ask questions in natural language: "How do I delete all .log
+						files?"
 					</Text>
 					<Text color="white">
 						• Get AI-powered command suggestions with detailed explanations
@@ -175,9 +202,7 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					<Text color="white">
 						• Real-time execution progress and error recovery
 					</Text>
-					<Text color="white">
-						• Cross-platform command compatibility
-					</Text>
+					<Text color="white">• Cross-platform command compatibility</Text>
 				</Box>
 
 				<Box marginBottom={1}>
@@ -187,18 +212,14 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					<Text color="white">
 						• Automatic command validation and sanitization
 					</Text>
-					<Text color="white">
-						• Dangerous command detection and blocking
-					</Text>
+					<Text color="white">• Dangerous command detection and blocking</Text>
 					<Text color="white">
 						• Safety level assessment (Safe/Caution/Dangerous)
 					</Text>
 					<Text color="white">
 						• User confirmation with detailed safety information
 					</Text>
-					<Text color="white">
-						• Safe alternatives for risky operations
-					</Text>
+					<Text color="white">• Safe alternatives for risky operations</Text>
 				</Box>
 
 				<Box marginBottom={1}>
@@ -208,42 +229,28 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					<Text color="white">
 						• Define project requirements in YAML format
 					</Text>
-					<Text color="white">
-						• Generate boilerplate code automatically
-					</Text>
-					<Text color="white">
-						• Validate and build from specifications
-					</Text>
+					<Text color="white">• Generate boilerplate code automatically</Text>
+					<Text color="white">• Validate and build from specifications</Text>
 				</Box>
 
 				<Box marginBottom={1}>
 					<Text color="cyan" bold>
 						4. 🔗 Agent Hooks & Automation
 					</Text>
-					<Text color="white">
-						• Automate repetitive development tasks
-					</Text>
-					<Text color="white">
-						• Git workflow automation
-					</Text>
-					<Text color="white">
-						• Custom build and deployment scripts
-					</Text>
+					<Text color="white">• Automate repetitive development tasks</Text>
+					<Text color="white">• Git workflow automation</Text>
+					<Text color="white">• Custom build and deployment scripts</Text>
 				</Box>
 
 				<Box marginBottom={1}>
 					<Text color="cyan" bold>
 						5. ⚙️ Configuration Management
 					</Text>
-					<Text color="white">
-						• Secure API key storage
-					</Text>
+					<Text color="white">• Secure API key storage</Text>
 					<Text color="white">
 						• Multiple AI provider support (OpenAI, Claude, Gemini)
 					</Text>
-					<Text color="white">
-						• Customizable model preferences
-					</Text>
+					<Text color="white">• Customizable model preferences</Text>
 				</Box>
 			</Box>
 		</Box>
@@ -251,7 +258,12 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 
 	const renderSetup = () => (
 		<Box flexDirection="column">
-			<Box borderStyle="round" borderColor="yellow" padding={1} marginBottom={2}>
+			<Box
+				borderStyle="round"
+				borderColor="yellow"
+				padding={1}
+				marginBottom={2}
+			>
 				<Text color="yellow" bold>
 					⚙️ Quick Setup Guide
 				</Text>
@@ -267,7 +279,9 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 						✅ Already Complete:
 					</Text>
 					<Text color="white">• Node.js v16+ (detected and working)</Text>
-					<Text color="white">• KiroCLI installation (you're running it now!)</Text>
+					<Text color="white">
+						• KiroCLI installation (you're running it now!)
+					</Text>
 					<Text color="white">• Platform compatibility confirmed</Text>
 				</Box>
 
@@ -286,7 +300,9 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					<Text color="blue" bold>
 						📁 KiroCLI creates these directories:
 					</Text>
-					<Text color="white">• ~/.kirocli/ - User configuration and API keys</Text>
+					<Text color="white">
+						• ~/.kirocli/ - User configuration and API keys
+					</Text>
 					<Text color="white">• .kiro/ - Project-specific specs and hooks</Text>
 					<Text color="white">• .kiro/config/ - Project AI configuration</Text>
 					<Text color="white">• .kiro/hooks/ - Custom automation scripts</Text>
@@ -305,45 +321,73 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 
 			<Box flexDirection="column" marginBottom={2}>
 				<Text color="white">
-					KiroCLI supports multiple AI providers. You'll need at least one API key to get started:
+					KiroCLI supports multiple AI providers. You'll need at least one API
+					key to get started:
 				</Text>
 
 				<Box marginTop={1} marginBottom={1}>
 					<Text color="cyan" bold>
 						🤖 Supported AI Providers:
 					</Text>
-					<Text color="white">• OpenAI (GPT-4, GPT-3.5-turbo) - Recommended for beginners</Text>
-					<Text color="white">• Anthropic Claude (Claude-3 Sonnet, Haiku, Opus)</Text>
-					<Text color="white">• Google Gemini (Gemini Pro, Gemini Pro Vision)</Text>
+					<Text color="white">
+						• OpenAI (GPT-4, GPT-3.5-turbo) - Recommended for beginners
+					</Text>
+					<Text color="white">
+						• Anthropic Claude (Claude-3 Sonnet, Haiku, Opus)
+					</Text>
+					<Text color="white">
+						• Google Gemini (Gemini Pro, Gemini Pro Vision)
+					</Text>
 				</Box>
 
 				<Box marginBottom={1}>
 					<Text color="green" bold>
 						📝 How to get API keys:
 					</Text>
-					<Text color="white">1. OpenAI: https://platform.openai.com/api-keys</Text>
+					<Text color="white">
+						1. OpenAI: https://platform.openai.com/api-keys
+					</Text>
 					<Text color="white">2. Claude: https://console.anthropic.com/</Text>
-					<Text color="white">3. Gemini: https://makersuite.google.com/app/apikey</Text>
+					<Text color="white">
+						3. Gemini: https://makersuite.google.com/app/apikey
+					</Text>
 				</Box>
 
 				<Box marginBottom={1}>
 					<Text color="yellow" bold>
 						⚡ Quick Setup Commands:
 					</Text>
-					<Text color="white">kirocli config set-key openai "your-api-key-here"</Text>
-					<Text color="white">kirocli config set-key claude "your-api-key-here"</Text>
-					<Text color="white">kirocli config set-key gemini "your-api-key-here"</Text>
+					<Text color="white">
+						kirocli config set-key openai "your-api-key-here"
+					</Text>
+					<Text color="white">
+						kirocli config set-key claude "your-api-key-here"
+					</Text>
+					<Text color="white">
+						kirocli config set-key gemini "your-api-key-here"
+					</Text>
 				</Box>
 			</Box>
 
-			<Box borderStyle="single" borderColor="green" padding={1} marginBottom={2}>
+			<Box
+				borderStyle="single"
+				borderColor="green"
+				padding={1}
+				marginBottom={2}
+			>
 				<Box flexDirection="column">
 					<Text color="green" bold>
 						🔒 Security Note:
 					</Text>
-					<Text color="white">API keys are stored securely in ~/.kirocli/config.yaml</Text>
-					<Text color="white">Keys are never transmitted except to their respective AI services</Text>
-					<Text color="white">You can also use environment variables for additional security</Text>
+					<Text color="white">
+						API keys are stored securely in ~/.kirocli/config.yaml
+					</Text>
+					<Text color="white">
+						Keys are never transmitted except to their respective AI services
+					</Text>
+					<Text color="white">
+						You can also use environment variables for additional security
+					</Text>
 				</Box>
 			</Box>
 		</Box>
@@ -351,7 +395,12 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 
 	const renderReady = () => (
 		<Box flexDirection="column">
-			<Box borderStyle="double" borderColor="green" padding={2} marginBottom={2}>
+			<Box
+				borderStyle="double"
+				borderColor="green"
+				padding={2}
+				marginBottom={2}
+			>
 				<Box flexDirection="column" alignItems="center">
 					<Text color="green" bold>
 						🎉 You're All Set!
@@ -371,29 +420,29 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					<Text color="cyan" bold>
 						1. Configure your first AI provider:
 					</Text>
-					<Text color="white">   kirocli config setup</Text>
-					<Text color="white">   kirocli config set-key openai "your-key"</Text>
+					<Text color="white"> kirocli config setup</Text>
+					<Text color="white"> kirocli config set-key openai "your-key"</Text>
 				</Box>
 
 				<Box marginBottom={1}>
 					<Text color="cyan" bold>
 						2. Test your AI connection:
 					</Text>
-					<Text color="white">   kirocli config test</Text>
+					<Text color="white"> kirocli config test</Text>
 				</Box>
 
 				<Box marginBottom={1}>
 					<Text color="cyan" bold>
 						3. Start your first AI chat:
 					</Text>
-					<Text color="white">   kirocli chat</Text>
+					<Text color="white"> kirocli chat</Text>
 				</Box>
 
 				<Box marginBottom={1}>
 					<Text color="cyan" bold>
 						4. Explore the main menu:
 					</Text>
-					<Text color="white">   kirocli (or just press Enter now!)</Text>
+					<Text color="white"> kirocli (or just press Enter now!)</Text>
 				</Box>
 			</Box>
 
@@ -402,8 +451,12 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					<Text color="blue" bold>
 						💡 Pro Tips:
 					</Text>
-					<Text color="white">• Use natural language: "Create a React component for login"</Text>
-					<Text color="white">• Try spec-driven development for complex projects</Text>
+					<Text color="white">
+						• Use natural language: "Create a React component for login"
+					</Text>
+					<Text color="white">
+						• Try spec-driven development for complex projects
+					</Text>
 					<Text color="white">• Set up hooks to automate your workflow</Text>
 					<Text color="white">• Press Escape anytime to go back</Text>
 				</Box>
@@ -439,7 +492,14 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 	};
 
 	const getStepNumber = () => {
-		const steps = ['welcome', 'platform', 'features', 'setup', 'apikeys', 'ready'];
+		const steps = [
+			'welcome',
+			'platform',
+			'features',
+			'setup',
+			'apikeys',
+			'ready',
+		];
 		return steps.indexOf(currentStep) + 1;
 	};
 
@@ -461,19 +521,11 @@ export default function GettingStarted({onComplete, onExit}: Props) {
 					<Text color="white" bold>
 						🎮 Navigation:
 					</Text>
-					<Text color="white">
-						• Press Enter or Space to continue
-					</Text>
-					<Text color="white">
-						• Press Escape to skip tutorial
-					</Text>
-					<Text color="white">
-						• Press Ctrl+C to exit KiroCLI
-					</Text>
+					<Text color="white">• Press Enter or Space to continue</Text>
+					<Text color="white">• Press Escape to skip tutorial</Text>
+					<Text color="white">• Press Ctrl+C to exit KiroCLI</Text>
 					{currentStep === 'ready' && (
-						<Text color="yellow">
-							• Press 's' to skip to main features
-						</Text>
+						<Text color="yellow">• Press 's' to skip to main features</Text>
 					)}
 				</Box>
 			</Box>

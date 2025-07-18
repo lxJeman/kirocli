@@ -61,10 +61,12 @@ npm run clean:binaries  # Clean binaries directory
 The project includes three GitHub Actions workflows:
 
 ### 1. Continuous Integration (`ci.yml`)
+
 **Triggers**: Push to `main`/`master` branches
 **Purpose**: Full testing and cross-platform package creation
 
 **What it does**:
+
 - ✅ Tests on Node.js 16, 18, and 20
 - ✅ Runs linting and tests
 - ✅ Builds TypeScript
@@ -73,19 +75,23 @@ The project includes three GitHub Actions workflows:
 - ✅ Uploads artifacts for 30 days
 
 ### 2. Development Build (`dev-build.yml`)
+
 **Triggers**: Push to feature branches, PRs
 **Purpose**: Quick validation for development
 
 **What it does**:
+
 - ✅ Quick test and build validation
 - ✅ Creates Linux package for testing
 - ✅ Uploads development artifacts for 7 days
 
 ### 3. Release (`release.yml`)
+
 **Triggers**: Git tags (`v*`), manual dispatch
 **Purpose**: Create GitHub releases with downloadable packages
 
 **What it does**:
+
 - ✅ Creates full cross-platform packages
 - ✅ Creates GitHub release with changelog
 - ✅ Uploads packages as release assets
@@ -96,6 +102,7 @@ The project includes three GitHub Actions workflows:
 ### Step 1: Repository Setup
 
 1. **Push your code to GitHub**:
+
    ```bash
    git add .
    git commit -m "feat: add GitHub Actions workflows"
@@ -124,6 +131,7 @@ git push origin v1.0.0
 ```
 
 This will trigger the release workflow and create:
+
 - GitHub release with changelog
 - Downloadable packages for all platforms
 - Release assets attached to the release
@@ -133,6 +141,7 @@ This will trigger the release workflow and create:
 ### GitHub Actions Dashboard
 
 Visit `https://github.com/your-username/kirocli/actions` to see:
+
 - ✅ Build status for all workflows
 - 📦 Downloadable artifacts
 - 📊 Build history and performance
@@ -143,12 +152,14 @@ Visit `https://github.com/your-username/kirocli/actions` to see:
 After successful builds, you can download:
 
 **From CI builds**:
+
 - `kirocli-linux-portable-{commit-sha}`
 - `kirocli-macos-portable-{commit-sha}`
 - `kirocli-windows-portable-{commit-sha}`
 - `kirocli-all-platforms-{commit-sha}`
 
 **From releases**:
+
 - `kirocli-linux-portable.tar.gz`
 - `kirocli-macos-portable.tar.gz`
 - `kirocli-windows-portable.tar.gz`
@@ -158,6 +169,7 @@ After successful builds, you can download:
 ### Common Issues
 
 #### Build Fails on Dependencies
+
 ```bash
 # Clear npm cache and reinstall
 npm cache clean --force
@@ -166,6 +178,7 @@ npm install
 ```
 
 #### TypeScript Compilation Errors
+
 ```bash
 # Check TypeScript configuration
 npx tsc --noEmit
@@ -173,6 +186,7 @@ npm run lint
 ```
 
 #### Package Creation Fails
+
 ```bash
 # Test distribution creation locally
 npm run build
@@ -180,6 +194,7 @@ npm run dist:linux
 ```
 
 #### GitHub Actions Permission Issues
+
 - Ensure `GITHUB_TOKEN` has proper permissions
 - Check repository settings > Actions > General
 - Verify workflow permissions are set to "Read and write"
@@ -187,6 +202,7 @@ npm run dist:linux
 ### Debug Mode
 
 Enable debug logging in GitHub Actions by setting repository secrets:
+
 - `ACTIONS_STEP_DEBUG`: `true`
 - `ACTIONS_RUNNER_DEBUG`: `true`
 
@@ -212,11 +228,11 @@ Edit `.github/workflows/ci.yml`:
 ```yaml
 on:
   push:
-    branches: [ main, master, develop ]  # Add more branches
+    branches: [main, master, develop] # Add more branches
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   schedule:
-    - cron: '0 2 * * 0'  # Weekly builds
+    - cron: '0 2 * * 0' # Weekly builds
 ```
 
 ### Add Environment Variables
@@ -230,6 +246,7 @@ env:
 ### Add Secrets
 
 For API keys or sensitive data:
+
 1. Go to repository Settings > Secrets and variables > Actions
 2. Add repository secrets
 3. Use in workflows: `${{ secrets.SECRET_NAME }}`
@@ -272,7 +289,7 @@ strategy:
   with:
     name: my-artifact
     path: dist/
-    retention-days: 90  # Keep for 90 days
+    retention-days: 90 # Keep for 90 days
 ```
 
 ## 📝 Best Practices

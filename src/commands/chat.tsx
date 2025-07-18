@@ -15,10 +15,19 @@ type Props = {
 
 type ChatMode = 'chat' | 'command-interpretation';
 
-export default function ChatCommand({model, onExit, debug = false, verbose = false}: Props) {
+export default function ChatCommand({
+	model,
+	onExit,
+	debug = false,
+	verbose = false,
+}: Props) {
 	const [input, setInput] = useState('');
 	const [messages, setMessages] = useState<
-		Array<{role: 'user' | 'assistant'; content: string; type?: 'command' | 'execution'}>
+		Array<{
+			role: 'user' | 'assistant';
+			content: string;
+			type?: 'command' | 'execution';
+		}>
 	>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [chatMode, setChatMode] = useState<ChatMode>('chat');
@@ -30,11 +39,11 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 		// Configure logger based on props
 		logger.setDebugMode(debug);
 		logger.setVerboseMode(verbose);
-		
+
 		logger.info('ChatCommand', `Starting chat with model: ${model}`, {
 			model,
 			debug,
-			verbose
+			verbose,
 		});
 	}, [model, debug, verbose]);
 
@@ -74,7 +83,7 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 			}
 		} else if (key.backspace || key.delete) {
 			// Handle Backspace/Delete key - remove last character
-			setInput(prev => prev.length > 0 ? prev.slice(0, -1) : '');
+			setInput(prev => (prev.length > 0 ? prev.slice(0, -1) : ''));
 		} else if (key.escape) {
 			// Handle Escape key - exit to main menu
 			if (onExit) {
@@ -90,7 +99,13 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 			if (onExit) {
 				onExit();
 			}
-		} else if (!key.ctrl && !key.meta && !key.escape && inputChar && inputChar.length === 1) {
+		} else if (
+			!key.ctrl &&
+			!key.meta &&
+			!key.escape &&
+			inputChar &&
+			inputChar.length === 1
+		) {
 			// Handle regular character input (ignore control keys and multi-char sequences)
 			// Only add printable characters
 			if (inputChar >= ' ' && inputChar <= '~') {
@@ -150,29 +165,54 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 
 	const isCommandRequest = (input: string): boolean => {
 		const commandKeywords = [
-			'run', 'execute', 'delete', 'remove', 'create', 'make', 'install',
-			'list', 'show', 'find', 'search', 'copy', 'move', 'rename',
-			'git', 'npm', 'yarn', 'docker', 'kill', 'start', 'stop',
-			'chmod', 'chown', 'mkdir', 'rmdir', 'touch', 'cat', 'grep',
-			'how do i', 'how to', 'command for', 'script to'
+			'run',
+			'execute',
+			'delete',
+			'remove',
+			'create',
+			'make',
+			'install',
+			'list',
+			'show',
+			'find',
+			'search',
+			'copy',
+			'move',
+			'rename',
+			'git',
+			'npm',
+			'yarn',
+			'docker',
+			'kill',
+			'start',
+			'stop',
+			'chmod',
+			'chown',
+			'mkdir',
+			'rmdir',
+			'touch',
+			'cat',
+			'grep',
+			'how do i',
+			'how to',
+			'command for',
+			'script to',
 		];
-		
+
 		const lowerInput = input.toLowerCase();
 		return commandKeywords.some(keyword => lowerInput.includes(keyword));
 	};
-
-
 
 	const handleCommandExecuted = (result: CommandResult) => {
 		// Add execution result to chat
 		const resultMessage = {
 			role: 'assistant' as const,
-			content: result.success 
+			content: result.success
 				? `✅ **Command executed successfully!**\n\n**Command:** \`${result.command}\`\n**Duration:** ${result.duration}ms\n\n**Output:**\n\`\`\`\n${result.output}\n\`\`\``
 				: `❌ **Command execution failed!**\n\n**Command:** \`${result.command}\`\n**Exit Code:** ${result.exitCode}\n**Duration:** ${result.duration}ms\n\n**Error:**\n\`\`\`\n${result.error}\n\`\`\``,
-			type: 'execution' as const
+			type: 'execution' as const,
 		};
-		
+
 		setMessages(prev => [...prev, resultMessage]);
 		setChatMode('chat');
 		setPendingCommand('');
@@ -192,7 +232,12 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 	if (showModeSelector) {
 		return (
 			<Box flexDirection="column" padding={1}>
-				<Box borderStyle="round" borderColor="cyan" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="round"
+					borderColor="cyan"
+					padding={1}
+					marginBottom={1}
+				>
 					<Text color="cyan" bold>
 						🎛️ Enhanced UI/UX Chat Mode Selection
 					</Text>
@@ -201,23 +246,27 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 				<Box flexDirection="column" marginBottom={2}>
 					<Text bold>Choose your chat experience:</Text>
 					<Text></Text>
-					
+
 					<Box marginBottom={1}>
-						<Text color="green" bold>1. Enhanced Chat (Phase 7 Features)</Text>
-						<Text>   • Persistent conversation history</Text>
-						<Text>   • Command history with ↑↓ navigation</Text>
-						<Text>   • Multiple chat sessions (Ctrl+S)</Text>
-						<Text>   • Progress indicators and enhanced UI</Text>
-						<Text>   • Better error handling with suggestions</Text>
-						<Text>   • Syntax highlighting for commands</Text>
-						<Text>   • Debug mode and verbose logging</Text>
+						<Text color="green" bold>
+							1. Enhanced Chat (Phase 7 Features)
+						</Text>
+						<Text> • Persistent conversation history</Text>
+						<Text> • Command history with ↑↓ navigation</Text>
+						<Text> • Multiple chat sessions (Ctrl+S)</Text>
+						<Text> • Progress indicators and enhanced UI</Text>
+						<Text> • Better error handling with suggestions</Text>
+						<Text> • Syntax highlighting for commands</Text>
+						<Text> • Debug mode and verbose logging</Text>
 					</Box>
 
 					<Box marginBottom={1}>
-						<Text color="yellow" bold>2. Legacy Chat</Text>
-						<Text>   • Simple command interpretation</Text>
-						<Text>   • Direct command execution</Text>
-						<Text>   • Basic UI elements</Text>
+						<Text color="yellow" bold>
+							2. Legacy Chat
+						</Text>
+						<Text> • Simple command interpretation</Text>
+						<Text> • Direct command execution</Text>
+						<Text> • Basic UI elements</Text>
 					</Box>
 				</Box>
 
@@ -248,7 +297,7 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 			<CommandInterpreter
 				userInput={pendingCommand}
 				onCommandExecuted={handleCommandExecuted}
-				onError={(error) => {
+				onError={error => {
 					const errorMessage = {
 						role: 'assistant' as const,
 						content: `❌ **Command interpretation failed:** ${error}`,
@@ -292,9 +341,11 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 							💡 Start a conversation by typing your message below and pressing
 							Enter.
 							<Newline />
-							Try asking: "How do I list files in a directory?" or "Delete all .log files"
+							Try asking: "How do I list files in a directory?" or "Delete all
+							.log files"
 							<Newline />
-							🚀 KiroCLI can understand commands and help you execute them safely!
+							🚀 KiroCLI can understand commands and help you execute them
+							safely!
 						</Text>
 					</Box>
 				)}
@@ -315,23 +366,43 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 							// AI response styling with border and padding
 							<Box
 								borderStyle="single"
-								borderColor={message.type === 'command' ? 'yellow' : message.type === 'execution' ? 'green' : 'blue'}
+								borderColor={
+									message.type === 'command'
+										? 'yellow'
+										: message.type === 'execution'
+										? 'green'
+										: 'blue'
+								}
 								padding={1}
 								marginLeft={2}
 							>
 								<Box flexDirection="column">
 									<Box marginBottom={1}>
-										<Text color={message.type === 'command' ? 'yellow' : message.type === 'execution' ? 'green' : 'blue'} bold>
-											{message.type === 'command' ? '⚡ Command' : message.type === 'execution' ? '🔧 Execution' : '🤖 Assistant'}
+										<Text
+											color={
+												message.type === 'command'
+													? 'yellow'
+													: message.type === 'execution'
+													? 'green'
+													: 'blue'
+											}
+											bold
+										>
+											{message.type === 'command'
+												? '⚡ Command'
+												: message.type === 'execution'
+												? '🔧 Execution'
+												: '🤖 Assistant'}
 										</Text>
 									</Box>
 									<Text color="white">{message.content}</Text>
-									
+
 									{/* Command execution buttons */}
 									{message.type === 'command' && pendingCommand && (
 										<Box marginTop={1}>
 											<Text color="white" dimColor>
-												Type "yes" to execute, "no" to cancel, or continue chatting normally.
+												Type "yes" to execute, "no" to cancel, or continue
+												chatting normally.
 											</Text>
 										</Box>
 									)}
@@ -374,7 +445,8 @@ export default function ChatCommand({model, onExit, debug = false, verbose = fal
 			{/* Help text */}
 			<Box marginTop={1}>
 				<Text color="white" dimColor>
-					Enter: send • Backspace: edit • Escape/Ctrl+M: main menu • Ctrl+C: exit
+					Enter: send • Backspace: edit • Escape/Ctrl+M: main menu • Ctrl+C:
+					exit
 					{pendingCommand && ' • Type "yes" to execute suggested command'}
 				</Text>
 			</Box>

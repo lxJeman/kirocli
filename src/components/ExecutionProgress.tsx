@@ -29,7 +29,7 @@ export default function ExecutionProgress({
 	title = 'Execution Progress',
 	showOutput = false,
 	showTimings = true,
-	onComplete
+	onComplete,
 }: Props) {
 	const [startTime] = useState(Date.now());
 	const [elapsedTime, setElapsedTime] = useState(0);
@@ -43,36 +43,52 @@ export default function ExecutionProgress({
 	}, [startTime]);
 
 	useEffect(() => {
-		const allCompleted = steps.every(step => 
-			step.status === 'completed' || step.status === 'failed' || step.status === 'skipped'
+		const allCompleted = steps.every(
+			step =>
+				step.status === 'completed' ||
+				step.status === 'failed' ||
+				step.status === 'skipped',
 		);
-		
+
 		if (allCompleted && onComplete) {
-			const success = steps.some(step => step.status === 'completed') && 
-							!steps.some(step => step.status === 'failed');
+			const success =
+				steps.some(step => step.status === 'completed') &&
+				!steps.some(step => step.status === 'failed');
 			onComplete(success);
 		}
 	}, [steps, onComplete]);
 
 	const getStatusIcon = (status: ExecutionStep['status']) => {
 		switch (status) {
-			case 'pending': return '⏳';
-			case 'running': return '🔄';
-			case 'completed': return '✅';
-			case 'failed': return '❌';
-			case 'skipped': return '⏭️';
-			default: return '❓';
+			case 'pending':
+				return '⏳';
+			case 'running':
+				return '🔄';
+			case 'completed':
+				return '✅';
+			case 'failed':
+				return '❌';
+			case 'skipped':
+				return '⏭️';
+			default:
+				return '❓';
 		}
 	};
 
 	const getStatusColor = (status: ExecutionStep['status']) => {
 		switch (status) {
-			case 'pending': return 'gray';
-			case 'running': return 'yellow';
-			case 'completed': return 'green';
-			case 'failed': return 'red';
-			case 'skipped': return 'blue';
-			default: return 'white';
+			case 'pending':
+				return 'gray';
+			case 'running':
+				return 'yellow';
+			case 'completed':
+				return 'green';
+			case 'failed':
+				return 'red';
+			case 'skipped':
+				return 'blue';
+			default:
+				return 'white';
 		}
 	};
 
@@ -82,9 +98,12 @@ export default function ExecutionProgress({
 		return `${Math.floor(ms / 60000)}m ${Math.floor((ms % 60000) / 1000)}s`;
 	};
 
-	const completedSteps = steps.filter(step => step.status === 'completed').length;
+	const completedSteps = steps.filter(
+		step => step.status === 'completed',
+	).length;
 	const failedSteps = steps.filter(step => step.status === 'failed').length;
-	const calculatedProgress = overallProgress ?? (completedSteps / steps.length) * 100;
+	const calculatedProgress =
+		overallProgress ?? (completedSteps / steps.length) * 100;
 
 	return (
 		<Box flexDirection="column">
@@ -92,19 +111,19 @@ export default function ExecutionProgress({
 			<Box borderStyle="round" borderColor="cyan" padding={1} marginBottom={1}>
 				<Box flexDirection="column" width="100%">
 					<Box justifyContent="space-between">
-						<Text color="cyan" bold>{title}</Text>
+						<Text color="cyan" bold>
+							{title}
+						</Text>
 						{showTimings && (
-							<Text dimColor>
-								Elapsed: {formatDuration(elapsedTime)}
-							</Text>
+							<Text dimColor>Elapsed: {formatDuration(elapsedTime)}</Text>
 						)}
 					</Box>
-					
+
 					{/* Overall Progress */}
 					<Box marginTop={1}>
-						<ProgressBar 
-							progress={calculatedProgress} 
-							width={50} 
+						<ProgressBar
+							progress={calculatedProgress}
+							width={50}
 							color={failedSteps > 0 ? 'red' : 'green'}
 							label={`Progress: ${completedSteps}/${steps.length} steps`}
 						/>
@@ -121,24 +140,16 @@ export default function ExecutionProgress({
 								{getStatusIcon(step.status)}
 							</Text>
 							<Box marginLeft={1}>
-								<Text bold={step.status === 'running'}>
-									{step.name}
-								</Text>
+								<Text bold={step.status === 'running'}>{step.name}</Text>
 							</Box>
 							{step.status === 'running' && step.id === currentStep && (
 								<Box marginLeft={2}>
-									<EnhancedSpinner 
-										text="" 
-										type="dots" 
-										color="yellow" 
-									/>
+									<EnhancedSpinner text="" type="dots" color="yellow" />
 								</Box>
 							)}
 							{showTimings && step.duration && (
 								<Box marginLeft={2}>
-									<Text dimColor>
-										({formatDuration(step.duration)})
-									</Text>
+									<Text dimColor>({formatDuration(step.duration)})</Text>
 								</Box>
 							)}
 						</Box>
@@ -169,10 +180,9 @@ export default function ExecutionProgress({
 				<Box flexDirection="column">
 					<Text bold>Execution Summary:</Text>
 					<Text>
-						✅ Completed: {completedSteps} • 
-						❌ Failed: {failedSteps} • 
-						⏳ Pending: {steps.filter(s => s.status === 'pending').length} • 
-						🔄 Running: {steps.filter(s => s.status === 'running').length}
+						✅ Completed: {completedSteps} • ❌ Failed: {failedSteps} • ⏳
+						Pending: {steps.filter(s => s.status === 'pending').length} • 🔄
+						Running: {steps.filter(s => s.status === 'running').length}
 					</Text>
 					{showTimings && (
 						<Text dimColor>

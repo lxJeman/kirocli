@@ -1,6 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {Text, Box, useInput} from 'ink';
-import {SpecParser, ValidationResult, GenerationResult} from '../parser/index.js';
+import {
+	SpecParser,
+	ValidationResult,
+	GenerationResult,
+} from '../parser/index.js';
 
 type Props = {
 	action: 'init' | 'build' | 'validate';
@@ -9,12 +13,21 @@ type Props = {
 	onExit?: () => void;
 };
 
-export default function SpecCommand({action, file = '.kiro/spec.yaml', template, onExit}: Props) {
-	const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+export default function SpecCommand({
+	action,
+	file = '.kiro/spec.yaml',
+	template,
+	onExit,
+}: Props) {
+	const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
+		'loading',
+	);
 	const [message, setMessage] = useState('');
 	const [details, setDetails] = useState<string[]>([]);
-	const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
-	const [generationResult, setGenerationResult] = useState<GenerationResult | null>(null);
+	const [validationResult, setValidationResult] =
+		useState<ValidationResult | null>(null);
+	const [generationResult, setGenerationResult] =
+		useState<GenerationResult | null>(null);
 
 	useEffect(() => {
 		handleAction();
@@ -48,16 +61,18 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 					break;
 			}
 		} catch (error) {
-			setMessage(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			setMessage(
+				`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+			);
 			setStatus('error');
 		}
 	};
 
 	const handleInit = async (parser: SpecParser) => {
 		setMessage('🔄 Creating spec file...');
-		
-		await parser.initSpec(file, { template: template || 'basic' });
-		
+
+		await parser.initSpec(file, {template: template || 'basic'});
+
 		setMessage(`✅ Spec file created successfully!`);
 		setDetails([
 			`📁 File: ${file}`,
@@ -67,17 +82,17 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 			'Next steps:',
 			'1. Edit the spec file to match your requirements',
 			'2. Run "kirocli spec validate" to check syntax',
-			'3. Run "kirocli spec build" to generate code'
+			'3. Run "kirocli spec build" to generate code',
 		]);
 		setStatus('success');
 	};
 
 	const handleValidate = async (parser: SpecParser) => {
 		setMessage('🔄 Validating spec file...');
-		
+
 		const result = await parser.validateSpec(file);
 		setValidationResult(result);
-		
+
 		if (result.valid) {
 			setMessage('✅ Spec file is valid!');
 			setDetails([
@@ -86,7 +101,7 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 				'✅ Syntax is correct',
 				'✅ Structure is valid',
 				...(result.warnings.length > 0 ? ['', '⚠️ Warnings:'] : []),
-				...result.warnings.map(w => `  • ${w}`)
+				...result.warnings.map(w => `  • ${w}`),
 			]);
 			setStatus('success');
 		} else {
@@ -99,7 +114,7 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 				...(result.warnings.length > 0 ? ['', '⚠️ Warnings:'] : []),
 				...result.warnings.map(w => `  • ${w}`),
 				'',
-				'Please fix these issues and try again.'
+				'Please fix these issues and try again.',
 			]);
 			setStatus('error');
 		}
@@ -107,7 +122,7 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 
 	const handleBuild = async (parser: SpecParser) => {
 		setMessage('🔄 Parsing spec file...');
-		
+
 		// First validate the spec
 		const validation = await parser.validateSpec(file);
 		if (!validation.valid) {
@@ -118,16 +133,16 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 				'❌ Errors:',
 				...validation.errors.map(e => `  • ${e}`),
 				'',
-				'Please run "kirocli spec validate" to see all issues.'
+				'Please run "kirocli spec validate" to see all issues.',
 			]);
 			setStatus('error');
 			return;
 		}
 
 		setMessage('🔄 Loading spec and generating code...');
-		
+
 		const spec = await parser.parseSpec(file);
-		
+
 		setMessage('🔄 Generating code with AI...');
 		setDetails([
 			`📋 Project: ${spec.name || 'Unnamed'}`,
@@ -137,7 +152,7 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 			`📁 Output: ${spec.outputPath}`,
 			`✨ Features: ${spec.features.length} items`,
 			'',
-			'🤖 AI is generating your code...'
+			'🤖 AI is generating your code...',
 		]);
 
 		const result = await parser.generateCode(spec);
@@ -154,7 +169,7 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 				'📄 Generated files:',
 				...result.files.map(f => `  • ${f.path} (${f.size} bytes)`),
 				'',
-				'🎉 Your code is ready to use!'
+				'🎉 Your code is ready to use!',
 			]);
 			setStatus('success');
 		} else {
@@ -166,7 +181,7 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 				'❌ Errors:',
 				...result.errors.map(e => `  • ${e}`),
 				'',
-				'Please check your spec file and try again.'
+				'Please check your spec file and try again.',
 			]);
 			setStatus('error');
 		}
@@ -188,18 +203,50 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 			</Box>
 
 			{/* Status Message */}
-			<Box borderStyle="single" borderColor={status === 'error' ? 'red' : status === 'success' ? 'green' : 'yellow'} padding={1} marginBottom={1}>
-				<Text color={status === 'error' ? 'red' : status === 'success' ? 'green' : 'yellow'} bold>
+			<Box
+				borderStyle="single"
+				borderColor={
+					status === 'error' ? 'red' : status === 'success' ? 'green' : 'yellow'
+				}
+				padding={1}
+				marginBottom={1}
+			>
+				<Text
+					color={
+						status === 'error'
+							? 'red'
+							: status === 'success'
+							? 'green'
+							: 'yellow'
+					}
+					bold
+				>
 					{message}
 				</Text>
 			</Box>
 
 			{/* Details */}
 			{details.length > 0 && (
-				<Box borderStyle="single" borderColor="blue" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="single"
+					borderColor="blue"
+					padding={1}
+					marginBottom={1}
+				>
 					<Box flexDirection="column">
 						{details.map((detail, index) => (
-							<Text key={index} color={detail.startsWith('❌') ? 'red' : detail.startsWith('⚠️') ? 'yellow' : detail.startsWith('✅') ? 'green' : 'white'}>
+							<Text
+								key={index}
+								color={
+									detail.startsWith('❌')
+										? 'red'
+										: detail.startsWith('⚠️')
+										? 'yellow'
+										: detail.startsWith('✅')
+										? 'green'
+										: 'white'
+								}
+							>
 								{detail}
 							</Text>
 						))}
@@ -209,7 +256,12 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 
 			{/* Validation Results */}
 			{validationResult && !validationResult.valid && (
-				<Box borderStyle="single" borderColor="red" padding={1} marginBottom={1}>
+				<Box
+					borderStyle="single"
+					borderColor="red"
+					padding={1}
+					marginBottom={1}
+				>
 					<Box flexDirection="column">
 						<Text color="red" bold>
 							🔍 Validation Details:
@@ -237,14 +289,17 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 
 			{/* Generation Results */}
 			{generationResult && (
-				<Box borderStyle="single" borderColor={generationResult.success ? 'green' : 'red'} padding={1} marginBottom={1}>
+				<Box
+					borderStyle="single"
+					borderColor={generationResult.success ? 'green' : 'red'}
+					padding={1}
+					marginBottom={1}
+				>
 					<Box flexDirection="column">
 						<Text color={generationResult.success ? 'green' : 'red'} bold>
 							🔧 Generation Summary:
 						</Text>
-						<Text color="white">
-							Duration: {generationResult.duration}ms
-						</Text>
+						<Text color="white">Duration: {generationResult.duration}ms</Text>
 						<Text color="white">
 							Files: {generationResult.files.length} generated
 						</Text>
@@ -290,9 +345,7 @@ export default function SpecCommand({action, file = '.kiro/spec.yaml', template,
 					<Text color="white">
 						• Press Escape or Ctrl+M to return to main menu
 					</Text>
-					<Text color="white">
-						• Press Ctrl+C to exit KiroCLI
-					</Text>
+					<Text color="white">• Press Ctrl+C to exit KiroCLI</Text>
 					{status === 'success' && action === 'init' && (
 						<Text color="green">
 							• Edit {file} and run "kirocli spec build" to generate code

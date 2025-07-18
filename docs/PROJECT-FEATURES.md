@@ -21,6 +21,7 @@
 ## 🎯 Current Implementation Status
 
 **✅ 8 Complete Development Phases**
+
 - **100% Functional** - All core features working
 - **Production Ready** - Cross-platform packages available
 - **Enterprise Grade** - Comprehensive testing and CI/CD
@@ -33,6 +34,7 @@
 ### **Phase 1: Foundation & Core CLI Structure** ✅
 
 #### **Features Implemented:**
+
 - ✅ **Ink + React CLI Setup** - Modern terminal UI framework
 - ✅ **TypeScript Configuration** - Strict mode with comprehensive type checking
 - ✅ **Package Management** - Complete dependency management
@@ -40,6 +42,7 @@
 - ✅ **Code Quality** - XO linting + Prettier formatting
 
 #### **Representative Files:**
+
 ```
 ├── package.json              # Dependencies and scripts
 ├── tsconfig.json            # TypeScript configuration
@@ -53,12 +56,14 @@
 ### **Phase 2: Core Architecture Setup** ✅
 
 #### **Features Implemented:**
+
 - ✅ **Project Structure** - Organized src/ directory architecture
 - ✅ **Subcommand System** - chat, config, spec, hook commands
 - ✅ **Interactive Mode** - Main menu with navigation
 - ✅ **Configuration System** - .kiro/ directory structure
 
 #### **Representative Files:**
+
 ```
 ├── src/
 │   ├── ai/                  # AI integration modules
@@ -78,6 +83,7 @@
 ### **Phase 3: AI Integration Foundation** ✅
 
 #### **Features Implemented:**
+
 - ✅ **Multi-Provider Support** - OpenAI, Claude, Gemini integration
 - ✅ **Provider Factory** - Dynamic AI provider selection
 - ✅ **API Key Management** - Secure credential storage
@@ -85,6 +91,7 @@
 - ✅ **Prompt Templates** - Structured AI interactions
 
 #### **Representative Files:**
+
 ```
 ├── src/ai/
 │   ├── index.ts             # Main AI provider interface
@@ -99,6 +106,7 @@
 ```
 
 #### **Key Features:**
+
 - **Automatic Fallback** - Switches providers on failure
 - **Context Management** - Maintains conversation context
 - **Error Recovery** - Graceful handling of API failures
@@ -109,6 +117,7 @@
 ### **Phase 4: Command Execution System** ✅
 
 #### **Features Implemented:**
+
 - ✅ **Safe Shell Execution** - Command validation and sanitization
 - ✅ **AI Command Understanding** - Natural language → shell commands
 - ✅ **Interactive Confirmation** - Preview before execution
@@ -116,6 +125,7 @@
 - ✅ **Getting Started Tutorial** - 6-step onboarding flow
 
 #### **Representative Files:**
+
 ```
 ├── src/commands/
 │   └── chat.tsx             # AI chat interface with command execution
@@ -131,6 +141,7 @@
 ```
 
 #### **Key Features:**
+
 - **Safety Assessment** - Commands rated as safe/caution/dangerous
 - **Working Directory Selection** - Execute commands anywhere
 - **Real-time Progress** - Visual feedback during execution
@@ -141,6 +152,7 @@
 ### **Phase 5: Spec-Driven Development** ✅
 
 #### **Features Implemented:**
+
 - ✅ **YAML Spec Parser** - Complete specification parsing
 - ✅ **Code Generation Engine** - AI-powered project generation
 - ✅ **Template System** - Multiple project templates (web, api, cli, library)
@@ -148,6 +160,7 @@
 - ✅ **File Organization** - Automatic directory structure creation
 
 #### **Representative Files:**
+
 ```
 ├── src/parser/
 │   └── index.ts             # Spec parsing and validation
@@ -159,6 +172,7 @@
 ```
 
 #### **Available Templates:**
+
 - **Basic** - Simple project template
 - **Web** - React web application with TypeScript
 - **API** - Express.js REST API server
@@ -166,6 +180,7 @@
 - **Library** - Reusable utility library
 
 #### **Key Features:**
+
 - **Schema Validation** - Ensures spec correctness
 - **Dependency Management** - Automatic package.json generation
 - **Directory Structure** - Creates organized project layout
@@ -176,6 +191,7 @@
 ### **Phase 6: Agent Hooks System** ✅
 
 #### **Features Implemented:**
+
 - ✅ **Hook Definition System** - YAML/JSON configuration
 - ✅ **Event Trigger System** - File changes, git events, manual triggers
 - ✅ **Action Pipeline** - Multiple action types (shell, git, npm, AI)
@@ -184,6 +200,7 @@
 - ✅ **Statistics Tracking** - Execution history and success rates
 
 #### **Representative Files:**
+
 ```
 ├── src/commands/
 │   └── hook.tsx             # Hook management interface
@@ -194,12 +211,14 @@
 ```
 
 #### **Built-in Hook Templates:**
+
 - **Git Auto-Commit** - Automatic commits on file changes
 - **Build-on-Change** - Auto-build when source files change
 - **Test Runner** - Automatic test execution
 - **Deploy-on-Push** - Deployment automation
 
 #### **Key Features:**
+
 - **Multiple Trigger Types** - Manual, file_change, git_event, schedule
 - **Rich Actions** - Shell commands, git operations, notifications
 - **Conditional Execution** - Run hooks based on conditions
@@ -210,6 +229,7 @@
 ### **Phase 7: Enhanced UI/UX** ✅
 
 #### **Features Implemented:**
+
 - ✅ **Enhanced Chat Interface** - Persistent conversation history
 - ✅ **Command History** - Navigation with arrow keys
 - ✅ **Syntax Highlighting** - Beautiful command previews
@@ -219,6 +239,7 @@
 - ✅ **Debug Mode** - Verbose logging and diagnostics
 
 #### **Representative Files:**
+
 ```
 ├── src/components/
 │   ├── EnhancedChat.tsx          # Persistent chat interface
@@ -233,6 +254,7 @@
 ```
 
 #### **Key Features:**
+
 - **Multi-turn Conversations** - Context-aware AI interactions
 - **Visual Feedback** - Real-time progress and status updates
 - **Error Recovery** - Actionable error messages with suggestions
@@ -243,6 +265,7 @@
 ### **Phase 8: Cross-Platform Distribution** ✅
 
 #### **Features Implemented:**
+
 - ✅ **Portable Packages** - Linux, macOS, Windows distributions
 - ✅ **Platform Detection** - Automatic shell and OS detection
 - ✅ **Build Automation** - One-command builds for all platforms
@@ -251,6 +274,7 @@
 - ✅ **Documentation** - Complete installation and setup guides
 
 #### **Representative Files:**
+
 ```
 ├── scripts/
 │   ├── build-binaries.js         # Binary packaging (experimental)
@@ -265,11 +289,13 @@
 ```
 
 #### **Distribution Formats:**
+
 - **Linux** - Portable tar.gz with shell launcher
 - **macOS** - Portable tar.gz with zsh/bash compatibility
 - **Windows** - Portable tar.gz with batch and PowerShell launchers
 
 #### **Key Features:**
+
 - **Zero Installation** - Portable packages work anywhere
 - **Automatic Updates** - GitHub Actions build on every commit
 - **Cross-Platform Testing** - Automated testing on all platforms
@@ -280,6 +306,7 @@
 ## 🏗️ Core Architecture
 
 ### **Application Structure**
+
 ```
 KiroCLI Application
 ├── CLI Entry Point (src/cli.tsx)
@@ -304,6 +331,7 @@ KiroCLI Application
 ```
 
 ### **Data Flow**
+
 1. **User Input** → CLI Parser → Command Router
 2. **Command Processing** → AI Provider → Response Generation
 3. **Execution Planning** → Safety Validation → User Confirmation
@@ -315,13 +343,15 @@ KiroCLI Application
 ## 🤖 AI Integration System
 
 ### **Supported AI Providers**
-| Provider | Models | Status | Features |
-|----------|--------|--------|----------|
-| **OpenAI** | GPT-4, GPT-3.5-turbo, GPT-4-turbo | ✅ Active | Chat, code generation, command interpretation |
-| **Anthropic** | Claude-3-sonnet, Claude-3-haiku, Claude-3-opus | ✅ Active | Advanced reasoning, safety-focused responses |
-| **Google** | Gemini-pro, Gemini-pro-vision | ✅ Active | Large context, multimodal capabilities |
+
+| Provider      | Models                                         | Status    | Features                                      |
+| ------------- | ---------------------------------------------- | --------- | --------------------------------------------- |
+| **OpenAI**    | GPT-4, GPT-3.5-turbo, GPT-4-turbo              | ✅ Active | Chat, code generation, command interpretation |
+| **Anthropic** | Claude-3-sonnet, Claude-3-haiku, Claude-3-opus | ✅ Active | Advanced reasoning, safety-focused responses  |
+| **Google**    | Gemini-pro, Gemini-pro-vision                  | ✅ Active | Large context, multimodal capabilities        |
 
 ### **AI Capabilities**
+
 - **Natural Language Processing** - Command interpretation and explanation
 - **Code Generation** - From specifications and natural language
 - **Context Awareness** - Multi-turn conversations with memory
@@ -333,6 +363,7 @@ KiroCLI Application
 ## ⚡ Command Execution System
 
 ### **Safety Features**
+
 - **Command Validation** - Syntax and safety checking
 - **Dangerous Command Detection** - Blocks destructive operations
 - **User Confirmation** - Interactive approval process
@@ -340,6 +371,7 @@ KiroCLI Application
 - **Rollback Capabilities** - Undo support where possible
 
 ### **Cross-Platform Support**
+
 - **Shell Detection** - Automatic shell identification (bash, zsh, PowerShell, cmd)
 - **Command Translation** - Platform-specific command conversion
 - **Path Handling** - Cross-platform file path management
@@ -350,6 +382,7 @@ KiroCLI Application
 ## 📜 Spec-Driven Development
 
 ### **Specification Format**
+
 ```yaml
 # Example spec.yaml
 version: 1.0.0
@@ -366,11 +399,12 @@ dependencies:
   - react
   - react-dom
 devDependencies:
-  - "@types/react"
+  - '@types/react'
   - typescript
 ```
 
 ### **Generation Process**
+
 1. **Spec Validation** - Schema and syntax checking
 2. **Template Selection** - Choose appropriate project template
 3. **AI Enhancement** - Intelligent code generation
@@ -382,6 +416,7 @@ devDependencies:
 ## 🔗 Agent Hooks System
 
 ### **Hook Configuration**
+
 ```yaml
 # Example hook configuration
 name: Git Auto Commit
@@ -389,17 +424,18 @@ description: Automatically commit changes when files are modified
 trigger:
   type: file_change
   patterns:
-    - "src/**/*.ts"
-    - "src/**/*.tsx"
+    - 'src/**/*.ts'
+    - 'src/**/*.tsx'
 actions:
   - type: shell
     command: git add .
   - type: git
     action: commit
-    message: "Auto-commit: {{timestamp}}"
+    message: 'Auto-commit: {{timestamp}}'
 ```
 
 ### **Trigger Types**
+
 - **Manual** - User-initiated execution
 - **File Change** - File system monitoring
 - **Git Events** - Repository state changes
@@ -411,6 +447,7 @@ actions:
 ## 🎨 Enhanced UI/UX
 
 ### **Visual Components**
+
 - **Spinners** - Multiple animation types with colors
 - **Progress Bars** - Customizable progress visualization
 - **Syntax Highlighting** - Language-specific code coloring
@@ -418,6 +455,7 @@ actions:
 - **Chat Interface** - Persistent conversation history
 
 ### **User Experience Features**
+
 - **Command History** - Navigate previous commands with arrow keys
 - **Auto-completion** - Intelligent command suggestions
 - **Error Handling** - Helpful error messages with solutions
@@ -428,7 +466,9 @@ actions:
 ## 📦 Cross-Platform Distribution
 
 ### **Package Contents**
+
 Each portable package includes:
+
 - **Application Files** - Complete KiroCLI application
 - **Dependencies** - All required Node.js modules
 - **Launchers** - Platform-specific execution scripts
@@ -436,6 +476,7 @@ Each portable package includes:
 - **Configuration** - Default settings and examples
 
 ### **Installation Methods**
+
 - **Portable Packages** - Extract and run (recommended)
 - **NPM Installation** - Global package installation
 - **Source Build** - Clone and build from source
@@ -446,12 +487,14 @@ Each portable package includes:
 ## 🔄 CI/CD & Automation
 
 ### **GitHub Actions Workflows**
+
 - **Continuous Integration** - Build and test on every commit
 - **Development Builds** - Quick validation for feature branches
 - **Release Automation** - Automated releases with packages
 - **Cross-Platform Testing** - Validation on Linux, macOS, Windows
 
 ### **Build Process**
+
 1. **Code Quality** - Linting and formatting checks
 2. **TypeScript Compilation** - Build verification
 3. **Testing** - Automated test execution
@@ -463,6 +506,7 @@ Each portable package includes:
 ## 📁 File Structure Reference
 
 ### **Source Code Organization**
+
 ```
 src/
 ├── ai/                      # AI Integration System
@@ -498,6 +542,7 @@ src/
 ```
 
 ### **Configuration Structure**
+
 ```
 .kiro/
 ├── config/
@@ -512,6 +557,7 @@ src/
 ```
 
 ### **Build and Distribution**
+
 ```
 scripts/
 ├── build-binaries.js      # Binary packaging (experimental)
@@ -536,30 +582,35 @@ distribution/              # Generated packages
 ### **What KiroCLI Can Do Right Now:**
 
 1. **AI-Powered Command Execution**
+
    - Natural language → shell commands
    - Safety assessment and user confirmation
    - Cross-platform command translation
    - Real-time execution progress
 
 2. **Spec-Driven Code Generation**
+
    - YAML specification parsing
    - Multiple project templates
    - AI-enhanced code generation
    - Complete project scaffolding
 
 3. **Workflow Automation**
+
    - Event-driven hook system
    - File watching and auto-execution
    - Git workflow automation
    - Build and deployment hooks
 
 4. **Multi-AI Provider Support**
+
    - OpenAI GPT models
    - Anthropic Claude models
    - Google Gemini models
    - Automatic provider fallback
 
 5. **Professional UI/UX**
+
    - Interactive terminal interface
    - Syntax highlighting
    - Progress indicators
@@ -571,6 +622,7 @@ distribution/              # Generated packages
    - Professional installation experience
 
 ### **Production Readiness:**
+
 - ✅ **Fully Functional** - All core features working
 - ✅ **Well Tested** - Comprehensive testing suite
 - ✅ **Well Documented** - Complete user and developer docs
