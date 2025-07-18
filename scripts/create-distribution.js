@@ -232,8 +232,8 @@ kirocli config setup
 
 ## Support
 
-- **Documentation**: https://github.com/your-repo/kirocli
-- **Issues**: https://github.com/your-repo/kirocli/issues
+- **Documentation**: https://github.com/lxJeman/kirocli
+- **Issues**: https://github.com/lxJeman/kirocli/issues
 
 ---
 

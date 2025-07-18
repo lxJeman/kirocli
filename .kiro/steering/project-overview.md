@@ -45,7 +45,7 @@ Build a **cross-platform terminal app (CLI tool)** that acts as an AI developer 
 ## 🗂️ Project Structure
 
 ```
-/ShellPilot
+/KiroCLI
   ├── /src
   │   ├── index.ts         ← Entry CLI file
   │   ├── ai/index.ts      ← Wrapper around GPT/Claude/Gemini
@@ -66,7 +66,7 @@ Build a **cross-platform terminal app (CLI tool)** that acts as an AI developer 
 | Purpose         | Tool/Command                                     |
 | --------------- | ------------------------------------------------ |
 | Dev script      | `ts-node src/index.ts` or `npm run dev`          |
-| Build CLI       | `pkg .` or `nexe -i dist/index.js -o shellpilot` |
+| Build CLI       | `pkg .` or `nexe -i dist/index.js -o KiroCLI` |
 | Install         | `npm install`                                    |
 | Format/Lint     | `eslint . && prettier --write .`                 |
 | Test (optional) | `jest` or `vitest`                               |
@@ -92,7 +92,7 @@ npm install shelljs ora chalk inquirer
 ## 📁 Example Usage
 
 ```
-$ shellpilot
+$ KiroCLI
 > How do I delete all .log files recursively?
 
 [AI] Suggested:
@@ -117,7 +117,7 @@ features:
 ```
 
 ```
-$ shellpilot spec build
+$ KiroCLI spec build
 🛠️  Generated code in ./output/LoginForm.tsx
 ```
 
@@ -136,7 +136,7 @@ $ shellpilot spec build
 ## ⚠️ Naming/IP Notes
 
 * Do **not** use "KiroCLI" as the final project name to avoid IP conflict.
-* Suggested names: `ShellPilot`, `TermFlow`, `DevCom`, `Clairo`, `SmartShell`
+* Suggested names: `KiroCLI`, `TermFlow`, `DevCom`, `Clairo`, `SmartShell`
 * Add disclaimer in README:
 
   > “This project is inspired by AWS Kiro, but not affiliated with or endorsed by Amazon or kiro.dev.”
@@ -154,7 +154,7 @@ Ensure no LLM model output includes copyrighted content.
 
 ```yaml
 project:
-  name: ShellPilot
+  name: KiroCLI
   description: "A cross-platform AI-powered terminal assistant for developers."
   goals:
     - Translate natural language to terminal commands

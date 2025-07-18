@@ -1,7 +1,10 @@
-name: Build and Release
+name: Release
 
 on:
   push:
+    branches:
+      - main
+      - master
     tags:
       - 'v*'
   workflow_dispatch:
@@ -10,6 +13,11 @@ on:
         description: 'Version to release (e.g., v1.0.0)'
         required: true
         default: 'v1.0.0'
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -60,7 +68,7 @@ jobs:
     name: Create GitHub Release
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     
     steps:
     - name: Checkout code
@@ -71,16 +79,34 @@ jobs:
       with:
         path: artifacts
         
+    - name: Generate version tag
+      id: version
+      run: |
+        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          echo "is_tag=true" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          echo "is_tag=false" >> $GITHUB_OUTPUT
+        else
+          # Auto-generate version for main/master branch pushes
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          COMMIT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          VERSION="v${PACKAGE_VERSION}-build.${COMMIT_SHA}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "is_tag=false" >> $GITHUB_OUTPUT
+        fi
+        
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name || github.event.inputs.version }}
-        release_name: KiroCLI ${{ github.ref_name || github.event.inputs.version }}
+        tag_name: ${{ steps.version.outputs.version }}
+        release_name: KiroCLI ${{ steps.version.outputs.version }}
         body: |
-          ## KiroCLI Release ${{ github.ref_name || github.event.inputs.version }}
+          ## KiroCLI Release ${{ steps.version.outputs.version }}
           
           ### 🚀 Features
           - ✅ AI Chat with OpenAI, Claude, and Gemini
@@ -97,7 +123,7 @@ jobs:
           
           #### Linux
           ```bash
-          wget https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name || github.event.inputs.version }}/kirocli-linux-portable.tar.gz
+          wget https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/kirocli-linux-portable.tar.gz
           tar -xzf kirocli-linux-portable.tar.gz
           cd kirocli-linux-portable
           ./kirocli --help
@@ -105,7 +131,7 @@ jobs:
           
           #### macOS
           ```bash
-          wget https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name || github.event.inputs.version }}/kirocli-macos-portable.tar.gz
+          wget https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/kirocli-macos-portable.tar.gz
           tar -xzf kirocli-macos-portable.tar.gz
           cd kirocli-macos-portable
           ./kirocli --help
@@ -127,7 +153,10 @@ jobs:
           ### 📋 Requirements
           - Node.js 16+ (must be installed separately)
           
-          ### 🆕 What's New
+          ### 🆕 What's New in This Build
+          - Commit: ${{ github.sha }}
+          - Branch: ${{ github.ref_name }}
+          - Build Date: ${{ github.event.head_commit.timestamp }}
           - Cross-platform distribution packages
           - Enhanced UI/UX with syntax highlighting
           - Improved error handling and user feedback

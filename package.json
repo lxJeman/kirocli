@@ -13,6 +13,8 @@
 		"start": "node dist/index.js",
 		"dev:run": "npm run build && npm start",
 		"test": "prettier --check . && xo && ava",
+		"lint": "prettier --check . && xo",
+		"lint:fix": "prettier --write . && xo --fix",
 		"build:all": "npm run build && npm run package:all",
 		"package:all": "npm run package:linux && npm run package:macos && npm run package:windows",
 		"package:linux": "pkg dist/cli-cjs.js --targets node18-linux-x64 --output binaries/kirocli-linux",

@@ -1,8 +1,34 @@
 # KiroCLI — AI Developer Terminal Copilot
 
+[![CI](https://github.com/lxJeman/kirocli/actions/workflows/ci.yml/badge.svg)](https://github.com/lxJeman/kirocli/actions/workflows/ci.yml)
+[![Release](https://github.com/lxJeman/kirocli/actions/workflows/release.yml/badge.svg)](https://github.com/lxJeman/kirocli/actions/workflows/release.yml)
+[![Dev Build](https://github.com/lxJeman/kirocli/actions/workflows/dev-build.yml/badge.svg)](https://github.com/lxJeman/kirocli/actions/workflows/dev-build.yml)
+
 ![Alt text](https://imgur.com/Get4U9q.png)
 
 > A cross-platform AI-powered terminal assistant that understands natural language and helps developers run commands, generate code, and automate workflows — all from the command line.
+
+## 📦 Quick Install
+
+### Pre-built Packages (Recommended)
+
+Download the latest release for your platform:
+
+- **Linux**: [kirocli-linux-portable.tar.gz](https://github.com/lxJeman/kirocli/releases/latest/download/kirocli-linux-portable.tar.gz)
+- **macOS**: [kirocli-macos-portable.tar.gz](https://github.com/lxJeman/kirocli/releases/latest/download/kirocli-macos-portable.tar.gz)
+- **Windows**: [kirocli-windows-portable.tar.gz](https://github.com/lxJeman/kirocli/releases/latest/download/kirocli-windows-portable.tar.gz)
+
+```bash
+# Linux/macOS
+wget https://github.com/lxJeman/kirocli/releases/latest/download/kirocli-linux-portable.tar.gz
+tar -xzf kirocli-linux-portable.tar.gz
+cd kirocli-linux-portable
+./kirocli --help
+```
+
+### Development Builds
+
+Every commit to master automatically creates development builds available in [GitHub Actions](https://github.com/lxJeman/kirocli/actions).
 
 ## 🚀 Overview
 
@@ -22,6 +48,13 @@ KiroCLI is a command-line tool designed to boost developer productivity by inter
 - **Workflow automation:** Use hooks to automate git, build, deploy, or other repetitive tasks.
 - **Cross-platform:** Works on Linux, Windows (including WSL), and macOS.
 - **CLI-based UI:** Built with [Ink](https://github.com/vadimdemedes/ink) for an interactive terminal experience.
+
+## 📚 Documentation
+
+- **[Complete Documentation](docs/documentation.md)** - All commands and features
+- **[Installation Guide](docs/INSTALL.md)** - Setup instructions for all platforms  
+- **[Development Setup](docs/SETUP.md)** - GitHub Actions and CI/CD setup
+- **[Project Features](docs/PROJECT-FEATURES.md)** - Detailed overview of implemented features
 
 ## ⚙️ Getting Started
 
@@ -184,7 +217,7 @@ dependencies:
   - axios
 devDependencies:
   - typescript
-  - "@types/react"
+  - '@types/react'
   - vite
 structure:
   directories:
@@ -398,25 +431,25 @@ This project is named **KiroCLI** as an independent implementation.
 
 ## 🚀 Command Reference
 
-| Command | Description | Options |
-|---------|-------------|---------|
-| `kirocli` | Start main menu | |
-| `kirocli menu` | Show main menu | |
-| `kirocli chat` | Start AI chat | `--model <model>` |
-| `kirocli config show` | Show configuration | |
-| `kirocli config test` | Test API connections | |
-| `kirocli config set-key <provider> <key>` | Set API key | `openai`, `claude`, `gemini` |
-| `kirocli spec init` | Create new spec | `--file <path>`, `--template <type>` |
-| `kirocli spec validate` | Validate spec file | `--file <path>` |
-| `kirocli spec build` | Generate code from spec | `--file <path>` |
-| `kirocli hook list` | List available hooks | `--category <category>` |
-| `kirocli hook run <name>` | Run specific hook | |
-| `kirocli hook create` | Create new hook | `--template <template>`, `--category <category>` |
-| `kirocli hook templates` | List available hook templates | |
-| `kirocli hook stats` | Show hook statistics | |
-| `kirocli hook enable <name>` | Enable a hook | |
-| `kirocli hook disable <name>` | Disable a hook | |
-| `kirocli hook delete <name>` | Delete a hook | |
+| Command                                   | Description                   | Options                                          |
+| ----------------------------------------- | ----------------------------- | ------------------------------------------------ |
+| `kirocli`                                 | Start main menu               |                                                  |
+| `kirocli menu`                            | Show main menu                |                                                  |
+| `kirocli chat`                            | Start AI chat                 | `--model <model>`                                |
+| `kirocli config show`                     | Show configuration            |                                                  |
+| `kirocli config test`                     | Test API connections          |                                                  |
+| `kirocli config set-key <provider> <key>` | Set API key                   | `openai`, `claude`, `gemini`                     |
+| `kirocli spec init`                       | Create new spec               | `--file <path>`, `--template <type>`             |
+| `kirocli spec validate`                   | Validate spec file            | `--file <path>`                                  |
+| `kirocli spec build`                      | Generate code from spec       | `--file <path>`                                  |
+| `kirocli hook list`                       | List available hooks          | `--category <category>`                          |
+| `kirocli hook run <name>`                 | Run specific hook             |                                                  |
+| `kirocli hook create`                     | Create new hook               | `--template <template>`, `--category <category>` |
+| `kirocli hook templates`                  | List available hook templates |                                                  |
+| `kirocli hook stats`                      | Show hook statistics          |                                                  |
+| `kirocli hook enable <name>`              | Enable a hook                 |                                                  |
+| `kirocli hook disable <name>`             | Disable a hook                |                                                  |
+| `kirocli hook delete <name>`              | Delete a hook                 |                                                  |
 
 ## 📜 License
 
