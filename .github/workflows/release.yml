@@ -19,6 +19,10 @@ on:
         default: false
         type: boolean
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     name: Build Cross-Platform Packages
@@ -98,13 +102,10 @@ jobs:
           fi
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          release_name: KiroCLI ${{ steps.version.outputs.version }}
+          name: KiroCLI ${{ steps.version.outputs.version }}
           body: |
             ## KiroCLI Release ${{ steps.version.outputs.version }}
 
@@ -151,7 +152,7 @@ jobs:
             ```
 
             ### 📋 Requirements
-            - Node.js 16+ (must be installed separately)
+            - Node.js 18+ (must be installed separately)
 
             ### 🆕 What's New in This Build
             - Commit: ${{ github.sha }}
@@ -163,33 +164,7 @@ jobs:
             - Platform-specific optimizations
           draft: false
           prerelease: false
-
-      - name: Upload Linux Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/kirocli-linux-portable/kirocli-linux-portable.tar.gz
-          asset_name: kirocli-linux-portable.tar.gz
-          asset_content_type: application/gzip
-
-      - name: Upload macOS Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/kirocli-macos-portable/kirocli-macos-portable.tar.gz
-          asset_name: kirocli-macos-portable.tar.gz
-          asset_content_type: application/gzip
-
-      - name: Upload Windows Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/kirocli-windows-portable/kirocli-windows-portable.tar.gz
-          asset_name: kirocli-windows-portable.tar.gz
-          asset_content_type: application/gzip
+          files: |
+            artifacts/kirocli-linux-portable/kirocli-linux-portable.tar.gz
+            artifacts/kirocli-macos-portable/kirocli-macos-portable.tar.gz
+            artifacts/kirocli-windows-portable/kirocli-windows-portable.tar.gz
