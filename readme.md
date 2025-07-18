@@ -1,10 +1,17 @@
-# KiroCLI — AI Developer Terminal Copilot
+```
+██╗  ██╗██╗██████╗  ██████╗  ██████╗██╗     ██╗
+██║ ██╔╝██║██╔══██╗██╔═══██╗██╔════╝██║     ██║
+█████╔╝ ██║██████╔╝██║   ██║██║     ██║     ██║
+██╔═██╗ ██║██╔══██╗██║   ██║██║     ██║     ██║
+██║  ██╗██║██║  ██║╚██████╔╝╚██████╗███████╗██║
+╚═╝  ╚═╝╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚══════╝╚═╝
+
+    AI Developer Terminal Copilot
+```
 
 [![CI](https://github.com/lxJeman/kirocli/actions/workflows/ci.yml/badge.svg)](https://github.com/lxJeman/kirocli/actions/workflows/ci.yml)
 [![Release](https://github.com/lxJeman/kirocli/actions/workflows/release.yml/badge.svg)](https://github.com/lxJeman/kirocli/actions/workflows/release.yml)
 [![Dev Build](https://github.com/lxJeman/kirocli/actions/workflows/dev-build.yml/badge.svg)](https://github.com/lxJeman/kirocli/actions/workflows/dev-build.yml)
-
-![Alt text](https://imgur.com/Get4U9q.png)
 
 > A cross-platform AI-powered terminal assistant that understands natural language and helps developers run commands, generate code, and automate workflows — all from the command line.
 
@@ -52,7 +59,7 @@ KiroCLI is a command-line tool designed to boost developer productivity by inter
 ## 📚 Documentation
 
 - **[Complete Documentation](docs/documentation.md)** - All commands and features
-- **[Installation Guide](docs/INSTALL.md)** - Setup instructions for all platforms  
+- **[Installation Guide](docs/INSTALL.md)** - Setup instructions for all platforms
 - **[Development Setup](docs/SETUP.md)** - GitHub Actions and CI/CD setup
 - **[Project Features](docs/PROJECT-FEATURES.md)** - Detailed overview of implemented features
 
