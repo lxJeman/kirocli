@@ -11,15 +11,38 @@ type Props = {
 };
 
 const menuItems = [
-	{key: '1', label: 'Start AI Chat', description: 'Interactive chat with AI models'},
-	{key: '2', label: 'Command Line', description: 'Execute commands directly (config, spec, hook)'},
-	{key: '3', label: 'Configuration', description: 'Manage API keys and settings'},
-	{key: '4', label: 'Spec Builder', description: 'Generate code from specifications'},
+	{
+		key: '1',
+		label: 'Start AI Chat',
+		description: 'Interactive chat with AI models',
+	},
+	{
+		key: '2',
+		label: 'Command Line',
+		description: 'Execute commands directly (config, spec, hook)',
+	},
+	{
+		key: '3',
+		label: 'Configuration',
+		description: 'Manage API keys and settings',
+	},
+	{
+		key: '4',
+		label: 'Spec Builder',
+		description: 'Generate code from specifications',
+	},
 	{key: '5', label: 'Agent Hooks', description: 'Workflow automation tools'},
 	{key: 'q', label: 'Quit', description: 'Exit KiroCLI'},
 ];
 
-export default function MainMenu({onSelectChat, onSelectCommandLine, onSelectConfig, onSelectSpec, onSelectHook, onExit}: Props) {
+export default function MainMenu({
+	onSelectChat,
+	onSelectCommandLine,
+	onSelectConfig,
+	onSelectSpec,
+	onSelectHook,
+	onExit,
+}: Props) {
 	const [selectedIndex, setSelectedIndex] = useState(0);
 
 	useInput((input, key) => {
@@ -69,11 +92,32 @@ export default function MainMenu({onSelectChat, onSelectCommandLine, onSelectCon
 
 	return (
 		<Box flexDirection="column" padding={2}>
-			{/* Header */}
+			{/* Header with ASCII Art */}
 			<Box borderStyle="double" borderColor="cyan" padding={1} marginBottom={2}>
 				<Box flexDirection="column" alignItems="center">
-					<Text color="cyan" bold>
-						🚀 KiroCLI - AI Developer Terminal Copilot
+					{/* ASCII Art Logo with Rainbow Colors */}
+					<Box flexDirection="column" alignItems="center" marginBottom={1}>
+						<Text color="red" bold>
+							██╗ ██╗██╗██████╗ ██████╗ ██████╗██╗ ██╗
+						</Text>
+						<Text color="yellow" bold>
+							██║ ██╔╝██║██╔══██╗██╔═══██╗██╔════╝██║ ██║
+						</Text>
+						<Text color="green" bold>
+							█████╔╝ ██║██████╔╝██║ ██║██║ ██║ ██║
+						</Text>
+						<Text color="blue" bold>
+							██╔═██╗ ██║██╔══██╗██║ ██║██║ ██║ ██║
+						</Text>
+						<Text color="magenta" bold>
+							██║ ██╗██║██║ ██║╚██████╔╝╚██████╗███████╗██║
+						</Text>
+						<Text color="cyan" bold>
+							╚═╝ ╚═╝╚═╝╚═╝ ╚═╝ ╚═════╝ ╚═════╝╚══════╝╚═╝
+						</Text>
+					</Box>
+					<Text color="white" bold>
+						✨ AI Developer Terminal Copilot ✨
 					</Text>
 					<Text color="white" dimColor>
 						Your AI-powered development assistant
@@ -88,7 +132,7 @@ export default function MainMenu({onSelectChat, onSelectCommandLine, onSelectCon
 						📋 Main Menu
 					</Text>
 				</Box>
-				
+
 				{menuItems.map((item, index) => (
 					<Box key={item.key} marginBottom={1}>
 						<Box
@@ -99,8 +143,8 @@ export default function MainMenu({onSelectChat, onSelectCommandLine, onSelectCon
 						>
 							<Box width={20}>
 								<Text color={selectedIndex === index ? 'green' : 'white'} bold>
-									{selectedIndex === index ? '❯ ' : '  '}
-									[{item.key}] {item.label}
+									{selectedIndex === index ? '❯ ' : '  '}[{item.key}]{' '}
+									{item.label}
 								</Text>
 							</Box>
 							<Text color="white" dimColor>
@@ -122,19 +166,16 @@ export default function MainMenu({onSelectChat, onSelectCommandLine, onSelectCon
 					<Text color="white">
 						• Use number keys (1-5) or arrow keys + Enter to select
 					</Text>
-					<Text color="white">
-						• Press 'q' to quit
-					</Text>
-					<Text color="white">
-						• Use Ctrl+C to force exit
-					</Text>
+					<Text color="white">• Press 'q' to quit</Text>
+					<Text color="white">• Use Ctrl+C to force exit</Text>
 				</Box>
 			</Box>
 
 			{/* Status */}
 			<Box marginTop={1}>
 				<Text color="white" dimColor>
-					Selected: {menuItems[selectedIndex]?.label || 'None'} • Press Enter or number key to continue
+					Selected: {menuItems[selectedIndex]?.label || 'None'} • Press Enter or
+					number key to continue
 				</Text>
 			</Box>
 		</Box>
