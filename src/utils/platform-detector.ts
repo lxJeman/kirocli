@@ -5,7 +5,7 @@
 
 import * as os from 'os';
 import * as path from 'path';
-import { execSync } from 'child_process';
+import {execSync} from 'child_process';
 
 export interface PlatformInfo {
 	name: 'linux' | 'macos' | 'windows' | 'unknown';
@@ -35,7 +35,7 @@ export class PlatformDetector {
 	}
 
 	public getPlatformInfo(): PlatformInfo {
-		return { ...this.platformInfo };
+		return {...this.platformInfo};
 	}
 
 	private detectPlatform(): PlatformInfo {
@@ -108,7 +108,7 @@ export class PlatformDetector {
 			const shells = ['zsh', 'bash', 'fish', 'sh'];
 			for (const shell of shells) {
 				try {
-					execSync(`which ${shell}`, { stdio: 'ignore' });
+					execSync(`which ${shell}`, {stdio: 'ignore'});
 					return shell;
 				} catch {
 					// Shell not found, continue
@@ -126,8 +126,11 @@ export class PlatformDetector {
 			// macOS Catalina+ defaults to zsh
 			const osVersion = os.release();
 			const versionParts = osVersion.split('.');
-			const majorVersion = versionParts.length > 0 && versionParts[0] ? parseInt(versionParts[0], 10) : 0;
-			
+			const majorVersion =
+				versionParts.length > 0 && versionParts[0]
+					? parseInt(versionParts[0], 10)
+					: 0;
+
 			// macOS 10.15 (Catalina) is Darwin 19.x
 			if (majorVersion >= 19) {
 				return 'zsh';
@@ -151,7 +154,7 @@ export class PlatformDetector {
 		try {
 			// Check for PowerShell Core
 			try {
-				execSync('pwsh --version', { stdio: 'ignore' });
+				execSync('pwsh --version', {stdio: 'ignore'});
 				return 'pwsh';
 			} catch {
 				// PowerShell Core not available
@@ -159,7 +162,7 @@ export class PlatformDetector {
 
 			// Check for Windows PowerShell
 			try {
-				execSync('powershell -Command "Get-Host"', { stdio: 'ignore' });
+				execSync('powershell -Command "Get-Host"', {stdio: 'ignore'});
 				return 'powershell';
 			} catch {
 				// PowerShell not available
@@ -186,8 +189,11 @@ export class PlatformDetector {
 			// Check /proc/version for WSL signature
 			if (os.platform() === 'linux') {
 				try {
-					const version = execSync('cat /proc/version', { encoding: 'utf8' });
-					return version.toLowerCase().includes('microsoft') || version.toLowerCase().includes('wsl');
+					const version = execSync('cat /proc/version', {encoding: 'utf8'});
+					return (
+						version.toLowerCase().includes('microsoft') ||
+						version.toLowerCase().includes('wsl')
+					);
 				} catch {
 					// /proc/version not readable
 				}
@@ -204,23 +210,23 @@ export class PlatformDetector {
 	 */
 	public translateCommand(command: string): string {
 		const platform = this.platformInfo.name;
-		
+
 		// Common command translations
 		const translations: Record<string, Record<string, string>> = {
 			windows: {
-				'ls': 'dir',
-				'cat': 'type',
-				'grep': 'findstr',
-				'which': 'where',
-				'rm': 'del',
-				'cp': 'copy',
-				'mv': 'move',
-				'mkdir': 'mkdir',
-				'rmdir': 'rmdir',
-				'pwd': 'cd',
-				'clear': 'cls',
-				'ps': 'tasklist',
-				'kill': 'taskkill',
+				ls: 'dir',
+				cat: 'type',
+				grep: 'findstr',
+				which: 'where',
+				rm: 'del',
+				cp: 'copy',
+				mv: 'move',
+				mkdir: 'mkdir',
+				rmdir: 'rmdir',
+				pwd: 'cd',
+				clear: 'cls',
+				ps: 'tasklist',
+				kill: 'taskkill',
 			},
 		};
 
@@ -228,8 +234,12 @@ export class PlatformDetector {
 			const windowsTranslations = translations['windows'];
 			const commandParts = command.split(' ');
 			const baseCommand = commandParts[0];
-			
-			if (windowsTranslations && baseCommand && windowsTranslations[baseCommand]) {
+
+			if (
+				windowsTranslations &&
+				baseCommand &&
+				windowsTranslations[baseCommand]
+			) {
 				return command.replace(baseCommand, windowsTranslations[baseCommand]);
 			}
 		}
@@ -245,7 +255,7 @@ export class PlatformDetector {
 			// Convert forward slashes to backslashes on Windows
 			return inputPath.replace(/\//g, '\\');
 		}
-		
+
 		// Convert backslashes to forward slashes on Unix-like systems
 		return inputPath.replace(/\\/g, '/');
 	}
@@ -268,7 +278,7 @@ export class PlatformDetector {
 	 * Get platform-specific shell command prefix
 	 */
 	public getShellCommandPrefix(): string[] {
-		const { shell, name } = this.platformInfo;
+		const {shell, name} = this.platformInfo;
 
 		switch (name) {
 			case 'windows':
@@ -292,8 +302,9 @@ export class PlatformDetector {
 	 */
 	public isCommandAvailable(command: string): boolean {
 		try {
-			const checkCommand = this.platformInfo.name === 'windows' ? 'where' : 'which';
-			execSync(`${checkCommand} ${command}`, { stdio: 'ignore' });
+			const checkCommand =
+				this.platformInfo.name === 'windows' ? 'where' : 'which';
+			execSync(`${checkCommand} ${command}`, {stdio: 'ignore'});
 			return true;
 		} catch {
 			return false;

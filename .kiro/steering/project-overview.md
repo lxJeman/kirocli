@@ -4,11 +4,11 @@
 
 Build a **cross-platform terminal app (CLI tool)** that acts as an AI developer assistant. It interprets natural language to:
 
-* Run shell commands
-* Generate, edit, and explain code
-* Automate tasks via "agent hooks" (or automatons)
-* Support spec-driven development (e.g., `.kiro/spec.yaml`)
-* Be distributable as `.exe`, `.app`, and ELF binaries (aka be cross-platform)
+- Run shell commands
+- Generate, edit, and explain code
+- Automate tasks via "agent hooks" (or automatons)
+- Support spec-driven development (e.g., `.kiro/spec.yaml`)
+- Be distributable as `.exe`, `.app`, and ELF binaries (aka be cross-platform)
 
 > Inspired by AWS Kiro, but this project is **not affiliated** with AWS or kiro.dev.
 
@@ -19,7 +19,7 @@ Build a **cross-platform terminal app (CLI tool)** that acts as an AI developer 
 | Feature                          | Description                                                   |
 | -------------------------------- | ------------------------------------------------------------- |
 | 🧠 AI Command Interpretation     | Converts user’s natural input to actionable terminal commands |
-| ⚙️ Cross-platform CLI            | Runs on Linux, macOS, and Windows |
+| ⚙️ Cross-platform CLI            | Runs on Linux, macOS, and Windows                             |
 | 📂 Hooks System                  | Automates dev workflows, git tasks, and custom shell scripts  |
 | 📜 Spec-to-Code Generator        | Accepts `.yaml` specs to auto-generate code using AI          |
 | 🧪 Dev Tools Integration         | Wraps LLMs like GPT, Claude, or Gemini for in-terminal use    |
@@ -63,13 +63,13 @@ Build a **cross-platform terminal app (CLI tool)** that acts as an AI developer 
 
 ## 🧪 Dev & Build Tools
 
-| Purpose         | Tool/Command                                     |
-| --------------- | ------------------------------------------------ |
-| Dev script      | `ts-node src/index.ts` or `npm run dev`          |
+| Purpose         | Tool/Command                                  |
+| --------------- | --------------------------------------------- |
+| Dev script      | `ts-node src/index.ts` or `npm run dev`       |
 | Build CLI       | `pkg .` or `nexe -i dist/index.js -o KiroCLI` |
-| Install         | `npm install`                                    |
-| Format/Lint     | `eslint . && prettier --write .`                 |
-| Test (optional) | `jest` or `vitest`                               |
+| Install         | `npm install`                                 |
+| Format/Lint     | `eslint . && prettier --write .`              |
+| Test (optional) | `jest` or `vitest`                            |
 
 ---
 
@@ -107,9 +107,9 @@ Or via spec:
 
 ```yaml
 # /.kiro/spec.yaml
-goal: "Build a React login form"
-language: "TypeScript"
-framework: "React"
+goal: 'Build a React login form'
+language: 'TypeScript'
+framework: 'React'
 features:
   - Email + password fields
   - Validation
@@ -135,9 +135,9 @@ $ KiroCLI spec build
 
 ## ⚠️ Naming/IP Notes
 
-* Do **not** use "KiroCLI" as the final project name to avoid IP conflict.
-* Suggested names: `KiroCLI`, `TermFlow`, `DevCom`, `Clairo`, `SmartShell`
-* Add disclaimer in README:
+- Do **not** use "KiroCLI" as the final project name to avoid IP conflict.
+- Suggested names: `KiroCLI`, `TermFlow`, `DevCom`, `Clairo`, `SmartShell`
+- Add disclaimer in README:
 
   > “This project is inspired by AWS Kiro, but not affiliated with or endorsed by Amazon or kiro.dev.”
 
@@ -155,7 +155,7 @@ Ensure no LLM model output includes copyrighted content.
 ```yaml
 project:
   name: KiroCLI
-  description: "A cross-platform AI-powered terminal assistant for developers."
+  description: 'A cross-platform AI-powered terminal assistant for developers.'
   goals:
     - Translate natural language to terminal commands
     - Run cross-platform (Linux, macOS, Windows)

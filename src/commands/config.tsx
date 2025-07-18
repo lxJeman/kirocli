@@ -10,8 +10,15 @@ type Props = {
 	onExit?: () => void;
 };
 
-export default function ConfigCommand({action, provider, apiKey, onExit}: Props) {
-	const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+export default function ConfigCommand({
+	action,
+	provider,
+	apiKey,
+	onExit,
+}: Props) {
+	const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
+		'loading',
+	);
 	const [message, setMessage] = useState('');
 	const [details, setDetails] = useState<string[]>([]);
 
@@ -51,7 +58,9 @@ export default function ConfigCommand({action, provider, apiKey, onExit}: Props)
 					break;
 			}
 		} catch (error) {
-			setMessage(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			setMessage(
+				`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+			);
 			setStatus('error');
 		}
 	};
@@ -71,10 +80,12 @@ export default function ConfigCommand({action, provider, apiKey, onExit}: Props)
 			`  Gemini: ${apiKeyStatus['gemini'] ? '✅ Configured' : '❌ Missing'}`,
 			'',
 			'Supported Models:',
-			...Object.entries(AIProviderFactory.getSupportedModels()).flatMap(([provider, models]) => [
-				`  ${provider}:`,
-				...models.map(model => `    - ${model}`),
-			]),
+			...Object.entries(AIProviderFactory.getSupportedModels()).flatMap(
+				([provider, models]) => [
+					`  ${provider}:`,
+					...models.map(model => `    - ${model}`),
+				],
+			),
 		]);
 		setStatus('success');
 	};
@@ -93,7 +104,7 @@ export default function ConfigCommand({action, provider, apiKey, onExit}: Props)
 			try {
 				const config = await configManager.getProviderConfig(provider as any);
 				const apiKey = await configManager.getApiKey(provider as any);
-				
+
 				const aiProvider = AIProviderFactory.create({
 					provider: provider as any,
 					apiKey,
@@ -103,9 +114,17 @@ export default function ConfigCommand({action, provider, apiKey, onExit}: Props)
 				});
 
 				const isConnected = await aiProvider.validateConnection();
-				results.push(`${isConnected ? '✅' : '❌'} ${provider}: ${isConnected ? 'Connected' : 'Connection failed'}`);
+				results.push(
+					`${isConnected ? '✅' : '❌'} ${provider}: ${
+						isConnected ? 'Connected' : 'Connection failed'
+					}`,
+				);
 			} catch (error) {
-				results.push(`❌ ${provider}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+				results.push(
+					`❌ ${provider}: ${
+						error instanceof Error ? error.message : 'Unknown error'
+					}`,
+				);
 			}
 		}
 
@@ -114,26 +133,43 @@ export default function ConfigCommand({action, provider, apiKey, onExit}: Props)
 		setStatus('success');
 	};
 
-	const setApiKey = async (configManager: ConfigManager, provider: string, apiKey: string) => {
+	const setApiKey = async (
+		configManager: ConfigManager,
+		provider: string,
+		apiKey: string,
+	) => {
 		if (!['openai', 'claude', 'gemini'].includes(provider)) {
-			throw new Error(`Invalid provider: ${provider}. Must be one of: openai, claude, gemini`);
+			throw new Error(
+				`Invalid provider: ${provider}. Must be one of: openai, claude, gemini`,
+			);
 		}
 
 		setMessage(`🔑 Setting API key for ${provider}...`);
-		
+
 		// Save the API key to user config
-		await configManager.setApiKey(provider as 'openai' | 'claude' | 'gemini', apiKey);
-		
+		await configManager.setApiKey(
+			provider as 'openai' | 'claude' | 'gemini',
+			apiKey,
+		);
+
 		setMessage(`✅ API key for ${provider} saved successfully!`);
 		setDetails([
 			`Provider: ${provider}`,
-			`API key: ${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 4)}`,
+			`API key: ${apiKey.substring(0, 8)}...${apiKey.substring(
+				apiKey.length - 4,
+			)}`,
 			'',
 			'Test the connection with:',
 			`  kirocli config test`,
 			'',
 			'Start chatting with:',
-			`  kirocli chat --model=${provider === 'openai' ? 'gpt-4' : provider === 'claude' ? 'claude-3-sonnet-20240229' : 'gemini-pro'}`,
+			`  kirocli chat --model=${
+				provider === 'openai'
+					? 'gpt-4'
+					: provider === 'claude'
+					? 'claude-3-sonnet-20240229'
+					: 'gemini-pro'
+			}`,
 		]);
 		setStatus('success');
 	};
@@ -185,14 +221,31 @@ export default function ConfigCommand({action, provider, apiKey, onExit}: Props)
 			{/* Content */}
 			<Box borderStyle="single" borderColor="blue" padding={1} marginBottom={1}>
 				<Box flexDirection="column">
-					<Text color={status === 'error' ? 'red' : status === 'success' ? 'green' : 'yellow'}>
+					<Text
+						color={
+							status === 'error'
+								? 'red'
+								: status === 'success'
+								? 'green'
+								: 'yellow'
+						}
+					>
 						{message}
 					</Text>
 
 					{details.length > 0 && (
 						<Box flexDirection="column" marginTop={1}>
 							{details.map((detail, index) => (
-								<Text key={index} color={detail.startsWith('✅') ? 'green' : detail.startsWith('❌') ? 'red' : 'white'}>
+								<Text
+									key={index}
+									color={
+										detail.startsWith('✅')
+											? 'green'
+											: detail.startsWith('❌')
+											? 'red'
+											: 'white'
+									}
+								>
 									{detail}
 								</Text>
 							))}

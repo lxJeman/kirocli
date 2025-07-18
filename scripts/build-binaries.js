@@ -5,10 +5,10 @@
  * Handles platform-specific optimizations and shell detection
  */
 
-import { execSync } from 'child_process';
-import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import {execSync} from 'child_process';
+import {existsSync, mkdirSync, writeFileSync, readFileSync} from 'fs';
+import {join, dirname} from 'path';
+import {fileURLToPath} from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,68 +16,68 @@ const rootDir = join(__dirname, '..');
 
 // Platform configurations
 const platforms = {
-  linux: {
-    target: 'node18-linux-x64',
-    output: 'kirocli-linux',
-    shell: 'bash',
-    pathSeparator: '/',
-    executable: true
-  },
-  macos: {
-    target: 'node18-macos-x64', 
-    output: 'kirocli-macos',
-    shell: 'zsh',
-    pathSeparator: '/',
-    executable: true
-  },
-  windows: {
-    target: 'node18-win-x64',
-    output: 'kirocli-windows.exe',
-    shell: 'cmd',
-    pathSeparator: '\\',
-    executable: true
-  }
+	linux: {
+		target: 'node18-linux-x64',
+		output: 'kirocli-linux',
+		shell: 'bash',
+		pathSeparator: '/',
+		executable: true,
+	},
+	macos: {
+		target: 'node18-macos-x64',
+		output: 'kirocli-macos',
+		shell: 'zsh',
+		pathSeparator: '/',
+		executable: true,
+	},
+	windows: {
+		target: 'node18-win-x64',
+		output: 'kirocli-windows.exe',
+		shell: 'cmd',
+		pathSeparator: '\\',
+		executable: true,
+	},
 };
 
 // Colors for console output
 const colors = {
-  reset: '\x1b[0m',
-  bright: '\x1b[1m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m'
+	reset: '\x1b[0m',
+	bright: '\x1b[1m',
+	red: '\x1b[31m',
+	green: '\x1b[32m',
+	yellow: '\x1b[33m',
+	blue: '\x1b[34m',
+	magenta: '\x1b[35m',
+	cyan: '\x1b[36m',
 };
 
 function log(message, color = 'reset') {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+	console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
 function createBinariesDir() {
-  const binariesDir = join(rootDir, 'binaries');
-  if (!existsSync(binariesDir)) {
-    mkdirSync(binariesDir, { recursive: true });
-    log('📁 Created binaries directory', 'green');
-  }
-  return binariesDir;
+	const binariesDir = join(rootDir, 'binaries');
+	if (!existsSync(binariesDir)) {
+		mkdirSync(binariesDir, {recursive: true});
+		log('📁 Created binaries directory', 'green');
+	}
+	return binariesDir;
 }
 
 function buildTypeScript() {
-  log('🔨 Building TypeScript...', 'blue');
-  try {
-    execSync('npm run build', { cwd: rootDir, stdio: 'inherit' });
-    log('✅ TypeScript build completed', 'green');
-  } catch (error) {
-    log('❌ TypeScript build failed', 'red');
-    throw error;
-  }
+	log('🔨 Building TypeScript...', 'blue');
+	try {
+		execSync('npm run build', {cwd: rootDir, stdio: 'inherit'});
+		log('✅ TypeScript build completed', 'green');
+	} catch (error) {
+		log('❌ TypeScript build failed', 'red');
+		throw error;
+	}
 }
 
 function createPlatformOptimizedEntry(platform) {
-  const platformConfig = platforms[platform];
-  const entryContent = `#!/usr/bin/env node
+	const platformConfig = platforms[platform];
+	const entryContent = `#!/usr/bin/env node
 
 // Platform-optimized entry point for ${platform}
 // Generated automatically by build-binaries.js
@@ -107,71 +107,75 @@ import('./cli.js').then(module => {
 });
 `;
 
-  const entryPath = join(rootDir, 'dist', `cli-${platform}.js`);
-  writeFileSync(entryPath, entryContent);
-  log(`📝 Created platform entry for ${platform}`, 'cyan');
-  return entryPath;
+	const entryPath = join(rootDir, 'dist', `cli-${platform}.js`);
+	writeFileSync(entryPath, entryContent);
+	log(`📝 Created platform entry for ${platform}`, 'cyan');
+	return entryPath;
 }
 
 function packageBinary(platform) {
-  const platformConfig = platforms[platform];
-  const binariesDir = createBinariesDir();
-  const entryPath = createPlatformOptimizedEntry(platform);
-  const outputPath = join(binariesDir, platformConfig.output);
+	const platformConfig = platforms[platform];
+	const binariesDir = createBinariesDir();
+	const entryPath = createPlatformOptimizedEntry(platform);
+	const outputPath = join(binariesDir, platformConfig.output);
 
-  log(`📦 Packaging ${platform} binary...`, 'magenta');
-  
-  try {
-    const pkgCommand = `pkg ${entryPath} --targets ${platformConfig.target} --output ${outputPath}`;
-    execSync(pkgCommand, { cwd: rootDir, stdio: 'inherit' });
-    log(`✅ ${platform} binary created: ${platformConfig.output}`, 'green');
-    
-    // Create installation script for the platform
-    createInstallationScript(platform, binariesDir);
-    
-  } catch (error) {
-    log(`❌ Failed to package ${platform} binary`, 'red');
-    throw error;
-  }
+	log(`📦 Packaging ${platform} binary...`, 'magenta');
+
+	try {
+		const pkgCommand = `pkg ${entryPath} --targets ${platformConfig.target} --output ${outputPath}`;
+		execSync(pkgCommand, {cwd: rootDir, stdio: 'inherit'});
+		log(`✅ ${platform} binary created: ${platformConfig.output}`, 'green');
+
+		// Create installation script for the platform
+		createInstallationScript(platform, binariesDir);
+	} catch (error) {
+		log(`❌ Failed to package ${platform} binary`, 'red');
+		throw error;
+	}
 }
 
 function createInstallationScript(platform, binariesDir) {
-  const platformConfig = platforms[platform];
-  
-  if (platform === 'windows') {
-    // Windows batch script
-    const batchScript = `@echo off
+	const platformConfig = platforms[platform];
+
+	if (platform === 'windows') {
+		// Windows batch script
+		const batchScript = `@echo off
 echo Installing KiroCLI for Windows...
 copy "${platformConfig.output}" "%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps\\kirocli.exe"
 echo KiroCLI installed successfully!
 echo You can now run 'kirocli' from anywhere in your terminal.
 pause
 `;
-    writeFileSync(join(binariesDir, 'install-windows.bat'), batchScript);
-  } else {
-    // Unix shell script
-    const shellScript = `#!/bin/bash
+		writeFileSync(join(binariesDir, 'install-windows.bat'), batchScript);
+	} else {
+		// Unix shell script
+		const shellScript = `#!/bin/bash
 echo "Installing KiroCLI for ${platform}..."
 sudo cp "${platformConfig.output}" /usr/local/bin/kirocli
 sudo chmod +x /usr/local/bin/kirocli
 echo "KiroCLI installed successfully!"
 echo "You can now run 'kirocli' from anywhere in your terminal."
 `;
-    writeFileSync(join(binariesDir, `install-${platform}.sh`), shellScript);
-    
-    // Make the install script executable
-    try {
-      execSync(`chmod +x "${join(binariesDir, `install-${platform}.sh`)}"`, { cwd: rootDir });
-    } catch (error) {
-      log(`⚠️ Could not make install script executable for ${platform}`, 'yellow');
-    }
-  }
-  
-  log(`📜 Created installation script for ${platform}`, 'cyan');
+		writeFileSync(join(binariesDir, `install-${platform}.sh`), shellScript);
+
+		// Make the install script executable
+		try {
+			execSync(`chmod +x "${join(binariesDir, `install-${platform}.sh`)}"`, {
+				cwd: rootDir,
+			});
+		} catch (error) {
+			log(
+				`⚠️ Could not make install script executable for ${platform}`,
+				'yellow',
+			);
+		}
+	}
+
+	log(`📜 Created installation script for ${platform}`, 'cyan');
 }
 
 function createReadme(binariesDir) {
-  const readmeContent = `# KiroCLI Binary Distribution
+	const readmeContent = `# KiroCLI Binary Distribution
 
 This directory contains pre-built binaries for KiroCLI across different platforms.
 
@@ -246,75 +250,79 @@ This will guide you through setting up your AI API keys.
 Built with ❤️ using Node.js, React, and Ink
 `;
 
-  writeFileSync(join(binariesDir, 'README.md'), readmeContent);
-  log('📚 Created distribution README', 'cyan');
+	writeFileSync(join(binariesDir, 'README.md'), readmeContent);
+	log('📚 Created distribution README', 'cyan');
 }
 
 function generateChecksums(binariesDir) {
-  const checksumContent = [];
-  
-  Object.values(platforms).forEach(config => {
-    const binaryPath = join(binariesDir, config.output);
-    if (existsSync(binaryPath)) {
-      try {
-        const command = process.platform === 'win32' 
-          ? `certutil -hashfile "${binaryPath}" SHA256`
-          : `shasum -a 256 "${binaryPath}"`;
-        
-        const result = execSync(command, { encoding: 'utf8' });
-        const hash = process.platform === 'win32' 
-          ? result.split('\n')[1].trim()
-          : result.split(' ')[0];
-        
-        checksumContent.push(`${hash}  ${config.output}`);
-      } catch (error) {
-        log(`⚠️ Could not generate checksum for ${config.output}`, 'yellow');
-      }
-    }
-  });
-  
-  if (checksumContent.length > 0) {
-    writeFileSync(join(binariesDir, 'SHA256SUMS'), checksumContent.join('\n') + '\n');
-    log('🔐 Generated SHA256 checksums', 'cyan');
-  }
+	const checksumContent = [];
+
+	Object.values(platforms).forEach(config => {
+		const binaryPath = join(binariesDir, config.output);
+		if (existsSync(binaryPath)) {
+			try {
+				const command =
+					process.platform === 'win32'
+						? `certutil -hashfile "${binaryPath}" SHA256`
+						: `shasum -a 256 "${binaryPath}"`;
+
+				const result = execSync(command, {encoding: 'utf8'});
+				const hash =
+					process.platform === 'win32'
+						? result.split('\n')[1].trim()
+						: result.split(' ')[0];
+
+				checksumContent.push(`${hash}  ${config.output}`);
+			} catch (error) {
+				log(`⚠️ Could not generate checksum for ${config.output}`, 'yellow');
+			}
+		}
+	});
+
+	if (checksumContent.length > 0) {
+		writeFileSync(
+			join(binariesDir, 'SHA256SUMS'),
+			checksumContent.join('\n') + '\n',
+		);
+		log('🔐 Generated SHA256 checksums', 'cyan');
+	}
 }
 
 async function main() {
-  const args = process.argv.slice(2);
-  const targetPlatforms = args.length > 0 ? args : Object.keys(platforms);
-  
-  log('🚀 Starting KiroCLI binary build process...', 'bright');
-  log(`📋 Target platforms: ${targetPlatforms.join(', ')}`, 'blue');
-  
-  try {
-    // Build TypeScript
-    buildTypeScript();
-    
-    // Create binaries directory
-    const binariesDir = createBinariesDir();
-    
-    // Package binaries for each platform
-    for (const platform of targetPlatforms) {
-      if (!platforms[platform]) {
-        log(`⚠️ Unknown platform: ${platform}`, 'yellow');
-        continue;
-      }
-      
-      await packageBinary(platform);
-    }
-    
-    // Create documentation and checksums
-    createReadme(binariesDir);
-    generateChecksums(binariesDir);
-    
-    log('🎉 Binary build process completed successfully!', 'green');
-    log(`📁 Binaries available in: ${binariesDir}`, 'cyan');
-    
-  } catch (error) {
-    log('💥 Build process failed:', 'red');
-    console.error(error);
-    process.exit(1);
-  }
+	const args = process.argv.slice(2);
+	const targetPlatforms = args.length > 0 ? args : Object.keys(platforms);
+
+	log('🚀 Starting KiroCLI binary build process...', 'bright');
+	log(`📋 Target platforms: ${targetPlatforms.join(', ')}`, 'blue');
+
+	try {
+		// Build TypeScript
+		buildTypeScript();
+
+		// Create binaries directory
+		const binariesDir = createBinariesDir();
+
+		// Package binaries for each platform
+		for (const platform of targetPlatforms) {
+			if (!platforms[platform]) {
+				log(`⚠️ Unknown platform: ${platform}`, 'yellow');
+				continue;
+			}
+
+			await packageBinary(platform);
+		}
+
+		// Create documentation and checksums
+		createReadme(binariesDir);
+		generateChecksums(binariesDir);
+
+		log('🎉 Binary build process completed successfully!', 'green');
+		log(`📁 Binaries available in: ${binariesDir}`, 'cyan');
+	} catch (error) {
+		log('💥 Build process failed:', 'red');
+		console.error(error);
+		process.exit(1);
+	}
 }
 
 // Run the build process

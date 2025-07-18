@@ -3,4 +3,4 @@ export * from './types.js';
 export * from './manager.js';
 
 // Re-export the main HookManager class for convenience
-export { HookManager } from './manager.js';
+export {HookManager} from './manager.js';

@@ -8,7 +8,7 @@ export class OpenAIProvider extends AIProvider {
 
 	constructor(config: AIConfig) {
 		super(config);
-		
+
 		if (!config.apiKey) {
 			throw new Error('OpenAI API key is required');
 		}
@@ -27,7 +27,7 @@ export class OpenAIProvider extends AIProvider {
 	async chat(messages: AIMessage[]): Promise<string> {
 		// Estimate tokens for rate limiting
 		const estimatedTokens = this.estimateTokens(messages);
-		
+
 		try {
 			// Check rate limits before making request
 			await this.rateLimiter.checkRateLimit(estimatedTokens);
@@ -42,23 +42,32 @@ export class OpenAIProvider extends AIProvider {
 				max_tokens: this.config.maxTokens || 2000,
 			});
 
-			const result = response.choices[0]?.message?.content || 'No response generated';
-			
+			const result =
+				response.choices[0]?.message?.content || 'No response generated';
+
 			// Log successful request
-			console.log(`✅ OpenAI request successful. Remaining: ${this.rateLimiter.getRemainingRequests()} requests, ${this.rateLimiter.getRemainingTokens()} tokens`);
-			
+			console.log(
+				`✅ OpenAI request successful. Remaining: ${this.rateLimiter.getRemainingRequests()} requests, ${this.rateLimiter.getRemainingTokens()} tokens`,
+			);
+
 			return result;
 		} catch (error) {
 			if (error instanceof Error) {
 				// Handle specific OpenAI errors
 				if (error.message.includes('rate limit')) {
-					throw new Error(`OpenAI rate limit exceeded. Please wait before making another request.`);
+					throw new Error(
+						`OpenAI rate limit exceeded. Please wait before making another request.`,
+					);
 				}
 				if (error.message.includes('insufficient_quota')) {
-					throw new Error(`OpenAI quota exceeded. Please check your billing settings.`);
+					throw new Error(
+						`OpenAI quota exceeded. Please check your billing settings.`,
+					);
 				}
 				if (error.message.includes('invalid_api_key')) {
-					throw new Error(`Invalid OpenAI API key. Please check your OPENAI_API_KEY environment variable.`);
+					throw new Error(
+						`Invalid OpenAI API key. Please check your OPENAI_API_KEY environment variable.`,
+					);
 				}
 				throw new Error(`OpenAI chat failed: ${error.message}`);
 			}
@@ -68,7 +77,10 @@ export class OpenAIProvider extends AIProvider {
 
 	private estimateTokens(messages: AIMessage[]): number {
 		// Rough estimation: ~4 characters per token
-		const totalChars = messages.reduce((sum, msg) => sum + msg.content.length, 0);
+		const totalChars = messages.reduce(
+			(sum, msg) => sum + msg.content.length,
+			0,
+		);
 		return Math.ceil(totalChars / 4) + (this.config.maxTokens || 2000);
 	}
 
@@ -77,7 +89,8 @@ export class OpenAIProvider extends AIProvider {
 		const messages: AIMessage[] = [
 			{
 				role: 'system',
-				content: 'You are a code generation assistant. Generate clean, production-ready code based on the provided specifications.',
+				content:
+					'You are a code generation assistant. Generate clean, production-ready code based on the provided specifications.',
 			},
 			{
 				role: 'user',

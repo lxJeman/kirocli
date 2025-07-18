@@ -17,23 +17,19 @@ program
 		'AI model to use (gpt-4, claude, gemini)',
 		'gpt-4',
 	)
-	.option(
-		'-d, --debug',
-		'Enable debug mode with detailed logging'
-	)
-	.option(
-		'-v, --verbose',
-		'Enable verbose output'
-	)
+	.option('-d, --debug', 'Enable debug mode with detailed logging')
+	.option('-v, --verbose', 'Enable verbose output')
 	.action(async options => {
 		const React = await import('react');
 		const {render} = await import('ink');
 		const {default: ChatCommand} = await import('./commands/chat.js');
-		render(React.createElement(ChatCommand, {
-			model: options.model,
-			debug: options.debug,
-			verbose: options.verbose
-		}));
+		render(
+			React.createElement(ChatCommand, {
+				model: options.model,
+				debug: options.debug,
+				verbose: options.verbose,
+			}),
+		);
 	});
 
 // Main menu command
@@ -55,16 +51,22 @@ program
 		new Command('init')
 			.description('Initialize a new spec file')
 			.option('-f, --file <file>', 'Spec file path', '.kiro/spec.yaml')
-			.option('-t, --template <template>', 'Template type (basic, web, api, cli, library)', 'basic')
+			.option(
+				'-t, --template <template>',
+				'Template type (basic, web, api, cli, library)',
+				'basic',
+			)
 			.action(async options => {
 				const React = await import('react');
 				const {render} = await import('ink');
 				const {default: SpecCommand} = await import('./commands/spec.js');
-				render(React.createElement(SpecCommand, {
-					action: 'init',
-					file: options.file,
-					template: options.template
-				}));
+				render(
+					React.createElement(SpecCommand, {
+						action: 'init',
+						file: options.file,
+						template: options.template,
+					}),
+				);
 			}),
 	)
 	.addCommand(
@@ -112,10 +114,12 @@ program
 				const React = await import('react');
 				const {render} = await import('ink');
 				const {default: HookCommand} = await import('./commands/hook.js');
-				render(React.createElement(HookCommand, {
-					action: 'list',
-					category: options.category
-				}));
+				render(
+					React.createElement(HookCommand, {
+						action: 'list',
+						category: options.category,
+					}),
+				);
 			}),
 	)
 	.addCommand(
@@ -140,11 +144,13 @@ program
 				const React = await import('react');
 				const {render} = await import('ink');
 				const {default: HookCommand} = await import('./commands/hook.js');
-				render(React.createElement(HookCommand, {
-					action: 'create',
-					template: options.template,
-					category: options.category
-				}));
+				render(
+					React.createElement(HookCommand, {
+						action: 'create',
+						template: options.template,
+						category: options.category,
+					}),
+				);
 			}),
 	)
 	.addCommand(
@@ -175,10 +181,12 @@ program
 				const React = await import('react');
 				const {render} = await import('ink');
 				const {default: HookCommand} = await import('./commands/hook.js');
-				render(React.createElement(HookCommand, {
-					action: 'enable',
-					hookName: name
-				}));
+				render(
+					React.createElement(HookCommand, {
+						action: 'enable',
+						hookName: name,
+					}),
+				);
 			}),
 	)
 	.addCommand(
@@ -189,10 +197,12 @@ program
 				const React = await import('react');
 				const {render} = await import('ink');
 				const {default: HookCommand} = await import('./commands/hook.js');
-				render(React.createElement(HookCommand, {
-					action: 'disable',
-					hookName: name
-				}));
+				render(
+					React.createElement(HookCommand, {
+						action: 'disable',
+						hookName: name,
+					}),
+				);
 			}),
 	)
 	.addCommand(
@@ -203,10 +213,12 @@ program
 				const React = await import('react');
 				const {render} = await import('ink');
 				const {default: HookCommand} = await import('./commands/hook.js');
-				render(React.createElement(HookCommand, {
-					action: 'delete',
-					hookName: name
-				}));
+				render(
+					React.createElement(HookCommand, {
+						action: 'delete',
+						hookName: name,
+					}),
+				);
 			}),
 	);
 

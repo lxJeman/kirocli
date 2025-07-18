@@ -59,7 +59,8 @@ const cli = meow(
 const [command, action, ...args] = cli.input;
 
 // Determine initial mode and command state
-let initialMode: 'menu' | 'chat' | 'config' | 'spec' | 'hook' | 'greeting' = 'menu';
+let initialMode: 'menu' | 'chat' | 'config' | 'spec' | 'hook' | 'greeting' =
+	'menu';
 let commandAction = action;
 let commandArgs = args;
 
@@ -99,12 +100,12 @@ if (cli.flags.name && !command) {
 }
 
 render(
-	<App 
-		name={cli.flags.name} 
+	<App
+		name={cli.flags.name}
 		initialMode={initialMode}
 		model={cli.flags.model}
 		command={command}
 		action={commandAction}
 		args={commandArgs}
-	/>
+	/>,
 );

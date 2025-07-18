@@ -23,173 +23,173 @@ jobs:
   build:
     name: Build Cross-Platform Packages
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run tests
-      run: npm test
-      
-    - name: Build application
-      run: npm run build
-      
-    - name: Create distribution packages
-      run: npm run dist
-      
-    - name: Upload Linux package
-      uses: actions/upload-artifact@v4
-      with:
-        name: kirocli-linux-portable
-        path: distribution/kirocli-linux-portable.tar.gz
-        
-    - name: Upload macOS package
-      uses: actions/upload-artifact@v4
-      with:
-        name: kirocli-macos-portable
-        path: distribution/kirocli-macos-portable.tar.gz
-        
-    - name: Upload Windows package
-      uses: actions/upload-artifact@v4
-      with:
-        name: kirocli-windows-portable
-        path: distribution/kirocli-windows-portable.tar.gz
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build application
+        run: npm run build
+
+      - name: Create distribution packages
+        run: npm run dist
+
+      - name: Upload Linux package
+        uses: actions/upload-artifact@v4
+        with:
+          name: kirocli-linux-portable
+          path: distribution/kirocli-linux-portable.tar.gz
+
+      - name: Upload macOS package
+        uses: actions/upload-artifact@v4
+        with:
+          name: kirocli-macos-portable
+          path: distribution/kirocli-macos-portable.tar.gz
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: kirocli-windows-portable
+          path: distribution/kirocli-windows-portable.tar.gz
 
   release:
     name: Create GitHub Release
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Download all artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: artifacts
-        
-    - name: Generate version tag
-      id: version
-      run: |
-        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-          echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          echo "is_tag=true" >> $GITHUB_OUTPUT
-        elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          echo "is_tag=false" >> $GITHUB_OUTPUT
-        else
-          # Auto-generate version for main/master branch pushes
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          COMMIT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          VERSION="v${PACKAGE_VERSION}-build.${COMMIT_SHA}"
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "is_tag=false" >> $GITHUB_OUTPUT
-        fi
-        
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.version.outputs.version }}
-        release_name: KiroCLI ${{ steps.version.outputs.version }}
-        body: |
-          ## KiroCLI Release ${{ steps.version.outputs.version }}
-          
-          ### 🚀 Features
-          - ✅ AI Chat with OpenAI, Claude, and Gemini
-          - ✅ Spec-driven code generation
-          - ✅ Agent hooks for workflow automation
-          - ✅ Cross-platform shell command execution
-          - ✅ Enhanced terminal UI with syntax highlighting
-          - ✅ Persistent conversation history
-          - ✅ Debug mode and verbose logging
-          
-          ### 📦 Installation
-          
-          Download the appropriate package for your platform:
-          
-          #### Linux
-          ```bash
-          wget https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/kirocli-linux-portable.tar.gz
-          tar -xzf kirocli-linux-portable.tar.gz
-          cd kirocli-linux-portable
-          ./kirocli --help
-          ```
-          
-          #### macOS
-          ```bash
-          wget https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/kirocli-macos-portable.tar.gz
-          tar -xzf kirocli-macos-portable.tar.gz
-          cd kirocli-macos-portable
-          ./kirocli --help
-          ```
-          
-          #### Windows
-          ```powershell
-          # Download and extract kirocli-windows-portable.tar.gz
-          # Run kirocli.bat or kirocli.ps1
-          ```
-          
-          ### ⚙️ Configuration
-          
-          After installation, configure your AI API keys:
-          ```bash
-          kirocli config setup
-          ```
-          
-          ### 📋 Requirements
-          - Node.js 16+ (must be installed separately)
-          
-          ### 🆕 What's New in This Build
-          - Commit: ${{ github.sha }}
-          - Branch: ${{ github.ref_name }}
-          - Build Date: ${{ github.event.head_commit.timestamp }}
-          - Cross-platform distribution packages
-          - Enhanced UI/UX with syntax highlighting
-          - Improved error handling and user feedback
-          - Platform-specific optimizations
-        draft: false
-        prerelease: false
-        
-    - name: Upload Linux Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/kirocli-linux-portable/kirocli-linux-portable.tar.gz
-        asset_name: kirocli-linux-portable.tar.gz
-        asset_content_type: application/gzip
-        
-    - name: Upload macOS Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/kirocli-macos-portable/kirocli-macos-portable.tar.gz
-        asset_name: kirocli-macos-portable.tar.gz
-        asset_content_type: application/gzip
-        
-    - name: Upload Windows Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/kirocli-windows-portable/kirocli-windows-portable.tar.gz
-        asset_name: kirocli-windows-portable.tar.gz
-        asset_content_type: application/gzip
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Generate version tag
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "is_tag=true" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+            echo "is_tag=false" >> $GITHUB_OUTPUT
+          else
+            # Auto-generate version for main/master branch pushes
+            PACKAGE_VERSION=$(node -p "require('./package.json').version")
+            COMMIT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+            VERSION="v${PACKAGE_VERSION}-build.${COMMIT_SHA}"
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+            echo "is_tag=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: KiroCLI ${{ steps.version.outputs.version }}
+          body: |
+            ## KiroCLI Release ${{ steps.version.outputs.version }}
+
+            ### 🚀 Features
+            - ✅ AI Chat with OpenAI, Claude, and Gemini
+            - ✅ Spec-driven code generation
+            - ✅ Agent hooks for workflow automation
+            - ✅ Cross-platform shell command execution
+            - ✅ Enhanced terminal UI with syntax highlighting
+            - ✅ Persistent conversation history
+            - ✅ Debug mode and verbose logging
+
+            ### 📦 Installation
+
+            Download the appropriate package for your platform:
+
+            #### Linux
+            ```bash
+            wget https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/kirocli-linux-portable.tar.gz
+            tar -xzf kirocli-linux-portable.tar.gz
+            cd kirocli-linux-portable
+            ./kirocli --help
+            ```
+
+            #### macOS
+            ```bash
+            wget https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/kirocli-macos-portable.tar.gz
+            tar -xzf kirocli-macos-portable.tar.gz
+            cd kirocli-macos-portable
+            ./kirocli --help
+            ```
+
+            #### Windows
+            ```powershell
+            # Download and extract kirocli-windows-portable.tar.gz
+            # Run kirocli.bat or kirocli.ps1
+            ```
+
+            ### ⚙️ Configuration
+
+            After installation, configure your AI API keys:
+            ```bash
+            kirocli config setup
+            ```
+
+            ### 📋 Requirements
+            - Node.js 16+ (must be installed separately)
+
+            ### 🆕 What's New in This Build
+            - Commit: ${{ github.sha }}
+            - Branch: ${{ github.ref_name }}
+            - Build Date: ${{ github.event.head_commit.timestamp }}
+            - Cross-platform distribution packages
+            - Enhanced UI/UX with syntax highlighting
+            - Improved error handling and user feedback
+            - Platform-specific optimizations
+          draft: false
+          prerelease: false
+
+      - name: Upload Linux Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: artifacts/kirocli-linux-portable/kirocli-linux-portable.tar.gz
+          asset_name: kirocli-linux-portable.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload macOS Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: artifacts/kirocli-macos-portable/kirocli-macos-portable.tar.gz
+          asset_name: kirocli-macos-portable.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload Windows Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: artifacts/kirocli-windows-portable/kirocli-windows-portable.tar.gz
+          asset_name: kirocli-windows-portable.tar.gz
+          asset_content_type: application/gzip

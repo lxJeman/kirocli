@@ -47,17 +47,39 @@ export interface GenerationResult {
 
 export class SpecParser {
 	private readonly supportedLanguages = [
-		'typescript', 'javascript', 'python', 'java', 'go', 'rust', 'c++', 'c#', 'php', 'ruby'
+		'typescript',
+		'javascript',
+		'python',
+		'java',
+		'go',
+		'rust',
+		'c++',
+		'c#',
+		'php',
+		'ruby',
 	];
 
 	private readonly supportedFrameworks = [
-		'react', 'vue', 'angular', 'svelte', 'next.js', 'nuxt.js', 'express', 'fastapi', 'django', 'spring', 'gin'
+		'react',
+		'vue',
+		'angular',
+		'svelte',
+		'next.js',
+		'nuxt.js',
+		'express',
+		'fastapi',
+		'django',
+		'spring',
+		'gin',
 	];
 
-	async initSpec(filePath: string, options?: {
-		interactive?: boolean;
-		template?: 'basic' | 'web' | 'api' | 'cli' | 'library';
-	}): Promise<void> {
+	async initSpec(
+		filePath: string,
+		options?: {
+			interactive?: boolean;
+			template?: 'basic' | 'web' | 'api' | 'cli' | 'library';
+		},
+	): Promise<void> {
 		const template = options?.template || 'basic';
 		const specTemplate = this.getSpecTemplate(template);
 
@@ -90,24 +112,30 @@ export class SpecParser {
 	async parseSpec(filePath: string): Promise<EnhancedSpecData> {
 		try {
 			const content = await fs.readFile(filePath, 'utf8');
-			
+
 			// Remove comments and parse YAML
 			const cleanContent = content
 				.split('\n')
 				.filter(line => !line.trim().startsWith('#'))
 				.join('\n');
-			
+
 			const spec = yaml.load(cleanContent) as EnhancedSpecData;
 
 			// Validate and enhance spec
 			const validation = await this.validateSpecData(spec);
 			if (!validation.valid) {
-				throw new Error(`Spec validation failed: ${validation.errors.join(', ')}`);
+				throw new Error(
+					`Spec validation failed: ${validation.errors.join(', ')}`,
+				);
 			}
 
 			return this.enhanceSpec(spec);
 		} catch (error) {
-			if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+			if (
+				error instanceof Error &&
+				'code' in error &&
+				error.code === 'ENOENT'
+			) {
 				throw new Error(`Spec file not found: ${filePath}`);
 			}
 			throw error;
@@ -122,8 +150,10 @@ export class SpecParser {
 		} catch (error) {
 			return {
 				valid: false,
-				errors: [error instanceof Error ? error.message : 'Unknown validation error'],
-				warnings: []
+				errors: [
+					error instanceof Error ? error.message : 'Unknown validation error',
+				],
+				warnings: [],
 			};
 		}
 	}
@@ -134,7 +164,7 @@ export class SpecParser {
 			success: false,
 			files: [],
 			errors: [],
-			duration: 0
+			duration: 0,
 		};
 
 		try {
@@ -157,7 +187,9 @@ export class SpecParser {
 
 			result.success = true;
 		} catch (error) {
-			result.errors.push(error instanceof Error ? error.message : 'Unknown generation error');
+			result.errors.push(
+				error instanceof Error ? error.message : 'Unknown generation error',
+			);
 		}
 
 		result.duration = Date.now() - startTime;
@@ -179,9 +211,9 @@ export class SpecParser {
 			scripts: {},
 			structure: {
 				directories: [],
-				files: []
+				files: [],
 			},
-			variables: {}
+			variables: {},
 		};
 
 		switch (template) {
@@ -200,24 +232,36 @@ export class SpecParser {
 						'Form validation',
 						'Error handling',
 						'Loading states',
-						'Routing'
+						'Routing',
 					],
 					dependencies: ['react', 'react-dom', 'react-router-dom'],
-					devDependencies: ['@types/react', '@types/react-dom', 'vite', 'typescript'],
+					devDependencies: [
+						'@types/react',
+						'@types/react-dom',
+						'vite',
+						'typescript',
+					],
 					scripts: {
-						'dev': 'vite',
-						'build': 'vite build',
-						'preview': 'vite preview'
+						dev: 'vite',
+						build: 'vite build',
+						preview: 'vite preview',
 					},
 					structure: {
-						directories: ['src', 'src/components', 'src/pages', 'src/hooks', 'src/utils', 'public'],
+						directories: [
+							'src',
+							'src/components',
+							'src/pages',
+							'src/hooks',
+							'src/utils',
+							'public',
+						],
 						files: [
-							{ path: 'src/App.tsx', template: 'react-app' },
-							{ path: 'src/main.tsx', template: 'react-main' },
-							{ path: 'index.html', template: 'html-template' },
-							{ path: 'package.json', template: 'package-json' }
-						]
-					}
+							{path: 'src/App.tsx', template: 'react-app'},
+							{path: 'src/main.tsx', template: 'react-main'},
+							{path: 'index.html', template: 'html-template'},
+							{path: 'package.json', template: 'package-json'},
+						],
+					},
 				};
 
 			case 'api':
@@ -235,23 +279,34 @@ export class SpecParser {
 						'Database integration',
 						'API documentation',
 						'Rate limiting',
-						'CORS support'
+						'CORS support',
 					],
 					dependencies: ['express', 'cors', 'helmet', 'dotenv'],
-					devDependencies: ['@types/express', '@types/cors', 'nodemon', 'typescript'],
+					devDependencies: [
+						'@types/express',
+						'@types/cors',
+						'nodemon',
+						'typescript',
+					],
 					scripts: {
-						'dev': 'nodemon src/index.ts',
-						'build': 'tsc',
-						'start': 'node dist/index.js'
+						dev: 'nodemon src/index.ts',
+						build: 'tsc',
+						start: 'node dist/index.js',
 					},
 					structure: {
-						directories: ['src', 'src/routes', 'src/middleware', 'src/models', 'src/controllers'],
+						directories: [
+							'src',
+							'src/routes',
+							'src/middleware',
+							'src/models',
+							'src/controllers',
+						],
 						files: [
-							{ path: 'src/index.ts', template: 'express-server' },
-							{ path: 'src/app.ts', template: 'express-app' },
-							{ path: 'package.json', template: 'package-json' }
-						]
-					}
+							{path: 'src/index.ts', template: 'express-server'},
+							{path: 'src/app.ts', template: 'express-app'},
+							{path: 'package.json', template: 'package-json'},
+						],
+					},
 				};
 
 			case 'cli':
@@ -268,23 +323,23 @@ export class SpecParser {
 						'Progress indicators',
 						'Error handling',
 						'Help system',
-						'Configuration management'
+						'Configuration management',
 					],
 					dependencies: ['commander', 'inquirer', 'ora', 'chalk'],
 					devDependencies: ['@types/inquirer', 'typescript', 'ts-node'],
 					scripts: {
-						'dev': 'ts-node src/index.ts',
-						'build': 'tsc',
-						'start': 'node dist/index.js'
+						dev: 'ts-node src/index.ts',
+						build: 'tsc',
+						start: 'node dist/index.js',
 					},
 					structure: {
 						directories: ['src', 'src/commands', 'src/utils'],
 						files: [
-							{ path: 'src/index.ts', template: 'cli-main' },
-							{ path: 'src/cli.ts', template: 'cli-app' },
-							{ path: 'package.json', template: 'package-json' }
-						]
-					}
+							{path: 'src/index.ts', template: 'cli-main'},
+							{path: 'src/cli.ts', template: 'cli-app'},
+							{path: 'package.json', template: 'package-json'},
+						],
+					},
 				};
 
 			case 'library':
@@ -299,23 +354,23 @@ export class SpecParser {
 						'Unit tests',
 						'Documentation',
 						'Build system',
-						'NPM publishing'
+						'NPM publishing',
 					],
 					dependencies: [],
 					devDependencies: ['typescript', 'vitest', 'tsup'],
 					scripts: {
-						'build': 'tsup src/index.ts --format cjs,esm --dts',
-						'test': 'vitest',
-						'dev': 'tsup src/index.ts --format cjs,esm --dts --watch'
+						build: 'tsup src/index.ts --format cjs,esm --dts',
+						test: 'vitest',
+						dev: 'tsup src/index.ts --format cjs,esm --dts --watch',
 					},
 					structure: {
 						directories: ['src', 'tests', 'docs'],
 						files: [
-							{ path: 'src/index.ts', template: 'library-main' },
-							{ path: 'package.json', template: 'package-json' },
-							{ path: 'tsconfig.json', template: 'tsconfig' }
-						]
-					}
+							{path: 'src/index.ts', template: 'library-main'},
+							{path: 'package.json', template: 'package-json'},
+							{path: 'tsconfig.json', template: 'tsconfig'},
+						],
+					},
 				};
 
 			default:
@@ -323,7 +378,9 @@ export class SpecParser {
 		}
 	}
 
-	private async validateSpecData(spec: EnhancedSpecData): Promise<ValidationResult> {
+	private async validateSpecData(
+		spec: EnhancedSpecData,
+	): Promise<ValidationResult> {
 		const errors: string[] = [];
 		const warnings: string[] = [];
 
@@ -331,22 +388,36 @@ export class SpecParser {
 		if (!spec.goal) errors.push('Missing required field: goal');
 		if (!spec.language) errors.push('Missing required field: language');
 		if (!spec.features || spec.features.length === 0) {
-			errors.push('Missing required field: features (must be a non-empty array)');
+			errors.push(
+				'Missing required field: features (must be a non-empty array)',
+			);
 		}
 
 		// Language validation
-		if (spec.language && !this.supportedLanguages.includes(spec.language.toLowerCase())) {
-			warnings.push(`Language '${spec.language}' is not in the list of commonly supported languages`);
+		if (
+			spec.language &&
+			!this.supportedLanguages.includes(spec.language.toLowerCase())
+		) {
+			warnings.push(
+				`Language '${spec.language}' is not in the list of commonly supported languages`,
+			);
 		}
 
 		// Framework validation
-		if (spec.framework && !this.supportedFrameworks.includes(spec.framework.toLowerCase())) {
-			warnings.push(`Framework '${spec.framework}' is not in the list of commonly supported frameworks`);
+		if (
+			spec.framework &&
+			!this.supportedFrameworks.includes(spec.framework.toLowerCase())
+		) {
+			warnings.push(
+				`Framework '${spec.framework}' is not in the list of commonly supported frameworks`,
+			);
 		}
 
 		// Output path validation
 		if (spec.outputPath && path.isAbsolute(spec.outputPath)) {
-			warnings.push('Using absolute output path - consider using relative paths for portability');
+			warnings.push(
+				'Using absolute output path - consider using relative paths for portability',
+			);
 		}
 
 		// Dependencies validation
@@ -366,7 +437,7 @@ export class SpecParser {
 		return {
 			valid: errors.length === 0,
 			errors,
-			warnings
+			warnings,
 		};
 	}
 
@@ -380,10 +451,10 @@ export class SpecParser {
 			scripts: {},
 			structure: {
 				directories: [],
-				files: []
+				files: [],
 			},
 			variables: {},
-			...spec
+			...spec,
 		};
 
 		// Auto-detect common dependencies based on language/framework
@@ -405,64 +476,76 @@ export class SpecParser {
 		return enhanced;
 	}
 
-	private async createDirectoryStructure(spec: EnhancedSpecData): Promise<void> {
+	private async createDirectoryStructure(
+		spec: EnhancedSpecData,
+	): Promise<void> {
 		const outputPath = spec.outputPath || './generated';
-		
+
 		// Create main output directory
-		await fs.mkdir(outputPath, { recursive: true });
+		await fs.mkdir(outputPath, {recursive: true});
 
 		// Create specified directories
 		if (spec.structure?.directories) {
 			for (const dir of spec.structure.directories) {
 				const fullPath = path.join(outputPath, dir);
-				await fs.mkdir(fullPath, { recursive: true });
+				await fs.mkdir(fullPath, {recursive: true});
 			}
 		}
 	}
 
-	private async generateFiles(spec: EnhancedSpecData): Promise<Array<{ path: string; content: string; size: number }>> {
-		const files: Array<{ path: string; content: string; size: number }> = [];
+	private async generateFiles(
+		spec: EnhancedSpecData,
+	): Promise<Array<{path: string; content: string; size: number}>> {
+		const files: Array<{path: string; content: string; size: number}> = [];
 		const outputPath = spec.outputPath || './generated';
 
 		// Generate files from structure definition
 		if (spec.structure?.files) {
 			for (const fileSpec of spec.structure.files) {
-				const content = fileSpec.content || await this.generateFileContent(fileSpec, spec);
+				const content =
+					fileSpec.content || (await this.generateFileContent(fileSpec, spec));
 				const fullPath = path.join(outputPath, fileSpec.path);
-				
+
 				// Ensure directory exists
-				await fs.mkdir(path.dirname(fullPath), { recursive: true });
-				
+				await fs.mkdir(path.dirname(fullPath), {recursive: true});
+
 				// Write file
 				await fs.writeFile(fullPath, content, 'utf8');
-				
+
 				files.push({
 					path: fileSpec.path,
 					content,
-					size: Buffer.byteLength(content, 'utf8')
+					size: Buffer.byteLength(content, 'utf8'),
 				});
 			}
 		}
 
 		// Generate main application file if not specified in structure
-		if (!spec.structure?.files?.some(f => f.path.includes('main') || f.path.includes('index'))) {
+		if (
+			!spec.structure?.files?.some(
+				f => f.path.includes('main') || f.path.includes('index'),
+			)
+		) {
 			const mainFile = await this.generateMainFile(spec);
 			const mainPath = this.getMainFileName(spec);
 			const fullPath = path.join(outputPath, mainPath);
-			
+
 			await fs.writeFile(fullPath, mainFile, 'utf8');
-			
+
 			files.push({
 				path: mainPath,
 				content: mainFile,
-				size: Buffer.byteLength(mainFile, 'utf8')
+				size: Buffer.byteLength(mainFile, 'utf8'),
 			});
 		}
 
 		return files;
 	}
 
-	private async generateFileContent(fileSpec: { path: string; template?: string; content?: string }, spec: EnhancedSpecData): Promise<string> {
+	private async generateFileContent(
+		fileSpec: {path: string; template?: string; content?: string},
+		spec: EnhancedSpecData,
+	): Promise<string> {
 		if (fileSpec.content) {
 			return this.processTemplate(fileSpec.content, spec.variables || {});
 		}
@@ -480,20 +563,23 @@ export class SpecParser {
 		// Use AI to generate the main application file
 		const {AIProvider} = await import('../ai/index.js');
 		const ai = await AIProvider.createDefault();
-		
+
 		return await ai.generateFromSpec({
 			goal: spec.goal,
 			language: spec.language,
 			framework: spec.framework,
 			features: spec.features,
-			outputPath: spec.outputPath
+			outputPath: spec.outputPath,
 		});
 	}
 
-	private async generateAIContent(filePath: string, spec: EnhancedSpecData): Promise<string> {
+	private async generateAIContent(
+		filePath: string,
+		spec: EnhancedSpecData,
+	): Promise<string> {
 		const {AIProvider} = await import('../ai/index.js');
 		const ai = await AIProvider.createDefault();
-		
+
 		const filePrompt = `Generate content for file: ${filePath}
 		
 Project: ${spec.name || 'Unnamed Project'}
@@ -507,7 +593,7 @@ ${spec.features.map(f => `- ${f}`).join('\n')}
 Generate appropriate content for this file that fits the project structure and requirements.
 Make sure the code is production-ready, well-commented, and follows best practices.`;
 
-		return await ai.chat([{ role: 'user', content: filePrompt }]);
+		return await ai.chat([{role: 'user', content: filePrompt}]);
 	}
 
 	private buildEnhancedPrompt(spec: EnhancedSpecData): string {
@@ -523,19 +609,29 @@ ${spec.author ? `Author: ${spec.author}` : ''}
 Features to implement:
 ${spec.features.map(feature => `- ${feature}`).join('\n')}
 
-${spec.dependencies && spec.dependencies.length > 0 ? `
+${
+	spec.dependencies && spec.dependencies.length > 0
+		? `
 Dependencies:
 ${spec.dependencies.map(dep => `- ${dep}`).join('\n')}
-` : ''}
+`
+		: ''
+}
 
-${spec.structure?.directories && spec.structure.directories.length > 0 ? `
+${
+	spec.structure?.directories && spec.structure.directories.length > 0
+		? `
 Directory Structure:
 ${spec.structure.directories.map(dir => `- ${dir}/`).join('\n')}
-` : ''}
+`
+		: ''
+}
 
 Requirements:
 - Write clean, maintainable, and well-documented code
-- Follow best practices for ${spec.language}${spec.framework ? ` and ${spec.framework}` : ''}
+- Follow best practices for ${spec.language}${
+			spec.framework ? ` and ${spec.framework}` : ''
+		}
 - Include proper error handling
 - Add TypeScript types if using TypeScript
 - Include comments explaining complex logic
@@ -553,33 +649,41 @@ ${spec.outputPath ? `Output should be suitable for: ${spec.outputPath}` : ''}`;
 	private getTemplate(templateName: string, spec: EnhancedSpecData): string {
 		// Built-in templates
 		const templates: Record<string, string> = {
-			'package-json': JSON.stringify({
-				name: spec.name || 'generated-project',
-				version: spec.version || '1.0.0',
-				description: spec.goal,
-				main: this.getMainFileName(spec),
-				scripts: spec.scripts || {},
-				dependencies: this.arrayToObject(spec.dependencies || []),
-				devDependencies: this.arrayToObject(spec.devDependencies || []),
-				author: spec.author || '',
-				license: 'MIT'
-			}, null, 2),
-
-			'tsconfig': JSON.stringify({
-				compilerOptions: {
-					target: 'ES2020',
-					module: 'ESNext',
-					moduleResolution: 'node',
-					strict: true,
-					esModuleInterop: true,
-					skipLibCheck: true,
-					forceConsistentCasingInFileNames: true,
-					outDir: './dist',
-					rootDir: './src'
+			'package-json': JSON.stringify(
+				{
+					name: spec.name || 'generated-project',
+					version: spec.version || '1.0.0',
+					description: spec.goal,
+					main: this.getMainFileName(spec),
+					scripts: spec.scripts || {},
+					dependencies: this.arrayToObject(spec.dependencies || []),
+					devDependencies: this.arrayToObject(spec.devDependencies || []),
+					author: spec.author || '',
+					license: 'MIT',
 				},
-				include: ['src/**/*'],
-				exclude: ['node_modules', 'dist']
-			}, null, 2),
+				null,
+				2,
+			),
+
+			tsconfig: JSON.stringify(
+				{
+					compilerOptions: {
+						target: 'ES2020',
+						module: 'ESNext',
+						moduleResolution: 'node',
+						strict: true,
+						esModuleInterop: true,
+						skipLibCheck: true,
+						forceConsistentCasingInFileNames: true,
+						outDir: './dist',
+						rootDir: './src',
+					},
+					include: ['src/**/*'],
+					exclude: ['node_modules', 'dist'],
+				},
+				null,
+				2,
+			),
 
 			'react-main': `import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -603,21 +707,24 @@ root.render(
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 </body>
-</html>`
+</html>`,
 		};
 
 		return templates[templateName] || `// Template '${templateName}' not found`;
 	}
 
-	private processTemplate(template: string, variables: Record<string, any>): string {
+	private processTemplate(
+		template: string,
+		variables: Record<string, any>,
+	): string {
 		let processed = template;
-		
+
 		// Replace variables in format {{variableName}}
 		for (const [key, value] of Object.entries(variables)) {
 			const regex = new RegExp(`{{${key}}}`, 'g');
 			processed = processed.replace(regex, String(value));
 		}
-		
+
 		return processed;
 	}
 
@@ -625,7 +732,7 @@ root.render(
 		for (const hook of hooks) {
 			try {
 				const {execa} = await import('execa');
-				await execa('sh', ['-c', hook], { stdio: 'inherit' });
+				await execa('sh', ['-c', hook], {stdio: 'inherit'});
 			} catch (error) {
 				console.warn(`Hook failed in ${phase}: ${hook}`);
 			}
@@ -634,17 +741,17 @@ root.render(
 
 	private getMainFileName(spec: EnhancedSpecData): string {
 		const extension = this.getFileExtension(spec.language, spec.framework);
-		
+
 		if (spec.framework?.toLowerCase().includes('react')) {
 			return `App${extension}`;
 		}
-		
+
 		return `index${extension}`;
 	}
 
 	private getFileExtension(language: string, framework?: string): string {
 		const lang = language.toLowerCase();
-		
+
 		if (framework?.toLowerCase().includes('react')) {
 			return lang === 'typescript' ? '.tsx' : '.jsx';
 		}
@@ -686,7 +793,7 @@ root.render(
 	// Legacy method for backward compatibility
 	async writeGeneratedCode(code: string, spec: SpecData): Promise<void> {
 		const outputPath = spec.outputPath || './generated';
-		
+
 		// Ensure output directory exists
 		await fs.mkdir(outputPath, {recursive: true});
 

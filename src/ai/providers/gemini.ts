@@ -8,7 +8,7 @@ export class GeminiProvider extends AIProvider {
 
 	constructor(config: AIConfig) {
 		super(config);
-		
+
 		if (!config.apiKey) {
 			throw new Error('Google API key is required');
 		}
@@ -25,7 +25,7 @@ export class GeminiProvider extends AIProvider {
 	async chat(messages: AIMessage[]): Promise<string> {
 		// Estimate tokens for rate limiting
 		const estimatedTokens = this.estimateTokens(messages);
-		
+
 		try {
 			// Check rate limits before making request
 			await this.rateLimiter.checkRateLimit(estimatedTokens);
@@ -48,22 +48,30 @@ export class GeminiProvider extends AIProvider {
 
 			const result = await chat.sendMessage(lastMessage.content);
 			const response = result.response.text();
-			
+
 			// Log successful request
-			console.log(`✅ Gemini request successful. Remaining: ${this.rateLimiter.getRemainingRequests()} requests, ${this.rateLimiter.getRemainingTokens()} tokens`);
-			
+			console.log(
+				`✅ Gemini request successful. Remaining: ${this.rateLimiter.getRemainingRequests()} requests, ${this.rateLimiter.getRemainingTokens()} tokens`,
+			);
+
 			return response;
 		} catch (error) {
 			if (error instanceof Error) {
 				// Handle specific Gemini errors
 				if (error.message.includes('quota')) {
-					throw new Error(`Gemini quota exceeded. Please check your billing settings.`);
+					throw new Error(
+						`Gemini quota exceeded. Please check your billing settings.`,
+					);
 				}
 				if (error.message.includes('API_KEY')) {
-					throw new Error(`Invalid Google API key. Please check your GOOGLE_API_KEY environment variable.`);
+					throw new Error(
+						`Invalid Google API key. Please check your GOOGLE_API_KEY environment variable.`,
+					);
 				}
 				if (error.message.includes('RATE_LIMIT')) {
-					throw new Error(`Gemini rate limit exceeded. Please wait before making another request.`);
+					throw new Error(
+						`Gemini rate limit exceeded. Please wait before making another request.`,
+					);
 				}
 				throw new Error(`Gemini chat failed: ${error.message}`);
 			}
@@ -73,7 +81,10 @@ export class GeminiProvider extends AIProvider {
 
 	private estimateTokens(messages: AIMessage[]): number {
 		// Rough estimation: ~4 characters per token
-		const totalChars = messages.reduce((sum, msg) => sum + msg.content.length, 0);
+		const totalChars = messages.reduce(
+			(sum, msg) => sum + msg.content.length,
+			0,
+		);
 		return Math.ceil(totalChars / 4) + (this.config.maxTokens || 2000);
 	}
 
@@ -94,7 +105,7 @@ export class GeminiProvider extends AIProvider {
 			const model = this.client.getGenerativeModel({
 				model: this.config.model || 'gemini-pro',
 			});
-			
+
 			await model.generateContent('Hi');
 			return true;
 		} catch {

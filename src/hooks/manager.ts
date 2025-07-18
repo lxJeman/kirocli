@@ -6,8 +6,8 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
-import { watch } from 'chokidar';
-import { execa } from 'execa';
+import {watch} from 'chokidar';
+import {execa} from 'execa';
 import {
 	HookConfig,
 	HookExecutionResult,
@@ -19,7 +19,7 @@ import {
 	HookValidationResult,
 	ActionExecutionResult,
 	ActionType,
-	HookCategory
+	HookCategory,
 } from './types.js';
 
 export class HookManager {
@@ -43,7 +43,7 @@ export class HookManager {
 
 		try {
 			// Ensure hooks directory exists
-			await fs.mkdir(this.hooksDirectory, { recursive: true });
+			await fs.mkdir(this.hooksDirectory, {recursive: true});
 
 			// Load existing hooks
 			await this.loadHooks();
@@ -53,7 +53,9 @@ export class HookManager {
 
 			this.isInitialized = true;
 		} catch (error) {
-			throw new Error(`Failed to initialize hook manager: ${(error as Error).message}`);
+			throw new Error(
+				`Failed to initialize hook manager: ${(error as Error).message}`,
+			);
 		}
 	}
 
@@ -63,7 +65,9 @@ export class HookManager {
 	async loadHooks(): Promise<void> {
 		try {
 			const files = await fs.readdir(this.hooksDirectory);
-			const hookFiles = files.filter(file => file.endsWith('.yaml') || file.endsWith('.yml'));
+			const hookFiles = files.filter(
+				file => file.endsWith('.yaml') || file.endsWith('.yml'),
+			);
 
 			for (const file of hookFiles) {
 				if (file === 'config.yaml' || file === 'config.yml') continue;
@@ -76,12 +80,17 @@ export class HookManager {
 					// Validate hook configuration
 					const validation = this.validateHook(hookConfig);
 					if (!validation.valid) {
-						console.warn(`Invalid hook configuration in ${file}: ${validation.errors.join(', ')}`);
+						console.warn(
+							`Invalid hook configuration in ${file}: ${validation.errors.join(
+								', ',
+							)}`,
+						);
 						continue;
 					}
 
 					// Set default values
-					hookConfig.id = hookConfig.id || path.basename(file, path.extname(file));
+					hookConfig.id =
+						hookConfig.id || path.basename(file, path.extname(file));
 					hookConfig.enabled = hookConfig.enabled !== false;
 					hookConfig.timeout = hookConfig.timeout || 30000;
 					hookConfig.retries = hookConfig.retries || 0;
@@ -89,7 +98,9 @@ export class HookManager {
 
 					this.hooks.set(hookConfig.id, hookConfig);
 				} catch (error) {
-					console.warn(`Failed to load hook from ${file}: ${(error as Error).message}`);
+					console.warn(
+						`Failed to load hook from ${file}: ${(error as Error).message}`,
+					);
 				}
 			}
 		} catch (error) {
@@ -105,7 +116,7 @@ export class HookManager {
 		const yamlContent = yaml.dump(hook, {
 			indent: 2,
 			lineWidth: 100,
-			noRefs: true
+			noRefs: true,
 		});
 
 		await fs.writeFile(hookPath, yamlContent, 'utf8');
@@ -117,7 +128,7 @@ export class HookManager {
 	 */
 	async createHook(options: HookCreateOptions = {}): Promise<HookConfig> {
 		const hookId = `hook-${Date.now()}`;
-		
+
 		let hookConfig: HookConfig;
 
 		if (options.template) {
@@ -131,11 +142,11 @@ export class HookManager {
 				name: template.name,
 				description: template.description,
 				enabled: true,
-				trigger: { type: 'manual', manual: true },
+				trigger: {type: 'manual', manual: true},
 				actions: [],
 				category: template.category,
 				created: new Date().toISOString(),
-				...template.config
+				...template.config,
 			} as HookConfig;
 		} else {
 			hookConfig = {
@@ -143,10 +154,10 @@ export class HookManager {
 				name: 'New Hook',
 				description: 'A new agent hook',
 				enabled: true,
-				trigger: { type: 'manual', manual: true },
+				trigger: {type: 'manual', manual: true},
 				actions: [],
 				category: 'custom',
-				created: new Date().toISOString()
+				created: new Date().toISOString(),
 			};
 		}
 
@@ -172,18 +183,20 @@ export class HookManager {
 
 		// Filter by tags
 		if (options.tags && options.tags.length > 0) {
-			hooks = hooks.filter(hook => 
-				hook.tags && hook.tags.some(tag => options.tags!.includes(tag))
+			hooks = hooks.filter(
+				hook => hook.tags && hook.tags.some(tag => options.tags!.includes(tag)),
 			);
 		}
 
 		// Search filter
 		if (options.search) {
 			const searchLower = options.search.toLowerCase();
-			hooks = hooks.filter(hook => 
-				hook.name.toLowerCase().includes(searchLower) ||
-				hook.description.toLowerCase().includes(searchLower) ||
-				(hook.tags && hook.tags.some(tag => tag.toLowerCase().includes(searchLower)))
+			hooks = hooks.filter(
+				hook =>
+					hook.name.toLowerCase().includes(searchLower) ||
+					hook.description.toLowerCase().includes(searchLower) ||
+					(hook.tags &&
+						hook.tags.some(tag => tag.toLowerCase().includes(searchLower))),
 			);
 		}
 
@@ -200,7 +213,10 @@ export class HookManager {
 	/**
 	 * Execute a hook by ID
 	 */
-	async executeHook(id: string, context?: Partial<HookExecutionContext>): Promise<HookExecutionResult> {
+	async executeHook(
+		id: string,
+		context?: Partial<HookExecutionContext>,
+	): Promise<HookExecutionResult> {
 		const hook = this.hooks.get(id);
 		if (!hook) {
 			throw new Error(`Hook '${id}' not found`);
@@ -214,9 +230,9 @@ export class HookManager {
 			workingDirectory: process.cwd(),
 			environment: process.env as Record<string, string>,
 			variables: hook.variables || {},
-			trigger: { type: 'manual' },
+			trigger: {type: 'manual'},
 			timestamp: new Date().toISOString(),
-			...context
+			...context,
 		};
 
 		const startTime = Date.now();
@@ -225,28 +241,43 @@ export class HookManager {
 			success: false,
 			duration: 0,
 			actions: [],
-			timestamp: executionContext.timestamp
+			timestamp: executionContext.timestamp,
 		};
 
 		try {
 			// Check conditions
-			if (hook.conditions && !await this.checkConditions(hook.conditions, executionContext)) {
+			if (
+				hook.conditions &&
+				!(await this.checkConditions(hook.conditions, executionContext))
+			) {
 				result.error = 'Hook conditions not met';
 				return result;
 			}
 
 			// Execute actions
 			for (const action of hook.actions) {
-				const actionResult = await this.executeAction(action, executionContext, hook);
+				const actionResult = await this.executeAction(
+					action,
+					executionContext,
+					hook,
+				);
 				result.actions.push(actionResult);
 
 				if (!actionResult.success && !action.continueOnError) {
 					if (hook.onError === 'stop') {
 						break;
-					} else if (hook.onError === 'retry' && hook.retries && hook.retries > 0) {
+					} else if (
+						hook.onError === 'retry' &&
+						hook.retries &&
+						hook.retries > 0
+					) {
 						// Implement retry logic
 						for (let retry = 0; retry < hook.retries; retry++) {
-							const retryResult = await this.executeAction(action, executionContext, hook);
+							const retryResult = await this.executeAction(
+								action,
+								executionContext,
+								hook,
+							);
 							if (retryResult.success) {
 								result.actions[result.actions.length - 1] = retryResult;
 								break;
@@ -273,13 +304,13 @@ export class HookManager {
 	private async executeAction(
 		action: any,
 		context: HookExecutionContext,
-		_hook: HookConfig
+		_hook: HookConfig,
 	): Promise<ActionExecutionResult> {
 		const startTime = Date.now();
 		const result: ActionExecutionResult = {
 			actionId: action.id,
 			success: false,
-			duration: 0
+			duration: 0,
 		};
 
 		try {
@@ -344,12 +375,15 @@ export class HookManager {
 	/**
 	 * Execute shell command action
 	 */
-	private async executeShellAction(action: any, context: HookExecutionContext): Promise<string> {
+	private async executeShellAction(
+		action: any,
+		context: HookExecutionContext,
+	): Promise<string> {
 		const command = this.processTemplate(action.command, context);
-		const { stdout } = await execa('sh', ['-c', command], {
+		const {stdout} = await execa('sh', ['-c', command], {
 			cwd: context.workingDirectory,
 			env: context.environment,
-			timeout: action.timeout || 30000
+			timeout: action.timeout || 30000,
 		});
 		return stdout;
 	}
@@ -357,12 +391,15 @@ export class HookManager {
 	/**
 	 * Execute script file action
 	 */
-	private async executeScriptAction(action: any, context: HookExecutionContext): Promise<string> {
+	private async executeScriptAction(
+		action: any,
+		context: HookExecutionContext,
+	): Promise<string> {
 		const scriptPath = this.processTemplate(action.script, context);
-		const { stdout } = await execa('sh', [scriptPath], {
+		const {stdout} = await execa('sh', [scriptPath], {
 			cwd: context.workingDirectory,
 			env: context.environment,
-			timeout: action.timeout || 30000
+			timeout: action.timeout || 30000,
 		});
 		return stdout;
 	}
@@ -370,35 +407,44 @@ export class HookManager {
 	/**
 	 * Execute file creation action
 	 */
-	private async executeFileCreateAction(action: any, context: HookExecutionContext): Promise<void> {
+	private async executeFileCreateAction(
+		action: any,
+		context: HookExecutionContext,
+	): Promise<void> {
 		const filePath = this.processTemplate(action.file, context);
 		const content = this.processTemplate(action.content || '', context);
-		
+
 		// Ensure directory exists
-		await fs.mkdir(path.dirname(filePath), { recursive: true });
+		await fs.mkdir(path.dirname(filePath), {recursive: true});
 		await fs.writeFile(filePath, content, 'utf8');
 	}
 
 	/**
 	 * Execute file copy action
 	 */
-	private async executeFileCopyAction(action: any, context: HookExecutionContext): Promise<void> {
+	private async executeFileCopyAction(
+		action: any,
+		context: HookExecutionContext,
+	): Promise<void> {
 		const source = this.processTemplate(action.source, context);
 		const target = this.processTemplate(action.target, context);
-		
+
 		// Ensure target directory exists
-		await fs.mkdir(path.dirname(target), { recursive: true });
+		await fs.mkdir(path.dirname(target), {recursive: true});
 		await fs.copyFile(source, target);
 	}
 
 	/**
 	 * Execute Git action
 	 */
-	private async executeGitAction(action: any, context: HookExecutionContext): Promise<string> {
+	private async executeGitAction(
+		action: any,
+		context: HookExecutionContext,
+	): Promise<string> {
 		const gitCommand = this.processTemplate(action.command, context);
-		const { stdout } = await execa('git', gitCommand.split(' '), {
+		const {stdout} = await execa('git', gitCommand.split(' '), {
 			cwd: context.workingDirectory,
-			env: context.environment
+			env: context.environment,
 		});
 		return stdout;
 	}
@@ -406,11 +452,14 @@ export class HookManager {
 	/**
 	 * Execute NPM action
 	 */
-	private async executeNpmAction(action: any, context: HookExecutionContext): Promise<string> {
+	private async executeNpmAction(
+		action: any,
+		context: HookExecutionContext,
+	): Promise<string> {
 		const npmCommand = this.processTemplate(action.command, context);
-		const { stdout } = await execa('npm', npmCommand.split(' '), {
+		const {stdout} = await execa('npm', npmCommand.split(' '), {
 			cwd: context.workingDirectory,
-			env: context.environment
+			env: context.environment,
 		});
 		return stdout;
 	}
@@ -418,7 +467,10 @@ export class HookManager {
 	/**
 	 * Execute notification action
 	 */
-	private async executeNotificationAction(action: any, context: HookExecutionContext): Promise<void> {
+	private async executeNotificationAction(
+		action: any,
+		context: HookExecutionContext,
+	): Promise<void> {
 		const message = this.processTemplate(action.message, context);
 		console.log(`🔔 ${action.title || 'Notification'}: ${message}`);
 	}
@@ -426,32 +478,44 @@ export class HookManager {
 	/**
 	 * Execute AI generation action
 	 */
-	private async executeAIGenerateAction(action: any, context: HookExecutionContext): Promise<string> {
-		const { AIProvider } = await import('../ai/index.js');
+	private async executeAIGenerateAction(
+		action: any,
+		context: HookExecutionContext,
+	): Promise<string> {
+		const {AIProvider} = await import('../ai/index.js');
 		const ai = await AIProvider.createDefault();
-		
+
 		const prompt = this.processTemplate(action.prompt, context);
-		return await ai.chat([{ role: 'user', content: prompt }]);
+		return await ai.chat([{role: 'user', content: prompt}]);
 	}
 
 	/**
 	 * Execute spec build action
 	 */
-	private async executeSpecBuildAction(action: any, context: HookExecutionContext): Promise<string> {
-		const { SpecParser } = await import('../parser/index.js');
+	private async executeSpecBuildAction(
+		action: any,
+		context: HookExecutionContext,
+	): Promise<string> {
+		const {SpecParser} = await import('../parser/index.js');
 		const parser = new SpecParser();
-		
-		const specFile = this.processTemplate(action.specFile || '.kiro/spec.yaml', context);
+
+		const specFile = this.processTemplate(
+			action.specFile || '.kiro/spec.yaml',
+			context,
+		);
 		const spec = await parser.parseSpec(specFile);
 		const result = await parser.generateCode(spec);
-		
+
 		return `Generated ${result.files.length} files in ${result.duration}ms`;
 	}
 
 	/**
 	 * Check hook conditions
 	 */
-	private async checkConditions(conditions: any[], context: HookExecutionContext): Promise<boolean> {
+	private async checkConditions(
+		conditions: any[],
+		context: HookExecutionContext,
+	): Promise<boolean> {
 		for (const condition of conditions) {
 			const result = await this.checkCondition(condition, context);
 			if (!result) return false;
@@ -462,7 +526,10 @@ export class HookManager {
 	/**
 	 * Check a single condition
 	 */
-	private async checkCondition(condition: any, context: HookExecutionContext): Promise<boolean> {
+	private async checkCondition(
+		condition: any,
+		context: HookExecutionContext,
+	): Promise<boolean> {
 		switch (condition.type) {
 			case 'file_exists':
 				try {
@@ -475,7 +542,7 @@ export class HookManager {
 			case 'command_success':
 				try {
 					await execa('sh', ['-c', condition.parameter], {
-						cwd: context.workingDirectory
+						cwd: context.workingDirectory,
 					});
 					return true;
 				} catch {
@@ -485,7 +552,7 @@ export class HookManager {
 			case 'env_var':
 				const envValue = context.environment[condition.parameter];
 				if (!condition.value) return !!envValue;
-				
+
 				switch (condition.operator) {
 					case 'equals':
 						return envValue === condition.value;
@@ -503,7 +570,10 @@ export class HookManager {
 	/**
 	 * Process template strings with variable substitution
 	 */
-	private processTemplate(template: string, context: HookExecutionContext): string {
+	private processTemplate(
+		template: string,
+		context: HookExecutionContext,
+	): string {
 		let processed = template;
 
 		// Replace context variables
@@ -513,7 +583,10 @@ export class HookManager {
 
 		// Replace built-in variables
 		processed = processed.replace(/\{\{timestamp\}\}/g, context.timestamp);
-		processed = processed.replace(/\{\{workingDirectory\}\}/g, context.workingDirectory);
+		processed = processed.replace(
+			/\{\{workingDirectory\}\}/g,
+			context.workingDirectory,
+		);
 
 		return processed;
 	}
@@ -523,16 +596,20 @@ export class HookManager {
 	 */
 	private async startFileWatchers(): Promise<void> {
 		for (const hook of this.hooks.values()) {
-			if (hook.enabled && hook.trigger.type === 'file_change' && hook.trigger.filePattern) {
+			if (
+				hook.enabled &&
+				hook.trigger.type === 'file_change' &&
+				hook.trigger.filePattern
+			) {
 				const watcher = watch(hook.trigger.filePattern, {
 					persistent: true,
-					ignoreInitial: true
+					ignoreInitial: true,
 				});
 
-				watcher.on('change', async (filePath) => {
+				watcher.on('change', async filePath => {
 					try {
 						await this.executeHook(hook.id, {
-							trigger: { type: 'file_change', data: { filePath } }
+							trigger: {type: 'file_change', data: {filePath}},
 						});
 					} catch (error) {
 						console.error(`Error executing hook ${hook.id}:`, error);
@@ -589,7 +666,7 @@ export class HookManager {
 		return {
 			valid: errors.length === 0,
 			errors,
-			warnings
+			warnings,
 		};
 	}
 
@@ -613,9 +690,15 @@ export class HookManager {
 			enabled: enabled.length,
 			disabled: hooks.length - enabled.length,
 			byCategory: byCategory as Record<HookCategory, number>,
-			lastExecuted: executions.length > 0 ? executions[executions.length - 1]?.timestamp : undefined,
+			lastExecuted:
+				executions.length > 0
+					? executions[executions.length - 1]?.timestamp
+					: undefined,
 			totalExecutions: executions.length,
-			successRate: executions.length > 0 ? (successful.length / executions.length) * 100 : 0
+			successRate:
+				executions.length > 0
+					? (successful.length / executions.length) * 100
+					: 0,
 		};
 	}
 
@@ -632,21 +715,21 @@ export class HookManager {
 				config: {
 					trigger: {
 						type: 'file_change',
-						filePattern: 'src/**/*'
+						filePattern: 'src/**/*',
 					},
 					actions: [
 						{
 							id: 'git-add',
 							type: 'git',
-							command: 'add .'
+							command: 'add .',
 						},
 						{
 							id: 'git-commit',
 							type: 'git',
-							command: 'commit -m "Auto-commit: {{timestamp}}"'
-						}
-					]
-				}
+							command: 'commit -m "Auto-commit: {{timestamp}}"',
+						},
+					],
+				},
 			},
 			{
 				id: 'build-on-change',
@@ -656,21 +739,21 @@ export class HookManager {
 				config: {
 					trigger: {
 						type: 'file_change',
-						filePattern: 'src/**/*'
+						filePattern: 'src/**/*',
 					},
 					actions: [
 						{
 							id: 'npm-build',
 							type: 'npm',
-							command: 'run build'
+							command: 'run build',
 						},
 						{
 							id: 'notify',
 							type: 'notification',
-							message: 'Project built successfully at {{timestamp}}'
-						}
-					]
-				}
+							message: 'Project built successfully at {{timestamp}}',
+						},
+					],
+				},
 			},
 			{
 				id: 'test-runner',
@@ -680,47 +763,48 @@ export class HookManager {
 				config: {
 					trigger: {
 						type: 'file_change',
-						filePattern: '{src,test}/**/*'
+						filePattern: '{src,test}/**/*',
 					},
 					actions: [
 						{
 							id: 'run-tests',
 							type: 'npm',
-							command: 'test'
-						}
-					]
-				}
+							command: 'test',
+						},
+					],
+				},
 			},
 			{
 				id: 'deploy-on-push',
 				name: 'Deploy on Git Push',
-				description: 'Deploy application when changes are pushed to main branch',
+				description:
+					'Deploy application when changes are pushed to main branch',
 				category: 'deploy',
 				config: {
 					trigger: {
 						type: 'git_event',
-						event: 'push'
+						event: 'push',
 					},
 					conditions: [
 						{
 							type: 'command_success',
-							parameter: 'git branch --show-current | grep -q main'
-						}
+							parameter: 'git branch --show-current | grep -q main',
+						},
 					],
 					actions: [
 						{
 							id: 'deploy',
 							type: 'shell',
-							command: 'npm run deploy'
+							command: 'npm run deploy',
 						},
 						{
 							id: 'notify-deploy',
 							type: 'notification',
-							message: 'Application deployed successfully'
-						}
-					]
-				}
-			}
+							message: 'Application deployed successfully',
+						},
+					],
+				},
+			},
 		];
 	}
 
@@ -791,7 +875,10 @@ export class HookManager {
 	getExecutionHistory(limit = 50): HookExecutionResult[] {
 		return this.executionHistory
 			.slice(-limit)
-			.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+			.sort(
+				(a, b) =>
+					new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+			);
 	}
 
 	/**

@@ -32,7 +32,7 @@ export class AIProviderFactory {
 	private static async getConfigFromModel(model: string): Promise<AIConfig> {
 		const configManager = ConfigManager.getInstance();
 		const aiConfig = await configManager.loadConfig();
-		
+
 		// Determine provider from model name
 		let provider: 'openai' | 'claude' | 'gemini' = aiConfig.default_provider;
 		if (model.includes('claude')) provider = 'claude';
@@ -58,7 +58,11 @@ export class AIProviderFactory {
 	static getSupportedModels(): Record<string, string[]> {
 		return {
 			openai: ['gpt-4', 'gpt-3.5-turbo', 'gpt-4-turbo'],
-			claude: ['claude-3-sonnet-20240229', 'claude-3-haiku-20240307', 'claude-3-opus-20240229'],
+			claude: [
+				'claude-3-sonnet-20240229',
+				'claude-3-haiku-20240307',
+				'claude-3-opus-20240229',
+			],
 			gemini: ['gemini-pro', 'gemini-pro-vision'],
 		};
 	}

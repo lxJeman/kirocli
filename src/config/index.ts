@@ -45,19 +45,22 @@ export class ConfigManager {
 		try {
 			// Try to load project-specific config first
 			const projectConfig = await this.loadProjectConfig();
-			
+
 			// Try to load user-specific config
 			const userConfig = await this.loadUserConfig();
-			
+
 			// Merge configs (project takes precedence)
 			this.config = this.mergeConfigs(userConfig, projectConfig);
-			
+
 			// Apply environment variable overrides
 			this.applyEnvironmentOverrides(this.config);
-			
+
 			return this.config;
 		} catch (error) {
-			console.warn('Failed to load AI config, using defaults:', error instanceof Error ? error.message : 'Unknown error');
+			console.warn(
+				'Failed to load AI config, using defaults:',
+				error instanceof Error ? error.message : 'Unknown error',
+			);
 			return this.getDefaultConfig();
 		}
 	}
@@ -80,12 +83,21 @@ export class ConfigManager {
 		}
 	}
 
-	private mergeConfigs(userConfig: Partial<AIConfiguration>, projectConfig: Partial<AIConfiguration>): AIConfiguration {
+	private mergeConfigs(
+		userConfig: Partial<AIConfiguration>,
+		projectConfig: Partial<AIConfiguration>,
+	): AIConfiguration {
 		const defaultConfig = this.getDefaultConfig();
-		
+
 		return {
-			default_provider: projectConfig.default_provider || userConfig.default_provider || defaultConfig.default_provider,
-			default_model: projectConfig.default_model || userConfig.default_model || defaultConfig.default_model,
+			default_provider:
+				projectConfig.default_provider ||
+				userConfig.default_provider ||
+				defaultConfig.default_provider,
+			default_model:
+				projectConfig.default_model ||
+				userConfig.default_model ||
+				defaultConfig.default_model,
 			providers: {
 				openai: {
 					...defaultConfig.providers.openai,
@@ -120,7 +132,10 @@ export class ConfigManager {
 
 		// Override default provider if specified
 		if (process.env['KIROCLI_DEFAULT_PROVIDER']) {
-			const provider = process.env['KIROCLI_DEFAULT_PROVIDER'] as 'openai' | 'claude' | 'gemini';
+			const provider = process.env['KIROCLI_DEFAULT_PROVIDER'] as
+				| 'openai'
+				| 'claude'
+				| 'gemini';
 			if (['openai', 'claude', 'gemini'].includes(provider)) {
 				config.default_provider = provider;
 			}
@@ -147,7 +162,11 @@ export class ConfigManager {
 					},
 				},
 				claude: {
-					models: ['claude-3-sonnet-20240229', 'claude-3-haiku-20240307', 'claude-3-opus-20240229'],
+					models: [
+						'claude-3-sonnet-20240229',
+						'claude-3-haiku-20240307',
+						'claude-3-opus-20240229',
+					],
 					temperature: 0.7,
 					max_tokens: 2000,
 					rate_limit: {
@@ -182,13 +201,15 @@ export class ConfigManager {
 			forceQuotes: true,
 		});
 		await fs.writeFile(this.userConfigPath, yamlContent, 'utf8');
-		
+
 		// Reload config
 		this.config = null;
 		await this.loadConfig();
 	}
 
-	async getProviderConfig(provider: 'openai' | 'claude' | 'gemini'): Promise<AIProviderConfig> {
+	async getProviderConfig(
+		provider: 'openai' | 'claude' | 'gemini',
+	): Promise<AIProviderConfig> {
 		const config = await this.loadConfig();
 		return config.providers[provider];
 	}
@@ -196,18 +217,20 @@ export class ConfigManager {
 	async getApiKey(provider: 'openai' | 'claude' | 'gemini'): Promise<string> {
 		const config = await this.loadConfig();
 		const apiKey = config.providers[provider].api_key;
-		
+
 		if (!apiKey) {
 			const envKey = `${provider.toUpperCase()}_API_KEY`;
-			throw new Error(`API key not found for ${provider}. Please set ${envKey} environment variable or configure it in ${this.userConfigPath}`);
+			throw new Error(
+				`API key not found for ${provider}. Please set ${envKey} environment variable or configure it in ${this.userConfigPath}`,
+			);
 		}
-		
+
 		return apiKey;
 	}
 
 	async validateApiKeys(): Promise<Record<string, boolean>> {
 		const results: Record<string, boolean> = {};
-		
+
 		for (const provider of ['openai', 'claude', 'gemini'] as const) {
 			try {
 				await this.getApiKey(provider);
@@ -216,11 +239,14 @@ export class ConfigManager {
 				results[provider] = false;
 			}
 		}
-		
+
 		return results;
 	}
 
-	async setApiKey(provider: 'openai' | 'claude' | 'gemini', apiKey: string): Promise<void> {
+	async setApiKey(
+		provider: 'openai' | 'claude' | 'gemini',
+		apiKey: string,
+	): Promise<void> {
 		// Load current user config or create empty one
 		let userConfig: Partial<AIConfiguration>;
 		try {
@@ -247,7 +273,7 @@ export class ConfigManager {
 
 		// Save the updated config
 		await this.saveUserConfig(userConfig);
-		
+
 		console.log(`✅ API key for ${provider} saved to ${this.userConfigPath}`);
 	}
 }
